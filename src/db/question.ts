@@ -11,6 +11,8 @@ import {
 import db from "./db";
 
 export async function fetchQuestions(
+  offset: number,
+  limit: number,
   auditRating?: "Pass" | "Flag for Human Review" | "Reject"
 ) {
   return (
@@ -32,6 +34,8 @@ export async function fetchQuestions(
         creatorId: true,
         audit: true,
       },
+      skip: offset,
+      take: limit,
     })
   ).map(parseQuestionAudit);
 }

@@ -1,8 +1,17 @@
+import { Button } from "@/components/ui/button";
 import { fetchQuestionById } from "@/db/question";
 import { CHECKLIST } from "@/lib/constants";
-import { ParsedAudit, ParsedQuestion, QuestionChoice } from "@/lib/types";
+import {
+  AuditRating,
+  ParsedAudit,
+  ParsedQuestion,
+  QuestionChoice,
+} from "@/lib/types";
 import { Check, X } from "lucide-react";
 import { notFound } from "next/navigation";
+import { handleUpdateAuditStatus } from "./actions";
+import { useRouter } from "next/router";
+import { useState } from "react";
 
 type ReviewQuestionPageProps = {
   params: Promise<{
@@ -101,6 +110,17 @@ type AuditSectionProps = {
 };
 
 function AuditSection({ audit }: AuditSectionProps) {
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
+
+  async function updateAuditStatus(rating: AuditRating) {
+    if (!audit) return;
+    setIsLoading(true);
+    await handleUpdateAuditStatus(audit.questionId, rating);
+    setIsLoading(false);
+    router.reload();
+  }
+
   function renderAuditStatus() {
     switch (audit?.rating) {
       case "Pass":
@@ -164,6 +184,26 @@ function AuditSection({ audit }: AuditSectionProps) {
         ))}
       </ul>
       {renderSuggestions()}
+      {audit?.rating === "Flag for Human Review" && (
+        <div className="flex gap-2">
+          <Button
+            className="flex-1"
+            onClick={() => updateAuditStatus("Pass")}
+            disabled={isLoading}
+          >
+            <span>Accept</span>
+            <Check />
+          </Button>
+          <Button
+            className="flex-1"
+            onClick={() => updateAuditStatus("Reject")}
+            disabled={isLoading}
+          >
+            <span>Reject</span>
+            <X />
+          </Button>
+        </div>
+      )}
     </section>
   );
 }

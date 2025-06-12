@@ -2,7 +2,11 @@
 
 import db from "@/db/db";
 
-export async function handleFetchUsers(search?: string) {
+export async function handleFetchUsers(
+  offset: number,
+  limit: number,
+  search?: string
+) {
   return await db.user.findMany({
     select: {
       id: true,
@@ -22,6 +26,8 @@ export async function handleFetchUsers(search?: string) {
         }
       : undefined,
     orderBy: { createdAt: "desc" },
+    skip: offset,
+    take: limit,
   });
 }
 

@@ -34,6 +34,10 @@ model ResetPassword {
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
+// model PracticeExam {
+//   id String @id @default(uuid())
+// }
+
 model Question {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())

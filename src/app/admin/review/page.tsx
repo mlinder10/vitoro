@@ -1,32 +1,37 @@
 "use client";
 
 import { fetchQuestions } from "@/db/question";
-import {
-  AuditRating,
-  ParsedAudit,
-  ParsedQuestion,
-  QuestionAudit,
-} from "@/lib/types";
+import useInfiniteScroll, { LoadingFooter } from "@/hooks/useInfiniteScroll";
+import { AuditRating, ParsedAudit, ParsedQuestion } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+
+const MAX_ITEMS_PER_PAGE = 30;
 
 export default function ReviewPage() {
-  const [questions, setQuestions] = useState<QuestionAudit[]>([]);
   const [rating, setRating] = useState<AuditRating | undefined>(undefined);
-
-  useEffect(() => {
-    fetchQuestions(rating).then(setQuestions);
-  }, [rating]);
+  const {
+    data: questions,
+    isLoading,
+    containerRef,
+  } = useInfiniteScroll(
+    async (offset) => fetchQuestions(offset, MAX_ITEMS_PER_PAGE, rating),
+    [rating]
+  );
 
   return (
-    <main className="px-4 pb-2 h-page">
-      <ul>
-        {questions.map((q) => (
-          <QuestionItem key={q.question.id} qa={q} />
-        ))}
-        {questions.length === 0 && <li>No flagged questions to review.</li>}
-      </ul>
+    <main className="flex flex-col px-4 pb-2 h-page">
+      <section>{/* TODO: add inputs */}</section>
+      <section className="flex-1 overflow-y-auto" ref={containerRef}>
+        <ul>
+          {questions.map((q) => (
+            <QuestionItem key={q.question.id} qa={q} />
+          ))}
+          {questions.length === 0 && <li>No flagged questions to review.</li>}
+        </ul>
+        <LoadingFooter isLoading={isLoading} />
+      </section>
     </main>
   );
 }
