@@ -1,27 +1,19 @@
+"use client";
+
 import AccentLink from "@/components/accent-link";
-// import Blob from "@/components/blob";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-// import { cn } from "@/lib/utils";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Loader } from "lucide-react";
+import { useActionState } from "react";
+import { handleLogin } from "../actions";
 
 export default function LoginPage() {
+  const [error, action, isPending] = useActionState(handleLogin, {});
+
   return (
     <main className="place-items-center grid h-page">
-      {/* <Blob
-        color="secondary"
-        className={cn("z-[-1] top-[-12%] right-[-12%] absolute w-1/2")}
-      />
-      <Blob
-        color="tertiary"
-        className={cn("z-[-1] top-[6%] left-[18%] absolute w-1/4")}
-      />
-      <Blob
-        color="primary"
-        className={cn("z-[-1] bottom-[0%] left-[0%] absolute w-1/3")}
-      /> */}
-      <form action="" className="flex flex-col items-center gap-6 w-1/4">
+      <form action={action} className="flex flex-col items-center gap-6 w-1/4">
         <div className="relative">
           <h1 className="font-bold text-4xl">Login</h1>
           <div className="top-[110%] absolute bg-gradient-to-r from-custom-accent w-full h-[2px] to-custom-accent-secondary" />
@@ -51,8 +43,17 @@ export default function LoginPage() {
             variant="accent"
             className="w-full font-semibold"
           >
-            <span>Login</span>
-            <ArrowRight />
+            {isPending ? (
+              <>
+                <span>Loading...</span>
+                <Loader className="animate-spin" />
+              </>
+            ) : (
+              <>
+                <span>Login</span>
+                <ArrowRight />
+              </>
+            )}
           </Button>
           <AccentLink
             href="/forgot-password"

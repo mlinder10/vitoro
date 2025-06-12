@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useState } from "react";
 import { handleFetchUsers, handleUpdateAdminStatus } from "./actions";
 import { Button } from "@/components/ui/button";
@@ -68,7 +70,7 @@ function UserItem({ user }: UserItemProps) {
         <p>
           {user.firstName} {user.lastName}
         </p>
-        <p className="text-muted text-sm">{user.email}</p>
+        <p className="text-muted-foreground text-sm">{user.email}</p>
       </div>
       <Button
         variant={isAdmin ? "destructive" : "accent"}
