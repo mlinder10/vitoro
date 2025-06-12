@@ -2,7 +2,6 @@
 
 import { saveQuestion } from "@/db/question";
 import { generateAudit, generateQuestion } from "@/lib/gemini";
-import { GeneratedQuestion } from "@/lib/types";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
@@ -13,32 +12,25 @@ const GenerateQuestionSchema = z.object({
   sources: z.string(),
 });
 
-export type GenerateQuestionResult =
-  | ({ success?: true } & GeneratedQuestion)
-  | {
-      success?: false;
-      topic?: string | string[];
-      concept?: string | string[];
-      type?: string | string[];
-      sources?: string | string[];
-    };
+export type GenerateQuestionResult = {
+  topic?: string | string[];
+  concept?: string | string[];
+  type?: string | string[];
+  sources?: string | string[];
+};
 
 export async function handleGenerateQuestion(
+  userId: string,
   _: unknown,
   formData: FormData
-): Promise<GenerateQuestionResult> {
+) {
   const parsed = GenerateQuestionSchema.safeParse(Object.fromEntries(formData));
-  if (!parsed.success) {
-    return {
-      success: false,
-      ...parsed.error.formErrors.fieldErrors,
-    };
-  }
+  if (!parsed.success) return parsed.error.formErrors.fieldErrors;
 
   const { topic, concept, type } = parsed.data;
   const question = await generateQuestion(topic, concept, type, []);
   const audit = await generateAudit(question);
-  const saved = await saveQuestion(question, audit, "dev-admin");
+  const saved = await saveQuestion(question, audit, userId);
 
   redirect(`/admin/review/${saved.id}`);
 }

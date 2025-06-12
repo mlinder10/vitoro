@@ -1,4 +1,3 @@
-import db from "@/db/db";
 import { Question, Audit } from "@prisma/client";
 
 // Question ===================================================================

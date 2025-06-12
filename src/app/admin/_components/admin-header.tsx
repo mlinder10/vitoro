@@ -18,6 +18,11 @@ export default function AdminHeader() {
               Review
             </Link>
           </li>
+          <li>
+            <Link href="/admin/promote" className="ml-4 text-muted-foreground">
+              Promote
+            </Link>
+          </li>
         </ul>
       </nav>
     </header>

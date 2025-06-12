@@ -9,15 +9,21 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  firstName String
-  lastName  String
-  password  String
-  createdAt DateTime @default(now())
-  isAdmin   Boolean  @default(false)
-
+  id            String          @id @default(uuid())
+  email         String          @unique
+  firstName     String
+  lastName      String
+  password      String
+  createdAt     DateTime        @default(now())
+  admin         Admin?
   resetPassword ResetPassword[]
+}
+
+model Admin {
+  userId    String     @id
+  createdAt DateTime   @default(now())
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  questions Question[]
 }
 
 model ResetPassword {
@@ -26,14 +32,6 @@ model ResetPassword {
   validUntil DateTime
   userId     String   @unique
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
-model Admin {
-  id       String @id @default(uuid())
-  email    String @unique
-  password String
-
-  questions Question[]
 }
 
 model Question {
@@ -54,7 +52,7 @@ model Question {
   difficulty     String
   nbmeStyleNotes String
 
-  creator Admin  @relation(fields: [creatorId], references: [id], onDelete: NoAction)
+  creator Admin  @relation(fields: [creatorId], references: [userId], onDelete: NoAction)
   audit   Audit?
 }
 

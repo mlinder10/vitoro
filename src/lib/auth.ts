@@ -9,7 +9,7 @@ const SECRET_KEY = new TextEncoder().encode(process.env.JWT_SECRET!);
 export type Session = {
   id: string;
   email: string;
-  isAdmin: boolean;
+  isAdmin?: boolean;
 };
 
 export async function signToken(payload: Session) {

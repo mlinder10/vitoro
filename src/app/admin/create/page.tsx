@@ -6,9 +6,14 @@ import { handleGenerateQuestion } from "./actions";
 import { useActionState } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Loader } from "lucide-react";
+import { useSession } from "@/contexts/session-provider";
 
 export default function CreateQBankPage() {
-  const [error, action, isPending] = useActionState(handleGenerateQuestion, {});
+  const session = useSession();
+  const [error, action, isPending] = useActionState(
+    handleGenerateQuestion.bind(null, session.id),
+    {}
+  );
 
   return (
     <main className="items-center grid h-page">
@@ -25,7 +30,7 @@ export default function CreateQBankPage() {
             placeholder='e.g. "Cardiovascular Pathophysiology"'
             required
           />
-          {error.success === false && error.topic && (
+          {error.topic && (
             <p className="text-destructive text-sm">{error.topic}</p>
           )}
         </div>
@@ -38,7 +43,7 @@ export default function CreateQBankPage() {
             placeholder='e.g. "Diagnosis, Treatment"'
             required
           />
-          {error.success === false && error.concept && (
+          {error.concept && (
             <p className="text-destructive text-sm">{error.concept}</p>
           )}
         </div>
@@ -51,7 +56,7 @@ export default function CreateQBankPage() {
             placeholder='e.g. "Most likely complication", "Next best step", etc.'
             required
           />
-          {error.success == false && error.type && (
+          {error.type && (
             <p className="text-destructive text-sm">{error.type}</p>
           )}
         </div>
@@ -63,7 +68,7 @@ export default function CreateQBankPage() {
             type="text"
             placeholder="e.g., StatPearls, UTD, etc."
           />
-          {error.success === false && error.sources && (
+          {error.sources && (
             <p className="text-destructive text-sm">{error.sources}</p>
           )}
         </div>

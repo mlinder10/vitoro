@@ -76,7 +76,11 @@ export async function saveQuestion(
     questionId: "", // doesn't matter since prisma automatically fills this
   });
 
-  const { questionId: _, ...auditWithoutQuestionId } = encodedAudit;
+  const auditWithoutQuestionId = {
+    checklist: encodedAudit.checklist,
+    suggestions: encodedAudit.suggestions,
+    rating: encodedAudit.rating,
+  };
 
   const savedQuestion = await db.question.create({
     data: {

@@ -1,9 +1,17 @@
 -- libsql
 
-CREATE TABLE IF NOT EXISTS Admin (
+CREATE TABLE IF NOT EXISTS User (
   id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
   email TEXT NOT NULL,
-  password TEXT NOT NULL
+  firstName TEXT NOT NULL,
+  lastName TEXT NOT NULL,
+  password TEXT NOT NULL,
+  createdAt TEXT DEFAULT (datetime('now'))
+);
+
+CREATE TABLE IF NOT EXISTS Admin (
+  userId TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
+  FOREIGN KEY (userId) REFERENCES User(id)
 );
 
 CREATE TABLE IF NOT EXISTS Question (

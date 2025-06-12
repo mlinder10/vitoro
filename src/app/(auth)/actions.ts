@@ -28,6 +28,12 @@ export async function handleLogin(_: unknown, data: FormData) {
 
   const user = await db.user.findUnique({
     where: { email: result.data.email },
+    select: {
+      id: true,
+      email: true,
+      password: true,
+      admin: { select: { userId: true } },
+    },
   });
   if (!user) return { email: ["Invalid email or password"] };
 
@@ -37,7 +43,7 @@ export async function handleLogin(_: unknown, data: FormData) {
   const token = await signToken({
     id: user.id,
     email: user.email,
-    isAdmin: user.isAdmin,
+    isAdmin: user.admin?.userId ? true : false,
   });
 
   (await cookies()).set({
@@ -90,7 +96,7 @@ export async function handleRegister(_: unknown, data: FormData) {
   const token = await signToken({
     id: newUser.id,
     email: newUser.email,
-    isAdmin: newUser.isAdmin,
+    isAdmin: false,
   });
 
   (await cookies()).set({
