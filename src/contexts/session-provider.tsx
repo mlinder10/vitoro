@@ -6,6 +6,9 @@ import { createContext, ReactNode, useContext } from "react";
 const SessionContext = createContext<Session>({
   id: "",
   email: "",
+  firstName: "",
+  lastName: "",
+  color: "",
   isAdmin: false,
 });
 

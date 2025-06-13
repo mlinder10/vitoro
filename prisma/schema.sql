@@ -5,6 +5,7 @@ CREATE TABLE IF NOT EXISTS User (
   email TEXT NOT NULL,
   firstName TEXT NOT NULL,
   lastName TEXT NOT NULL,
+  color TEXT NOT NULL,
   password TEXT NOT NULL,
   createdAt TEXT DEFAULT (datetime('now'))
 );

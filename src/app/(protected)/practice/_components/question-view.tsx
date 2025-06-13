@@ -3,7 +3,8 @@
 import { Button } from "@/components/ui/button";
 import { ParsedQuestion, QuestionChoice } from "@/lib/types";
 import { cn } from "@/lib/utils";
-import { ArrowRight, Circle, CircleCheck, CircleX } from "lucide-react";
+import { ArrowRight, Check, Circle, CircleCheck, CircleX } from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
 
 type QuestionViewProps = {
@@ -15,7 +16,7 @@ export default function QuestionView({ question }: QuestionViewProps) {
   const [isChecked, setIsChecked] = useState(false);
 
   return (
-    <main className="flex flex-col h-page">
+    <div className="flex flex-col h-full">
       <section className="p-4">
         <p>{question.question}</p>
       </section>
@@ -34,14 +35,20 @@ export default function QuestionView({ question }: QuestionViewProps) {
             />
           ))}
         </ul>
-        {!isChecked && (
+        {isChecked ? (
+          <Button className="ml-auto w-fit" variant="accent" asChild>
+            <Link href="/practice" className="flex items-center gap-2">
+              <span>Next</span>
+              <ArrowRight />
+            </Link>
+          </Button>
+        ) : (
           <Button variant="accent" onClick={() => setIsChecked(true)}>
             <span>Submit</span>
-            <ArrowRight />
           </Button>
         )}
       </section>
-    </main>
+    </div>
   );
 }
 
@@ -79,7 +86,7 @@ function QuestionChoiceView({
     <li
       onClick={handleSelect}
       className={cn(
-        "flex items-center gap-2 bg-secondary p-2 border-2 rounded-md",
+        "flex items-center gap-2 bg-background p-2 border-2 rounded-md",
         !isChecked && "cursor-pointer"
       )}
     >
