@@ -12,7 +12,10 @@ export default function Header() {
         <Link href="/">
           <h1>Vitado</h1>
         </Link>
-        <ul>
+        <ul className="flex gap-6">
+          <li>
+            <Link href="/practice">Practice</Link>
+          </li>
           {session.isAdmin && (
             <li>
               <Link href="/admin">Admin</Link>

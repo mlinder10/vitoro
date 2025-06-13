@@ -1,5 +1,6 @@
 "use server";
 
+import db from "@/db/db";
 import { jwtVerify, SignJWT } from "jose";
 import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
@@ -67,9 +68,21 @@ export async function getSession() {
     return null;
   }
   const token = jwt[0].split("=")[1];
-  if (token) {
-    const decoded = await verifyToken(token);
-    return decoded;
-  }
-  return null;
+  if (!token) return null;
+  const decoded = await verifyToken(token);
+  if (!decoded) return null;
+  const user = await db.user.findUnique({
+    where: { id: decoded.id },
+    select: {
+      id: true,
+      email: true,
+      admin: { select: { userId: true } },
+    },
+  });
+  if (!user) return null;
+  return {
+    id: user.id,
+    email: user.email,
+    isAdmin: user.admin?.userId ? true : false,
+  };
 }

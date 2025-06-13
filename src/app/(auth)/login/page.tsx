@@ -27,6 +27,9 @@ export default function LoginPage() {
             type="email"
             placeholder="name@email.com"
           />
+          {error.email && (
+            <p className="text-destructive text-sm">{error.email}</p>
+          )}
         </div>
         <div className="space-y-2 w-full">
           <Label htmlFor="password">Password</Label>
@@ -36,6 +39,9 @@ export default function LoginPage() {
             type="password"
             placeholder="••••••••"
           />
+          {error.password && (
+            <p className="text-destructive text-sm">{error.password}</p>
+          )}
         </div>
         <div className="space-y-2 w-full">
           <Button

@@ -77,23 +77,21 @@ export async function saveQuestion(
   const encodedAudit = encodeAudit({
     ...audit,
     id: crypto.randomUUID(),
-    questionId: "", // doesn't matter since prisma automatically fills this
+    questionId: encodedQuestion.id,
   });
-
-  const auditWithoutQuestionId = {
-    checklist: encodedAudit.checklist,
-    suggestions: encodedAudit.suggestions,
-    rating: encodedAudit.rating,
-  };
 
   const savedQuestion = await db.question.create({
     data: {
       ...encodedQuestion,
       audit: {
-        create: auditWithoutQuestionId,
+        create: {
+          id: encodedAudit.id,
+          checklist: encodedAudit.checklist,
+          suggestions: encodedAudit.suggestions,
+          rating: encodedAudit.rating,
+        },
       },
     },
   });
-
   return parseQuestion(savedQuestion);
 }

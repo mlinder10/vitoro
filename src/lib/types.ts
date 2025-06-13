@@ -41,7 +41,15 @@ export type ParsedQuestion = GeneratedQuestion & {
 
 export function encodeQuestion(question: ParsedQuestion): Question {
   return {
-    ...question,
+    id: question.id,
+    topic: question.topic,
+    concept: question.concept,
+    type: question.type,
+    createdAt: question.createdAt,
+    creatorId: question.creatorId,
+    question: question.question,
+    answer: question.answer,
+    difficulty: question.difficulty,
     sources: JSON.stringify(question.sources),
     choices: JSON.stringify(question.choices),
     explanations: JSON.stringify(question.explanations),
@@ -51,7 +59,13 @@ export function encodeQuestion(question: ParsedQuestion): Question {
 
 export function parseQuestion(encoded: Question): ParsedQuestion {
   return {
-    ...encoded,
+    id: encoded.id,
+    topic: encoded.topic,
+    concept: encoded.concept,
+    type: encoded.type,
+    createdAt: encoded.createdAt,
+    creatorId: encoded.creatorId,
+    question: encoded.question,
     sources: JSON.parse(encoded.sources),
     choices: JSON.parse(encoded.choices),
     answer: encoded.answer as QuestionChoice,

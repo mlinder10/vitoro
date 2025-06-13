@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS User (
 
 CREATE TABLE IF NOT EXISTS Admin (
   userId TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
+  createdAt TEXT DEFAULT (datetime('now')),
   FOREIGN KEY (userId) REFERENCES User(id)
 );
 
@@ -28,6 +29,7 @@ CREATE TABLE IF NOT EXISTS Question (
   choices TEXT NOT NULL,
   explanations TEXT NOT NULL,
 
+  sources TEXT NOT NULL,
   difficulty TEXT NOT NULL,
   nbmeStyleNotes TEXT NOT NULL,
 
