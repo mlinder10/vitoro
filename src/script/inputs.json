@@ -1,0 +1,1837 @@
+[
+  {
+    "topic": "Hypertrophic Cardiomyopathy",
+    "concept": "Pathophysiology",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "SIADH",
+    "concept": "Lab interpretation",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "Crohn's disease",
+    "concept": "Complication",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Nephrotic syndrome",
+    "concept": "Pathogenesis",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Iron deficiency anemia",
+    "concept": "Labs",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "Myasthenia gravis",
+    "concept": "Pharmacology",
+    "type": "Next step in management"
+  },
+  {
+    "topic": "Graves disease",
+    "concept": "Mechanism",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Parkinson disease",
+    "concept": "Neurotransmitters",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Pulmonary embolism",
+    "concept": "Presentation",
+    "type": "Next step in management"
+  },
+  {
+    "topic": "Diabetic ketoacidosis",
+    "concept": "Acid-base",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Pernicious anemia",
+    "concept": "Immunology",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Cushing syndrome",
+    "concept": "Diagnosis",
+    "type": "Next step in management"
+  },
+  {
+    "topic": "Addison disease",
+    "concept": "Hormone pathway",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Neuroblastoma",
+    "concept": "Genetics",
+    "type": "Risk factor/epidemiology"
+  },
+  {
+    "topic": "Testicular torsion",
+    "concept": "Emergency management",
+    "type": "Next step in management"
+  },
+  {
+    "topic": "Turner syndrome",
+    "concept": "Embryology",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Tetralogy of Fallot",
+    "concept": "Cyanotic heart disease",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "Wiskott-Aldrich syndrome",
+    "concept": "Immunodeficiency",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Congenital adrenal hyperplasia",
+    "concept": "Enzyme deficiency",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Cerebral palsy",
+    "concept": "Risk factors",
+    "type": "Risk factor/epidemiology"
+  },
+  {
+    "topic": "SCID",
+    "concept": "Immunodeficiency",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Systemic lupus erythematosus",
+    "concept": "Autoantibodies",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "G6PD deficiency",
+    "concept": "Pathophys",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Guillain-Barré syndrome",
+    "concept": "Pathogenesis",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Multiple sclerosis",
+    "concept": "Pathophysiology",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "Preeclampsia",
+    "concept": "Diagnosis",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "HELLP syndrome",
+    "concept": "Lab findings",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "Hyperthyroidism",
+    "concept": "Pharmacology",
+    "type": "Next step in management"
+  },
+  {
+    "topic": "Hypothyroidism",
+    "concept": "Mechanism",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Acromegaly",
+    "concept": "Diagnosis",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "SIADH",
+    "concept": "Etiology",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Diabetes insipidus",
+    "concept": "Lab pattern",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Septic shock",
+    "concept": "Mechanism",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "ARDS",
+    "concept": "Pathophysiology",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Asthma",
+    "concept": "Pathology",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "COPD",
+    "concept": "Management",
+    "type": "Next step in management"
+  },
+  {
+    "topic": "Cystic fibrosis",
+    "concept": "Genetics",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Sarcoidosis",
+    "concept": "Clinical features",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "TB",
+    "concept": "Microbiology",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Bacterial meningitis",
+    "concept": "Empiric treatment",
+    "type": "Next step in management"
+  },
+  {
+    "topic": "Viral meningitis",
+    "concept": "CSF findings",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "Subarachnoid hemorrhage",
+    "concept": "Diagnosis",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "Ischemic stroke",
+    "concept": "Timing",
+    "type": "Next step in management"
+  },
+  {
+    "topic": "Wilson disease",
+    "concept": "Hepatic path",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Hemochromatosis",
+    "concept": "Iron overload",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Cholecystitis",
+    "concept": "Imaging",
+    "type": "Next step in management"
+  },
+  {
+    "topic": "Acute pancreatitis",
+    "concept": "Etiology",
+    "type": "Risk factor/epidemiology"
+  },
+  {
+    "topic": "Ulcerative colitis",
+    "concept": "Histology",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Celiac disease",
+    "concept": "Pathogenesis",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Appendicitis",
+    "concept": "Diagnosis",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "Diverticulitis",
+    "concept": "Complications",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Colon cancer",
+    "concept": "Screening",
+    "type": "Next step in management"
+  },
+  {
+    "topic": "Prostate cancer",
+    "concept": "Screening controversy",
+    "type": "Risk factor/epidemiology"
+  },
+  {
+    "topic": "Breast cancer",
+    "concept": "BRCA mutation",
+    "type": "Risk factor/epidemiology"
+  },
+  {
+    "topic": "Testicular cancer",
+    "concept": "Tumor markers",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "Ovarian torsion",
+    "concept": "Emergency management",
+    "type": "Next step in management"
+  },
+  {
+    "topic": "Ectopic pregnancy",
+    "concept": "Diagnosis",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "PCOS",
+    "concept": "Pathophysiology",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Endometriosis",
+    "concept": "Diagnosis",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "Preeclampsia",
+    "concept": "Timing",
+    "type": "Next step in management"
+  },
+  {
+    "topic": "Hyperemesis gravidarum",
+    "concept": "Complications",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Depression",
+    "concept": "Pharmacology",
+    "type": "Next step in management"
+  },
+  {
+    "topic": "Bipolar disorder",
+    "concept": "Pharmacology",
+    "type": "Next step in management"
+  },
+  {
+    "topic": "Schizophrenia",
+    "concept": "Pathophysiology",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Alcohol withdrawal",
+    "concept": "Timing",
+    "type": "Risk factor/epidemiology"
+  },
+  {
+    "topic": "Delirium tremens",
+    "concept": "Management",
+    "type": "Next step in management"
+  },
+  {
+    "topic": "Opioid overdose",
+    "concept": "Pharmacology",
+    "type": "Next step in management"
+  },
+  {
+    "topic": "Benzo overdose",
+    "concept": "Antidote",
+    "type": "Next step in management"
+  },
+  {
+    "topic": "Acetaminophen overdose",
+    "concept": "Toxicity",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Salicylate overdose",
+    "concept": "Acid-base",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Lead poisoning",
+    "concept": "Peds",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Child abuse",
+    "concept": "Imaging",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "Domestic violence",
+    "concept": "Communication",
+    "type": "Next step in management"
+  },
+  {
+    "topic": "Ethical scenarios",
+    "concept": "Consent",
+    "type": "Next step in management"
+  },
+  {
+    "topic": "End-of-life care",
+    "concept": "Advance directives",
+    "type": "Next step in management"
+  },
+  {
+    "topic": "Vaccines",
+    "concept": "Contraindications",
+    "type": "Next step in management"
+  },
+  {
+    "topic": "Autonomic pharmacology",
+    "concept": "Receptor effects",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Beta blockers",
+    "concept": "Selectivity",
+    "type": "Next step in management"
+  },
+  {
+    "topic": "Loop diuretics",
+    "concept": "Electrolytes",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "ACE inhibitors",
+    "concept": "Side effect",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Statins",
+    "concept": "Mechanism",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Warfarin",
+    "concept": "Metabolism",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Heparin-induced thrombocytopenia",
+    "concept": "Immunology",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Anemia of chronic disease",
+    "concept": "Cytokines",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Sickle cell disease",
+    "concept": "Pathophysiology",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "DIC",
+    "concept": "Lab findings",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Thrombotic thrombocytopenic purpura",
+    "concept": "Mechanism",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "AML",
+    "concept": "Genetics",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "ALL",
+    "concept": "Presentation",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "CML",
+    "concept": "Pathophysiology",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Hodgkin lymphoma",
+    "concept": "Histology",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "Non-Hodgkin lymphoma",
+    "concept": "Immunophenotype",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "Basal ganglia circuitry",
+    "concept": "Neuroanatomy",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Craniopharyngioma",
+    "concept": "Embryology",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "Pituitary apoplexy",
+    "concept": "Endocrine emergency",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "Hyperaldosteronism",
+    "concept": "Electrolyte physiology",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Thyroid storm",
+    "concept": "Acute management",
+    "type": "Next step in management"
+  },
+  {
+    "topic": "Hepatic encephalopathy",
+    "concept": "Pathophysiology",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Reye syndrome",
+    "concept": "Pathology",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Wilson disease",
+    "concept": "Genetics",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Hemochromatosis",
+    "concept": "Pathogenesis",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Dubin-Johnson syndrome",
+    "concept": "Metabolism",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Crigler-Najjar syndrome",
+    "concept": "Bilirubin metabolism",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Zollinger-Ellison syndrome",
+    "concept": "Pathophysiology",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Lactose intolerance",
+    "concept": "Carbohydrate metabolism",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "Abetalipoproteinemia",
+    "concept": "Lipid transport",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Vitamin E deficiency",
+    "concept": "Neurology",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Cystinuria",
+    "concept": "Transport defect",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Hartnup disease",
+    "concept": "Amino acid metabolism",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Maple syrup urine disease",
+    "concept": "Enzyme defect",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Ornithine transcarbamylase deficiency",
+    "concept": "Urea cycle",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Acute intermittent porphyria",
+    "concept": "Metabolic pathway",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Porphyria cutanea tarda",
+    "concept": "Heme synthesis",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Lead poisoning",
+    "concept": "Enzyme inhibition",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Hereditary spherocytosis",
+    "concept": "Hematology",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Paroxysmal nocturnal hemoglobinuria",
+    "concept": "Hematology",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Warm autoimmune hemolytic anemia",
+    "concept": "Immunology",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Cold agglutinin disease",
+    "concept": "Triggers",
+    "type": "Risk factor/epidemiology"
+  },
+  {
+    "topic": "Aplastic anemia",
+    "concept": "Causes",
+    "type": "Risk factor/epidemiology"
+  },
+  {
+    "topic": "Fanconi anemia",
+    "concept": "Genetics",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Diamond-Blackfan anemia",
+    "concept": "Pediatrics",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Osteogenesis imperfecta",
+    "concept": "Collagen defect",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Marfan syndrome",
+    "concept": "Genetic mutation",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Ehlers-Danlos syndrome",
+    "concept": "Collagen type",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Homocystinuria",
+    "concept": "Pathophys",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Alkaptonuria",
+    "concept": "Pigment accumulation",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Phenylketonuria",
+    "concept": "Genetics",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Galactosemia",
+    "concept": "Neonatal emergency",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "Fructose intolerance",
+    "concept": "Metabolism",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "McArdle disease",
+    "concept": "Muscle metabolism",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Von Gierke disease",
+    "concept": "Glycogen storage",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Pompe disease",
+    "concept": "Lysosomal storage",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Tay-Sachs disease",
+    "concept": "Lipid metabolism",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Niemann-Pick disease",
+    "concept": "Histology",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Gaucher disease",
+    "concept": "Cell morphology",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Krabbe disease",
+    "concept": "Neurodegeneration",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Metachromatic leukodystrophy",
+    "concept": "Neurology",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Hurler syndrome",
+    "concept": "Lysosomal storage",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Hunter syndrome",
+    "concept": "Differentiating features",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "X-linked agammaglobulinemia",
+    "concept": "Immunology",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Selective IgA deficiency",
+    "concept": "Most common primary immunodeficiency",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Hyper IgM syndrome",
+    "concept": "CD40 defect",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "IL-12 receptor deficiency",
+    "concept": "Immunology",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Hyper IgE syndrome",
+    "concept": "Immunodeficiency",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Wiskott-Aldrich syndrome",
+    "concept": "Cytoskeleton",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "LAD type 1",
+    "concept": "Immune cell migration",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Chediak-Higashi syndrome",
+    "concept": "Lysosomal trafficking",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "CGD",
+    "concept": "Oxidative burst",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "SCID",
+    "concept": "Combined deficiency",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Ataxia telangiectasia",
+    "concept": "DNA repair",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Bloom syndrome",
+    "concept": "Chromosomal instability",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Fanconi anemia",
+    "concept": "Pancytopenia",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Tuberous sclerosis",
+    "concept": "Neurocutaneous",
+    "type": "Risk factor/epidemiology"
+  },
+  {
+    "topic": "Sturge-Weber syndrome",
+    "concept": "Vascular anomaly",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Neurofibromatosis type 1",
+    "concept": "Skin findings",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Neurofibromatosis type 2",
+    "concept": "CNS tumors",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Von Hippel-Lindau disease",
+    "concept": "Vascular tumors",
+    "type": "Risk factor/epidemiology"
+  },
+  {
+    "topic": "Tay-Sachs vs Niemann-Pick",
+    "concept": "Comparison",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "Carcinoid syndrome",
+    "concept": "Serotonin metabolism",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "MEN1",
+    "concept": "Tumor triad",
+    "type": "Risk factor/epidemiology"
+  },
+  {
+    "topic": "MEN2A",
+    "concept": "Mutation",
+    "type": "Risk factor/epidemiology"
+  },
+  {
+    "topic": "MEN2B",
+    "concept": "Mucosal neuromas",
+    "type": "Risk factor/epidemiology"
+  },
+  {
+    "topic": "Kallmann syndrome",
+    "concept": "GnRH migration",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Androgen insensitivity syndrome",
+    "concept": "XY karyotype",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "Müllerian agenesis",
+    "concept": "Genital development",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "Complete mole",
+    "concept": "Genetics",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "Partial mole",
+    "concept": "Presentation",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "Preeclampsia with severe features",
+    "concept": "Indications for delivery",
+    "type": "Next step in management"
+  },
+  {
+    "topic": "HELLP syndrome",
+    "concept": "Liver pathology",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Eclampsia",
+    "concept": "Management",
+    "type": "Next step in management"
+  },
+  {
+    "topic": "Postpartum hemorrhage",
+    "concept": "Uterine causes",
+    "type": "Next step in management"
+  },
+  {
+    "topic": "Sheehan syndrome",
+    "concept": "Ischemia",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Asherman syndrome",
+    "concept": "Infertility",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "Polymyalgia rheumatica",
+    "concept": "Association",
+    "type": "Risk factor/epidemiology"
+  },
+  {
+    "topic": "Temporal arteritis",
+    "concept": "Emergency",
+    "type": "Next step in management"
+  },
+  {
+    "topic": "Takayasu arteritis",
+    "concept": "Population",
+    "type": "Risk factor/epidemiology"
+  },
+  {
+    "topic": "Polyarteritis nodosa",
+    "concept": "Hepatitis B link",
+    "type": "Risk factor/epidemiology"
+  },
+  {
+    "topic": "Kawasaki disease",
+    "concept": "Vessel",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Granulomatosis with polyangiitis",
+    "concept": "ANCA type",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Microscopic polyangiitis",
+    "concept": "Histology",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Eosinophilic GPA",
+    "concept": "Atopy",
+    "type": "Risk factor/epidemiology"
+  },
+  {
+    "topic": "Henoch-Schönlein purpura",
+    "concept": "Pathophys",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Goodpasture syndrome",
+    "concept": "Antibody target",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Cryoglobulinemia",
+    "concept": "Association",
+    "type": "Risk factor/epidemiology"
+  },
+  {
+    "topic": "Glomerulonephritis",
+    "concept": "Immune-mediated damage",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Post-streptococcal GN",
+    "concept": "Infectious trigger",
+    "type": "Risk factor/epidemiology"
+  },
+  {
+    "topic": "IgA nephropathy",
+    "concept": "Timing of hematuria",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Alport syndrome",
+    "concept": "Genetic disorder",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Minimal change disease",
+    "concept": "Pediatric nephrotic syndrome",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "Focal segmental glomerulosclerosis",
+    "concept": "Secondary causes",
+    "type": "Risk factor/epidemiology"
+  },
+  {
+    "topic": "Membranous nephropathy",
+    "concept": "Autoimmune association",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Membranoproliferative GN",
+    "concept": "Complement activation",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Diabetic nephropathy",
+    "concept": "Progression",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "HIV-associated nephropathy",
+    "concept": "Renal pathology",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "Renal artery stenosis",
+    "concept": "Hypertension",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Acute interstitial nephritis",
+    "concept": "Drug-induced",
+    "type": "Risk factor/epidemiology"
+  },
+  {
+    "topic": "Rhabdomyolysis",
+    "concept": "Renal complication",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Tumor lysis syndrome",
+    "concept": "Electrolyte imbalance",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Hyperkalemia",
+    "concept": "EKG changes",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Hypocalcemia",
+    "concept": "Tetany",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Hypernatremia",
+    "concept": "Volume status",
+    "type": "Next step in management"
+  },
+  {
+    "topic": "Serotonin syndrome",
+    "concept": "Medication interaction",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "Neonatal conjunctivitis",
+    "concept": "Timing of onset",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "Neonatal respiratory distress syndrome",
+    "concept": "Surfactant deficiency",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Coarctation of the aorta",
+    "concept": "Congenital heart disease",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "Cyanotic congenital heart defects",
+    "concept": "Shunting",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Breastfeeding jaundice vs breast milk jaundice",
+    "concept": "Timing",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Developmental dysplasia of the hip",
+    "concept": "Screening",
+    "type": "Next step in management"
+  },
+  {
+    "topic": "Pediatric milestones",
+    "concept": "Gross motor",
+    "type": "Risk factor/epidemiology"
+  },
+  {
+    "topic": "Slipped capital femoral epiphysis",
+    "concept": "Obesity link",
+    "type": "Risk factor/epidemiology"
+  },
+  {
+    "topic": "Legg-Calvé-Perthes disease",
+    "concept": "Avascular necrosis",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "Intussusception",
+    "concept": "Pediatric emergency",
+    "type": "Next step in management"
+  },
+  {
+    "topic": "Meckel diverticulum",
+    "concept": "GI bleeding",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "Hirschsprung disease",
+    "concept": "Failure to pass meconium",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "Pediatric seizure management",
+    "concept": "Status epilepticus",
+    "type": "Next step in management"
+  },
+  {
+    "topic": "Febrile seizures",
+    "concept": "Benign course",
+    "type": "Risk factor/epidemiology"
+  },
+  {
+    "topic": "TORCH infections",
+    "concept": "Vertical transmission",
+    "type": "Risk factor/epidemiology"
+  },
+  {
+    "topic": "Congenital syphilis",
+    "concept": "Late findings",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "Congenital rubella",
+    "concept": "Classic triad",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "CMV in utero",
+    "concept": "Intracranial calcifications",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "Hydatidiform mole",
+    "concept": "hCG elevation",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Postpartum endometritis",
+    "concept": "Risk after C-section",
+    "type": "Risk factor/epidemiology"
+  },
+  {
+    "topic": "Breastfeeding contraindications",
+    "concept": "Infectious risk",
+    "type": "Next step in management"
+  },
+  {
+    "topic": "Infant botulism",
+    "concept": "Honey ingestion",
+    "type": "Risk factor/epidemiology"
+  },
+  {
+    "topic": "Listeria monocytogenes",
+    "concept": "Neonatal meningitis",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "Group B strep",
+    "concept": "Intrapartum prophylaxis",
+    "type": "Next step in management"
+  },
+  {
+    "topic": "Listeria treatment",
+    "concept": "Empiric antibiotics",
+    "type": "Next step in management"
+  },
+  {
+    "topic": "Necrotizing enterocolitis",
+    "concept": "Prematurity",
+    "type": "Risk factor/epidemiology"
+  },
+  {
+    "topic": "Enterobius vermicularis",
+    "concept": "Perianal itching",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "Strongyloides",
+    "concept": "Larvae in stool",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "Clostridium difficile",
+    "concept": "Antibiotic use",
+    "type": "Risk factor/epidemiology"
+  },
+  {
+    "topic": "Giardia lamblia",
+    "concept": "Campers",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "Schistosomiasis",
+    "concept": "Hematuria",
+    "type": "Risk factor/epidemiology"
+  },
+  {
+    "topic": "Chagas disease",
+    "concept": "Dilated cardiomyopathy",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "Echinococcus",
+    "concept": "Hydatid cyst",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "Cryptococcus",
+    "concept": "HIV meningitis",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "Aspergillus",
+    "concept": "Fungal ball",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "Mucormycosis",
+    "concept": "Diabetics",
+    "type": "Risk factor/epidemiology"
+  },
+  {
+    "topic": "Blastomycosis",
+    "concept": "Skin lesions",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "Histoplasmosis",
+    "concept": "Cave exposure",
+    "type": "Risk factor/epidemiology"
+  },
+  {
+    "topic": "Coccidioidomycosis",
+    "concept": "Southwest US",
+    "type": "Risk factor/epidemiology"
+  },
+  {
+    "topic": "Antibiotics that cause QT prolongation",
+    "concept": "Macrolides",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Linezolid",
+    "concept": "Serotonin syndrome",
+    "type": "Risk factor/epidemiology"
+  },
+  {
+    "topic": "TB drugs",
+    "concept": "Hepatotoxicity",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Fluoroquinolones",
+    "concept": "Tendon rupture",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Aminoglycosides",
+    "concept": "Ototoxicity",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Tetracyclines",
+    "concept": "Tooth discoloration",
+    "type": "Risk factor/epidemiology"
+  },
+  {
+    "topic": "Vancomycin",
+    "concept": "Red man syndrome",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Hyperacute transplant rejection",
+    "concept": "Preformed antibodies",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Graft-versus-host disease",
+    "concept": "Immunology",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "T-cell maturation",
+    "concept": "Thymus",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "B-cell maturation",
+    "concept": "Bone marrow",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Positive predictive value",
+    "concept": "Prevalence impact",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Likelihood ratios",
+    "concept": "Test utility",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Lead-time bias",
+    "concept": "Screening error",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Confounding bias",
+    "concept": "Study design",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Non-inferiority trial",
+    "concept": "Stats interpretation",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Kaplan-Meier curve",
+    "concept": "Survival analysis",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Cross-sectional study",
+    "concept": "Association",
+    "type": "Risk factor/epidemiology"
+  },
+  {
+    "topic": "Case-control study",
+    "concept": "Retrospective",
+    "type": "Risk factor/epidemiology"
+  },
+  {
+    "topic": "Cohort study",
+    "concept": "Prospective",
+    "type": "Risk factor/epidemiology"
+  },
+  {
+    "topic": "Intention-to-treat",
+    "concept": "Clinical trial analysis",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Hazard ratio",
+    "concept": "Interpretation",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Number needed to treat",
+    "concept": "Efficacy",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Confidence interval",
+    "concept": "Overlap with null",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Power",
+    "concept": "Type II error",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "P-value",
+    "concept": "Statistical significance",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "ANOVA",
+    "concept": "Comparing means",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Chi-square test",
+    "concept": "Categorical data",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Pearson correlation",
+    "concept": "Continuous variables",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Ethics: autonomy",
+    "concept": "Refusal of treatment",
+    "type": "Next step in management"
+  },
+  {
+    "topic": "Ethics: non-maleficence",
+    "concept": "Do no harm",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Ethics: beneficence",
+    "concept": "Acting in best interest",
+    "type": "Next step in management"
+  },
+  {
+    "topic": "Ethics: justice",
+    "concept": "Resource allocation",
+    "type": "Next step in management"
+  },
+  {
+    "topic": "Informed consent",
+    "concept": "Components",
+    "type": "Next step in management"
+  },
+  {
+    "topic": "Minor consent laws",
+    "concept": "STIs & pregnancy",
+    "type": "Next step in management"
+  },
+  {
+    "topic": "DNR orders",
+    "concept": "Code status",
+    "type": "Next step in management"
+  },
+  {
+    "topic": "Surrogate decision makers",
+    "concept": "Hierarchy",
+    "type": "Next step in management"
+  },
+  {
+    "topic": "Medical error disclosure",
+    "concept": "Ethical responsibility",
+    "type": "Next step in management"
+  },
+  {
+    "topic": "Confidentiality exceptions",
+    "concept": "Reportable conditions",
+    "type": "Next step in management"
+  },
+  {
+    "topic": "Physician impairment",
+    "concept": "Reporting obligation",
+    "type": "Next step in management"
+  },
+  {
+    "topic": "Child neglect",
+    "concept": "Legal reporting",
+    "type": "Next step in management"
+  },
+  {
+    "topic": "Elder abuse",
+    "concept": "Signs and symptoms",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "End-of-life care",
+    "concept": "Capacity assessment",
+    "type": "Next step in management"
+  },
+  {
+    "topic": "Thrombotic thrombocytopenic purpura (TTP)",
+    "concept": "ADAMTS13 deficiency",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Immune thrombocytopenic purpura (ITP)",
+    "concept": "Autoantibodies",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Hemolytic uremic syndrome (HUS)",
+    "concept": "E. coli O157:H7",
+    "type": "Risk factor/epidemiology"
+  },
+  {
+    "topic": "Heparin-induced thrombocytopenia (HIT)",
+    "concept": "Antibody-mediated platelet activation",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Disseminated intravascular coagulation (DIC)",
+    "concept": "Consumptive coagulopathy",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Hypercalcemia of malignancy",
+    "concept": "PTHrP",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Tumor lysis syndrome",
+    "concept": "Uric acid, K⁺, phosphate release",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "SIADH due to small cell lung cancer",
+    "concept": "Paraneoplastic",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Lambert-Eaton syndrome",
+    "concept": "Presynaptic calcium channels",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Hyper IgE (Job) syndrome",
+    "concept": "STAT3 mutation",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "DiGeorge syndrome",
+    "concept": "22q11 deletion",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Ectopic ACTH production",
+    "concept": "Cushing syndrome variant",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "Pheochromocytoma",
+    "concept": "Catecholamine-secreting tumor",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "Adrenal crisis",
+    "concept": "Steroid withdrawal",
+    "type": "Risk factor/epidemiology"
+  },
+  {
+    "topic": "Cerebral edema in DKA",
+    "concept": "Pediatric emergency",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Insulinoma",
+    "concept": "Whipple triad",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "Glucagonoma",
+    "concept": "Necrolytic migratory erythema",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "VIPoma",
+    "concept": "Watery diarrhea, hypokalemia, achlorhydria",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "MEN syndromes",
+    "concept": "Gene mutations",
+    "type": "Risk factor/epidemiology"
+  },
+  {
+    "topic": "Hemochromatosis-induced diabetes",
+    "concept": "Iron in pancreas",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Wilson disease-induced psychosis",
+    "concept": "Copper in basal ganglia",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Lactose intolerance",
+    "concept": "Osmotic diarrhea",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Carbohydrate malabsorption",
+    "concept": "Positive reducing substances",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "Pancreatic insufficiency",
+    "concept": "Fat malabsorption",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Small intestinal bacterial overgrowth (SIBO)",
+    "concept": "Post-surgical",
+    "type": "Risk factor/epidemiology"
+  },
+  {
+    "topic": "Zollinger-Ellison syndrome",
+    "concept": "Gastrinoma",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "Whipple disease",
+    "concept": "PAS+ foamy macrophages",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "Tropical sprue",
+    "concept": "Post-travel diarrhea",
+    "type": "Risk factor/epidemiology"
+  },
+  {
+    "topic": "Clostridium perfringens",
+    "concept": "Alpha toxin",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Shigella",
+    "concept": "HUS risk",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Campylobacter jejuni",
+    "concept": "Guillain-Barré trigger",
+    "type": "Risk factor/epidemiology"
+  },
+  {
+    "topic": "Norovirus",
+    "concept": "Cruise ship diarrhea",
+    "type": "Risk factor/epidemiology"
+  },
+  {
+    "topic": "Rotavirus",
+    "concept": "Unvaccinated infant",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "Hepatitis B",
+    "concept": "Serology interpretation",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Hepatitis C",
+    "concept": "Chronicity",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Autoimmune hepatitis",
+    "concept": "ANA, anti-SMA",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "Primary biliary cholangitis",
+    "concept": "Anti-mitochondrial Ab",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "Primary sclerosing cholangitis",
+    "concept": "Association with UC",
+    "type": "Risk factor/epidemiology"
+  },
+  {
+    "topic": "Hemorrhoids",
+    "concept": "Painless vs painful",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "Anal fissure",
+    "concept": "Location",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "Esophageal varices",
+    "concept": "Portal hypertension",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Esophageal adenocarcinoma",
+    "concept": "Barrett esophagus",
+    "type": "Risk factor/epidemiology"
+  },
+  {
+    "topic": "Squamous cell carcinoma of esophagus",
+    "concept": "Alcohol/tobacco",
+    "type": "Risk factor/epidemiology"
+  },
+  {
+    "topic": "Achalasia",
+    "concept": "Bird-beak sign",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "Zenker diverticulum",
+    "concept": "Halitosis",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "Diffuse esophageal spasm",
+    "concept": "Corkscrew esophagus",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "Boerhaave syndrome",
+    "concept": "Mediastinal air",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "Mallory-Weiss tear",
+    "concept": "Vomiting + hematemesis",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "Peptic ulcer disease",
+    "concept": "NSAIDs vs H. pylori",
+    "type": "Risk factor/epidemiology"
+  },
+  {
+    "topic": "Gastric cancer",
+    "concept": "Virchow node, Krukenberg tumor",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "GIST tumor",
+    "concept": "CD117 positivity",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "Hyperplastic polyps",
+    "concept": "Colon cancer risk",
+    "type": "Risk factor/epidemiology"
+  },
+  {
+    "topic": "Adenomatous polyps",
+    "concept": "Villous vs tubular",
+    "type": "Risk factor/epidemiology"
+  },
+  {
+    "topic": "Familial adenomatous polyposis",
+    "concept": "APC mutation",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Lynch syndrome",
+    "concept": "Mismatch repair",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Peutz-Jeghers syndrome",
+    "concept": "Pigmented spots + hamartomas",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "Juvenile polyposis",
+    "concept": "Bleeding in kids",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "Appendicitis",
+    "concept": "Obstruction of lumen",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Gallstones",
+    "concept": "Cholesterol vs pigment",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Cholecystitis",
+    "concept": "Murphy sign",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "Choledocholithiasis",
+    "concept": "Obstructive jaundice",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "Cholangitis",
+    "concept": "Charcot triad",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "Porcelain gallbladder",
+    "concept": "Cancer risk",
+    "type": "Risk factor/epidemiology"
+  },
+  {
+    "topic": "Gallstone ileus",
+    "concept": "Pneumobilia",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "Pancreatic adenocarcinoma",
+    "concept": "Courvoisier sign",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "Pancreatic pseudocyst",
+    "concept": "Post-pancreatitis",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "Annular pancreas",
+    "concept": "Double bubble",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "Biliary atresia",
+    "concept": "Neonatal jaundice",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "Gilbert syndrome",
+    "concept": "Benign jaundice",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Crigler-Najjar syndrome type I",
+    "concept": "Unconjugated hyperbilirubinemia",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Dubin-Johnson syndrome",
+    "concept": "Black liver",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "Rotor syndrome",
+    "concept": "Mild conjugated hyperbilirubinemia",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Alcoholic hepatitis",
+    "concept": "AST > ALT",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "Non-alcoholic fatty liver disease",
+    "concept": "Metabolic syndrome",
+    "type": "Risk factor/epidemiology"
+  },
+  {
+    "topic": "Alpha-1 antitrypsin deficiency",
+    "concept": "Lung + liver",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Hepatocellular carcinoma",
+    "concept": "AFP elevation",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "Hepatic adenoma",
+    "concept": "OCP use",
+    "type": "Risk factor/epidemiology"
+  },
+  {
+    "topic": "Budd-Chiari syndrome",
+    "concept": "Hepatic vein thrombosis",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Reye syndrome",
+    "concept": "Mitochondrial damage",
+    "type": "Pathophysiology"
+  },
+  {
+    "topic": "Polyarteritis nodosa",
+    "concept": "Medium vessels + HBV",
+    "type": "Risk factor/epidemiology"
+  },
+  {
+    "topic": "Behçet syndrome",
+    "concept": "Recurrent ulcers",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "Takayasu arteritis",
+    "concept": "Pulseless disease",
+    "type": "Most likely diagnosis"
+  },
+  {
+    "topic": "Giant cell arteritis",
+    "concept": "Temporal artery biopsy",
+    "type": "Next step in management"
+  }
+]
