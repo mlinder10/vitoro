@@ -10,6 +10,9 @@ const SECRET_KEY = new TextEncoder().encode(process.env.JWT_SECRET!);
 export type Session = {
   id: string;
   email: string;
+  firstName: string;
+  lastName: string;
+  color: string;
   isAdmin?: boolean;
 };
 
@@ -58,7 +61,7 @@ export async function verifyPassword(password: string, hash: string) {
   return passwordHash === hash;
 }
 
-export async function getSession() {
+export async function getSession(): Promise<Session | null> {
   const head = await headers();
   const jwt = head
     .get("cookie")
@@ -76,6 +79,9 @@ export async function getSession() {
     select: {
       id: true,
       email: true,
+      firstName: true,
+      lastName: true,
+      color: true,
       admin: { select: { userId: true } },
     },
   });
@@ -83,6 +89,9 @@ export async function getSession() {
   return {
     id: user.id,
     email: user.email,
+    firstName: user.firstName,
+    lastName: user.lastName,
+    color: user.color,
     isAdmin: user.admin?.userId ? true : false,
   };
 }

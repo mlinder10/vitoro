@@ -1,10 +1,21 @@
-import db from "@/db/db";
-import { Question } from "@prisma/client";
+import { getSession } from "@/lib/auth";
+import { LOGIN_PATH } from "@/lib/constants";
 import { redirect } from "next/navigation";
+import { fetchUnansweredQuestion } from "./actions";
 
 export default async function ReviewPage() {
-  // fetch random question and redirect to it
-  const question =
-    (await db.$queryRaw`SELECT * FROM Question ORDER BY RANDOM() LIMIT 1`) as Question[];
-  return redirect(`/practice/${question[0].id}`);
+  const session = await getSession();
+  if (!session) redirect(LOGIN_PATH);
+  const question = await fetchUnansweredQuestion(session.id);
+
+  if (!question)
+    return (
+      <main>
+        <div>
+          <p>You have answered all of our questions!</p>
+        </div>
+      </main>
+    );
+
+  return redirect(`/practice/${question.id}`);
 }

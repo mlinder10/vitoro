@@ -2,7 +2,7 @@ import SessionProvider from "@/contexts/session-provider";
 import { getSession } from "@/lib/auth";
 import { LOGIN_PATH } from "@/lib/constants";
 import { redirect } from "next/navigation";
-import Header from "./_components/header";
+import SideNav from "./_components/side-nav";
 
 export default async function ProtectedLayout({
   children,
@@ -14,8 +14,12 @@ export default async function ProtectedLayout({
 
   return (
     <SessionProvider session={session}>
-      <Header />
-      {children}
+      <div className="flex h-full overflow-hidden">
+        <SideNav />
+        <main className="flex-4 bg-secondary h-full overflow-y-auto">
+          {children}
+        </main>
+      </div>
     </SessionProvider>
   );
 }

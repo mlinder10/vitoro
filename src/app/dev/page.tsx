@@ -1,5 +1,7 @@
 import { ParsedQuestion } from "@/lib/types";
 import QuestionView from "../(protected)/practice/_components/question-view";
+import SideNav from "../(protected)/_components/side-nav";
+import AccountPage from "../(protected)/account/page";
 
 const QUESTION: ParsedQuestion = {
   id: "",
@@ -32,5 +34,13 @@ const QUESTION: ParsedQuestion = {
 };
 
 export default function DevPage() {
-  return <QuestionView question={QUESTION} />;
+  return (
+    <div className="flex h-full overflow-hidden">
+      <SideNav />
+      <main className="flex-4 bg-secondary h-full overflow-y-auto">
+        {/* <QuestionView question={QUESTION} /> */}
+        <AccountPage />
+      </main>
+    </div>
+  );
 }

@@ -9,19 +9,23 @@ datasource db {
 }
 
 model User {
-  id            String          @id @default(uuid())
-  email         String          @unique
-  firstName     String
-  lastName      String
-  password      String
-  createdAt     DateTime        @default(now())
-  admin         Admin?
-  resetPassword ResetPassword[]
+  id        String   @id @default(uuid())
+  email     String   @unique
+  firstName String
+  lastName  String
+  color     String
+  password  String
+  createdAt DateTime @default(now())
+
+  admin             Admin?
+  resetPassword     ResetPassword[]
+  answeredQuestions AnsweredQuestion[]
 }
 
 model Admin {
-  userId    String     @id
-  createdAt DateTime   @default(now())
+  userId    String   @id
+  createdAt DateTime @default(now())
+
   user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   questions Question[]
 }
@@ -31,7 +35,8 @@ model ResetPassword {
   code       String   @unique
   validUntil DateTime
   userId     String   @unique
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 // model PracticeExam {
@@ -56,8 +61,9 @@ model Question {
   difficulty     String
   nbmeStyleNotes String
 
-  creator Admin  @relation(fields: [creatorId], references: [userId], onDelete: NoAction)
-  audit   Audit?
+  creator           Admin              @relation(fields: [creatorId], references: [userId], onDelete: NoAction)
+  audit             Audit?
+  answeredQuestions AnsweredQuestion[]
 }
 
 model Audit {
@@ -71,14 +77,14 @@ model Audit {
   question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
 }
 
-model QuestionTopic {
-  name String @id
-}
+model AnsweredQuestion {
+  userId     String
+  questionId String
+  createdAt  DateTime @default(now())
+  userAnswer String
 
-model QuestionConcept {
-  name String @id
-}
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
 
-model QuestionType {
-  name String @id
+  @@id([userId, questionId])
 }
