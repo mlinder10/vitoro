@@ -1,6 +1,6 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { PrismaLibSQL } from "@prisma/adapter-libsql";
-import { Audit, PrismaClient, Question } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 import { readFileSync, writeFileSync } from "fs";
 import { createRequire } from "module";
 const require = createRequire(import.meta.url);
@@ -51,7 +51,7 @@ export type ParsedQuestion = GeneratedQuestion & {
   creatorId: string;
 };
 
-export function encodeQuestion(question: ParsedQuestion): Question {
+export function encodeQuestion(question: ParsedQuestion) {
   return {
     id: question.id,
     topic: question.topic,
@@ -94,9 +94,10 @@ export type ParsedAudit = GeneratedAudit & {
   questionId: string;
 };
 
-export function encodeAudit(audit: ParsedAudit): Audit {
+export function encodeAudit(audit: ParsedAudit) {
   return {
-    ...audit,
+    id: audit.id,
+    rating: audit.rating,
     checklist: JSON.stringify(audit.checklist),
     suggestions: JSON.stringify(audit.suggestions),
   };
@@ -227,7 +228,7 @@ function stripAndParse<T>(output: string): T {
 
 // Logging ------------------------------------------------------------------
 
-const META_FILE_PATH = "./meta.txt";
+const META_FILE_PATH = "src/script/meta.txt";
 
 function readInputOffset() {
   const data = readFileSync(META_FILE_PATH, "utf-8");
@@ -243,45 +244,56 @@ function writeInputOffset(num: number) {
 // Main ---------------------------------------------------------------------
 
 async function main() {
-  const db = createDb();
-  const gemini = createGemini();
-  let offset = readInputOffset();
-  const unwrittenInputs = inputs.slice(offset);
+  try {
+    const db = createDb();
+    const gemini = createGemini();
+    let offset = readInputOffset();
+    const unwrittenInputs = inputs.slice(offset);
 
-  for (const input of unwrittenInputs) {
-    // Generate question
-    const questionPrompt = createQuestionPrompt(input);
-    const questionRes = await gemini.generateContent(questionPrompt);
-    const parsedQuestion = stripAndParse<GeneratedQuestion>(
-      questionRes.response.text()
-    );
-    const fullQuestion: ParsedQuestion = {
-      ...parsedQuestion,
-      id: crypto.randomUUID(),
-      createdAt: new Date(),
-      creatorId: "167e3d51-7236-4304-81d9-42355cd76bc8", // Matt Linder's user ID
-    };
-    const encodedQuestion = encodeQuestion(fullQuestion);
+    for (const input of unwrittenInputs) {
+      // Generate question
+      const questionPrompt = createQuestionPrompt(input);
+      const questionRes = await gemini.generateContent(questionPrompt);
+      const parsedQuestion = stripAndParse<GeneratedQuestion>(
+        questionRes.response.text()
+      );
+      const fullQuestion: ParsedQuestion = {
+        ...parsedQuestion,
+        id: crypto.randomUUID(),
+        createdAt: new Date(),
+        creatorId: "167e3d51-7236-4304-81d9-42355cd76bc8", // Matt Linder's user ID
+      };
+      const encodedQuestion = encodeQuestion(fullQuestion);
 
-    // Generate audit
-    const auditPrompt = createAuditPrompt(parsedQuestion);
-    const auditRes = await gemini.generateContent(auditPrompt);
-    const parsedAudit = stripAndParse<GeneratedAudit>(auditRes.response.text());
-    const fullAudit: ParsedAudit = {
-      ...parsedAudit,
-      id: crypto.randomUUID(),
-      questionId: fullQuestion.id,
-    };
-    const encodedAudit = encodeAudit(fullAudit);
+      // Generate audit
+      const auditPrompt = createAuditPrompt(parsedQuestion);
+      const auditRes = await gemini.generateContent(auditPrompt);
+      const parsedAudit = stripAndParse<GeneratedAudit>(
+        auditRes.response.text()
+      );
+      const fullAudit: ParsedAudit = {
+        ...parsedAudit,
+        id: crypto.randomUUID(),
+        questionId: fullQuestion.id,
+      };
+      const encodedAudit = encodeAudit(fullAudit);
 
-    // Save both
-    await db.question.create({
-      data: {
-        ...encodedQuestion,
-        audit: { create: encodedAudit },
-      },
-    });
-    writeInputOffset(++offset);
+      // Save both
+      await db.question.create({
+        data: {
+          ...encodedQuestion,
+          audit: { create: encodedAudit },
+        },
+      });
+      writeInputOffset(++offset);
+      console.log(
+        `Generated question #${offset} with\nTopic: ${input.topic}\nConcept: ${input.concept}\nType: ${input.type}\n\n`
+      );
+    }
+  } catch (error) {
+    // Retry after one minute on error
+    console.error(error);
+    setTimeout(() => main(), 1000);
   }
 }
 

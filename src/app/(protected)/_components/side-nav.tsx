@@ -3,7 +3,14 @@
 import { Button } from "@/components/ui/button";
 import { useSession } from "@/contexts/session-provider";
 import { cn } from "@/lib/utils";
-import { LogOut, Menu, Notebook, Settings, X } from "lucide-react";
+import {
+  LogOut,
+  Menu,
+  Notebook,
+  Settings,
+  ShieldUserIcon,
+  X,
+} from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import AccountIcon from "./account-icon";
@@ -38,7 +45,7 @@ export default function SideNav() {
             </ListLink>
             {session.isAdmin && (
               <ListLink href="/admin">
-                <Settings size={16} />
+                <ShieldUserIcon size={16} />
                 <span>Admin</span>
               </ListLink>
             )}

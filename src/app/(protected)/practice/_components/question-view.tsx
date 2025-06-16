@@ -1,9 +1,9 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { ParsedQuestion, QuestionChoice } from "@/lib/types";
+import { ParsedQuestion, QuestionChoice } from "@/types";
 import { cn } from "@/lib/utils";
-import { ArrowRight, Check, Circle, CircleCheck, CircleX } from "lucide-react";
+import { ArrowRight, Circle, CircleCheck, CircleX } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 

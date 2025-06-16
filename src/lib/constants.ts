@@ -19,4 +19,4 @@ export const CHECKLIST = {
   "7": "No direct giveaway or naming of the diagnosis in the stem",
   "8": "Every answer choice is anchored to clues in the vignette",
   "9": "No duplicate correct answers or overly vague distractors",
-};
+} as const;

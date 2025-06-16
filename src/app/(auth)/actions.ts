@@ -4,6 +4,7 @@ import db from "@/db/db";
 import { sendRegisterEmail } from "@/email/register-auto-reply";
 import { sendResetPasswordEmail } from "@/email/reset-password";
 import { hashPassword, signToken, verifyPassword } from "@/lib/auth";
+import { generateColor } from "@/lib/utils";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { z } from "zod";
@@ -31,6 +32,9 @@ export async function handleLogin(_: unknown, data: FormData) {
     select: {
       id: true,
       email: true,
+      firstName: true,
+      lastName: true,
+      color: true,
       password: true,
       admin: { select: { userId: true } },
     },
@@ -43,6 +47,9 @@ export async function handleLogin(_: unknown, data: FormData) {
   const token = await signToken({
     id: user.id,
     email: user.email,
+    firstName: user.firstName,
+    lastName: user.lastName,
+    color: user.color,
     isAdmin: user.admin?.userId ? true : false,
   });
 
@@ -84,11 +91,13 @@ export async function handleRegister(_: unknown, data: FormData) {
   if (user) return { email: ["User already exists"] };
 
   const hashedPassword = await hashPassword(result.data.password);
+  const color = generateColor();
   const newUser = await db.user.create({
     data: {
       email: result.data.email,
       firstName: result.data.firstName,
       lastName: result.data.lastName,
+      color,
       password: hashedPassword,
     },
   });
@@ -96,6 +105,9 @@ export async function handleRegister(_: unknown, data: FormData) {
   const token = await signToken({
     id: newUser.id,
     email: newUser.email,
+    firstName: newUser.firstName,
+    lastName: newUser.lastName,
+    color: newUser.color,
     isAdmin: false,
   });
 

@@ -1,7 +1,7 @@
 import db from "@/db/db";
 import { notFound } from "next/navigation";
 import QuestionView from "../_components/question-view";
-import { parseQuestion } from "@/lib/types";
+import { parseQuestion } from "@/types";
 
 type PracticeQuestionPageProps = {
   params: Promise<{

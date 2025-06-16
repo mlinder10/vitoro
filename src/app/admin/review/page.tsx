@@ -2,7 +2,7 @@
 
 import { fetchQuestions } from "@/db/question";
 import useInfiniteScroll, { LoadingFooter } from "@/hooks/useInfiniteScroll";
-import { AuditRating, ParsedAudit, ParsedQuestion } from "@/lib/types";
+import { AuditRating, ParsedAudit, ParsedQuestion } from "@/types";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { useState } from "react";
@@ -10,7 +10,7 @@ import { useState } from "react";
 const MAX_ITEMS_PER_PAGE = 30;
 
 export default function ReviewPage() {
-  const [rating, setRating] = useState<AuditRating | undefined>(undefined);
+  const [rating] = useState<AuditRating | undefined>(undefined);
   const {
     data: questions,
     isLoading,
@@ -21,14 +21,16 @@ export default function ReviewPage() {
   );
 
   return (
-    <main className="flex flex-col px-4 pb-2 h-page">
-      <section>{/* TODO: add inputs */}</section>
-      <section className="flex-1 overflow-y-auto" ref={containerRef}>
+    <main className="flex flex-col pb-2 h-page">
+      <section className="px-4">{/* TODO: add inputs */}</section>
+      <section className="flex-1 px-4 overflow-y-auto" ref={containerRef}>
         <ul>
           {questions.map((q) => (
             <QuestionItem key={q.question.id} qa={q} />
           ))}
-          {questions.length === 0 && <li>No flagged questions to review.</li>}
+          {questions.length === 0 && !isLoading && (
+            <li>No flagged questions to review.</li>
+          )}
         </ul>
         <LoadingFooter isLoading={isLoading} />
       </section>
@@ -71,7 +73,7 @@ function QuestionItem({ qa, isLast = false }: QuestionItemProps) {
   }
 
   return (
-    <li className={cn("py-2", isLast && "border-b-2")}>
+    <li className={cn("py-2", !isLast && "border-b-2")}>
       <Link href={`/admin/review/${question.id}`}>
         <div className="flex justify-between">
           <div>

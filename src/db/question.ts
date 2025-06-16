@@ -7,7 +7,7 @@ import {
   GeneratedQuestion,
   parseQuestion,
   parseQuestionAudit,
-} from "@/lib/types";
+} from "@/types";
 import db from "./db";
 
 export async function fetchQuestions(

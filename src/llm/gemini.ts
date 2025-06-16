@@ -1,7 +1,7 @@
 "use server";
 
 import { GoogleGenerativeAI, TaskType } from "@google/generative-ai";
-import { GeneratedAudit, GeneratedQuestion } from "./types";
+import { GeneratedAudit, GeneratedQuestion } from "@/types";
 
 export async function generateQuestion(
   topic: string,

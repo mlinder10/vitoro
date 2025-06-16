@@ -1,7 +1,7 @@
 "use server";
 
 import db from "@/db/db";
-import { AuditRating } from "@/lib/types";
+import { AuditRating } from "@/types";
 
 export async function handleUpdateAuditStatus(
   questionId: string,

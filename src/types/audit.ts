@@ -1,0 +1,43 @@
+import { Audit } from "@prisma/client";
+
+export type ChecklistItem = { pass: boolean; notes: string };
+
+export type AuditRating = "Pass" | "Flag for Human Review" | "Reject";
+
+export type GeneratedAudit = {
+  checklist: {
+    1: ChecklistItem;
+    2: ChecklistItem;
+    3: ChecklistItem;
+    4: ChecklistItem;
+    5: ChecklistItem;
+    6: ChecklistItem;
+    7: ChecklistItem;
+    8: ChecklistItem;
+    9: ChecklistItem;
+  };
+  suggestions: string[];
+  rating: AuditRating;
+};
+
+export type ParsedAudit = GeneratedAudit & {
+  id: string;
+  questionId: string;
+};
+
+export function encodeAudit(audit: ParsedAudit): Audit {
+  return {
+    ...audit,
+    checklist: JSON.stringify(audit.checklist),
+    suggestions: JSON.stringify(audit.suggestions),
+  };
+}
+
+export function parseAudit(encoded: Audit): ParsedAudit {
+  return {
+    ...encoded,
+    checklist: JSON.parse(encoded.checklist),
+    suggestions: JSON.parse(encoded.suggestions),
+    rating: encoded.rating as AuditRating,
+  };
+}

@@ -38,9 +38,9 @@ export function shiftColor(hexColor: string): string {
     b /= 255;
     const max = Math.max(r, g, b),
       min = Math.min(r, g, b);
-    let h = 0,
-      s = 0,
-      l = (max + min) / 2;
+    let h = 0;
+    let s = 0;
+    const l = (max + min) / 2;
 
     if (max !== min) {
       const d = max - min;
@@ -113,8 +113,21 @@ export function isColorDark(color: string) {
       .join("");
   }
   if (color.length !== 6) throw new Error("Invalid hex color format");
-  let r = parseInt(color.substring(0, 2), HEX_BASE);
-  let g = parseInt(color.substring(2, 4), HEX_BASE);
-  let b = parseInt(color.substring(4, 6), HEX_BASE);
+  const r = parseInt(color.substring(0, 2), HEX_BASE);
+  const g = parseInt(color.substring(2, 4), HEX_BASE);
+  const b = parseInt(color.substring(4, 6), HEX_BASE);
   return r * 0.299 + g * 0.587 + b * 0.114 < 128;
+}
+
+export function capitalize(str: string) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+export function generateColor() {
+  const letters = "0123456789ABCDEF";
+  let color = "#";
+  for (let i = 0; i < 6; i++) {
+    color += letters[Math.floor(Math.random() * 16)];
+  }
+  return color;
 }
