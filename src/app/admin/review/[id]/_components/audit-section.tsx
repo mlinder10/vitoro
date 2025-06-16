@@ -1,39 +1,47 @@
 "use client";
 
 import { CHECKLIST } from "@/lib/constants";
-import { AuditRating, ParsedAudit, ParsedQuestion } from "@/types";
-import { Check, Pencil, X } from "lucide-react";
+import { AuditRating, ParsedAudit, QuestionDifficulty } from "@/types";
+import {
+  Check,
+  Pencil,
+  Save,
+  Undo,
+  X,
+  Clipboard,
+  Loader,
+  Loader2,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { handleUpdateAuditStatus } from "../actions";
 import { Button } from "@/components/ui/button";
 import { capitalize } from "@/lib/utils";
-import { ReviewPageType } from "./page-wrapper";
+import { useAdminReview } from "@/contexts/admin-review-provider";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
-type AuditSectionProps = {
-  question: ParsedQuestion;
-  audit: ParsedAudit | null;
-  pageType: ReviewPageType;
-  setPageType: (pageType: ReviewPageType) => void;
-};
+export default function AuditSection() {
+  const { audit, pageType, setPageType, isSaving } = useAdminReview();
 
-export default function AuditSection({
-  question,
-  audit,
-  pageType,
-  setPageType,
-}: AuditSectionProps) {
+  function togglePageType() {
+    setPageType((prev) => (prev === "edit" ? "review" : "edit"));
+  }
+
   if (!audit) return null;
 
   return (
-    <section className="flex-1/4 space-y-4 bg-secondary py-4 border-l-2 overflow-y-auto">
+    <section className="flex-1/4 space-y-2 bg-secondary py-4 border-l-2 overflow-y-auto">
       <AuditStatus rating={audit.rating} />
       <div className="px-2">
-        <div className="flex justify-center bg-background py-2 border-2 rounded-md w-full">
-          <p className="text-muted-foreground">
-            {capitalize(question.difficulty)} Difficulty
-          </p>
-        </div>
+        <AuditDifficulty />
       </div>
       <AuditChecklist checklist={audit.checklist} />
       <AuditSuggestions suggestions={audit.suggestions} />
@@ -41,17 +49,14 @@ export default function AuditSection({
         <Button
           className="w-full"
           variant="accent-tertiary"
-          onClick={() => setPageType("edit")}
+          onClick={togglePageType}
+          disabled={isSaving}
         >
-          <span>Edit</span>
-          <Pencil />
+          <span>{pageType === "edit" ? "Review" : "Edit"}</span>
+          {pageType === "edit" ? <Clipboard /> : <Pencil />}
         </Button>
       </div>
-      <AuditButtons
-        questionId={question.id}
-        rating={audit.rating}
-        pageType={pageType}
-      />
+      <AuditButtons />
     </section>
   );
 }
@@ -66,7 +71,7 @@ function AuditStatus({ rating }: { rating: AuditRating }) {
       );
     case "Flag for Human Review":
       return (
-        <p className="bg-yellow-300 mx-2 py-2 border-2 border-yellow-500 rounded-md text-yellow-800 text-center">
+        <p className="flex justify-center items-center bg-yellow-300 mx-2 border-2 border-yellow-500 rounded-md h-9 text-yellow-800 text-center">
           Flagged
         </p>
       );
@@ -77,6 +82,41 @@ function AuditStatus({ rating }: { rating: AuditRating }) {
         </p>
       );
   }
+}
+
+function AuditDifficulty() {
+  const { question, editQuestion, pageType, updateQuestion } = useAdminReview();
+
+  if (pageType === "review") {
+    return (
+      <div className="flex justify-center items-center bg-background border-2 rounded-md w-full h-9">
+        <p className="text-muted-foreground">
+          {capitalize(question.difficulty)}
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <Select
+      value={editQuestion.difficulty}
+      onValueChange={(value) =>
+        updateQuestion("difficulty", value as QuestionDifficulty)
+      }
+    >
+      <SelectTrigger className="bg-background w-full text-md" center>
+        <SelectValue placeholder="Select difficulty" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectGroup>
+          <SelectLabel>Difficulty</SelectLabel>
+          <SelectItem value="easy">Easy</SelectItem>
+          <SelectItem value="moderate">Medium</SelectItem>
+          <SelectItem value="hard">Hard</SelectItem>
+        </SelectGroup>
+      </SelectContent>
+    </Select>
+  );
 }
 
 function AuditChecklist({
@@ -124,19 +164,22 @@ function AuditSuggestions({ suggestions }: { suggestions: string[] }) {
   );
 }
 
-type AuditButtonsProps = {
-  questionId: string;
-  rating: AuditRating;
-  pageType: ReviewPageType;
-};
-
-function AuditButtons({ questionId, rating, pageType }: AuditButtonsProps) {
+function AuditButtons() {
+  const {
+    question,
+    audit,
+    pageType,
+    hasChanges,
+    revertChanges,
+    saveChanges,
+    isSaving,
+  } = useAdminReview();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
   async function updateAuditStatus(rating: AuditRating) {
     setIsLoading(true);
-    await handleUpdateAuditStatus(questionId, rating);
+    await handleUpdateAuditStatus(question.id, rating);
     setIsLoading(false);
     router.refresh();
   }
@@ -144,30 +187,31 @@ function AuditButtons({ questionId, rating, pageType }: AuditButtonsProps) {
   if (pageType === "edit") {
     return (
       <div className="flex gap-2 px-2">
-        <Button>
-          <span>Discard</span>
-          <X />
+        <Button
+          className="flex-1"
+          variant="destructive"
+          disabled={!hasChanges || isSaving}
+          onClick={revertChanges}
+        >
+          <span>Revert</span>
+          <Undo />
         </Button>
-        <Button>
-          <span>Save</span>
-          <Check />
+        <Button
+          className="flex-1"
+          variant="accent"
+          disabled={!hasChanges || isSaving}
+          onClick={saveChanges}
+        >
+          <span>{isSaving ? "Saving..." : "Save"}</span>
+          {isSaving ? <Loader2 className="animate-spin" /> : <Save />}
         </Button>
       </div>
     );
   }
 
-  if (rating === "Flag for Human Review") {
+  if (audit?.rating === "Flag for Human Review") {
     return (
       <div className="flex gap-2 px-2">
-        <Button
-          className="flex-1"
-          onClick={() => updateAuditStatus("Pass")}
-          disabled={isLoading}
-          variant="accent"
-        >
-          <span>Accept</span>
-          <Check />
-        </Button>
         <Button
           className="flex-1"
           onClick={() => updateAuditStatus("Reject")}
@@ -176,6 +220,15 @@ function AuditButtons({ questionId, rating, pageType }: AuditButtonsProps) {
         >
           <span>Reject</span>
           <X />
+        </Button>
+        <Button
+          className="flex-1"
+          onClick={() => updateAuditStatus("Pass")}
+          disabled={isLoading}
+          variant="accent"
+        >
+          <span>Accept</span>
+          <Check />
         </Button>
       </div>
     );

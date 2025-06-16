@@ -1,39 +1,21 @@
-import { ParsedQuestion, ParsedAudit, QuestionChoice } from "@/types";
+import { QuestionChoice } from "@/types";
 import AuditSection from "./audit-section";
 import { Check, X } from "lucide-react";
-import { ReviewPageType } from "./page-wrapper";
+import { useAdminReview } from "@/contexts/admin-review-provider";
 
-type ReviewPageProps = {
-  question: ParsedQuestion;
-  audit: ParsedAudit | null;
-  setPageType: (pageType: ReviewPageType) => void;
-};
-
-export default function ReviewPage({
-  question,
-  audit,
-  setPageType,
-}: ReviewPageProps) {
+export default function ReviewPage() {
   return (
     <main className="flex h-page">
-      <QuestionSection question={question} />
-      <AuditSection
-        question={question}
-        audit={audit}
-        pageType={"review"}
-        setPageType={setPageType}
-      />
+      <QuestionSection />
+      <AuditSection />
     </main>
   );
 }
 
-// Question Section ============================================================
+// TODO: add information about question creator
+function QuestionSection() {
+  const { question } = useAdminReview();
 
-type QuestionSectionProps = {
-  question: ParsedQuestion;
-};
-
-function QuestionSection({ question }: QuestionSectionProps) {
   return (
     <section className="flex-3/4 space-y-4 p-4 overflow-y-auto">
       <p>{question.question}</p>

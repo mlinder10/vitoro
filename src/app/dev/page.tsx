@@ -1,46 +1,65 @@
-// import { ParsedQuestion } from "@/types";
-// import QuestionView from "../(protected)/practice/_components/question-view";
-import SideNav from "../(protected)/_components/side-nav";
-import AccountPage from "../(protected)/account/page";
+"use client";
 
-// const QUESTION: ParsedQuestion = {
-//   id: "",
-//   createdAt: new Date(),
-//   creatorId: "",
+import { ParsedAudit, ParsedQuestion } from "@/types";
+import AdminReviewProvider from "@/contexts/admin-review-provider";
+import AdminHeader from "../admin/_components/admin-header";
+import ReviewPageWrapper from "../admin/review/[id]/_components/page-wrapper";
 
-//   question: "What is the best programming language",
-//   answer: "c",
-//   choices: {
-//     a: "Java",
-//     b: "Python",
-//     c: "Swift",
-//     d: "TypeScript",
-//     e: "C#",
-//   },
-//   explanations: {
-//     a: "Too much boilerplate",
-//     b: "No type safety",
-//     c: "Just perfect...",
-//     d: "Missing some type safety (linting issues)",
-//     e: "Strange gaming language...",
-//   },
-//   nbmeStyleNotes: [],
-//   sources: [],
-//   difficulty: "easy",
+const QUESTION: ParsedQuestion = {
+  id: "",
+  createdAt: new Date(),
+  creatorId: "",
 
-//   topic: "",
-//   concept: "",
-//   type: "",
-// };
+  question: "What is the best programming language",
+  answer: "c",
+  choices: {
+    a: "Java",
+    b: "Python",
+    c: "Swift",
+    d: "TypeScript",
+    e: "C#",
+  },
+  explanations: {
+    a: "Too much boilerplate",
+    b: "No type safety",
+    c: "Just perfect...",
+    d: "Missing some type safety (linting issues)",
+    e: "Strange gaming language...",
+  },
+  nbmeStyleNotes: [],
+  sources: [],
+  difficulty: "easy",
+
+  topic: "",
+  concept: "",
+  type: "",
+};
+
+const AUDIT: ParsedAudit = {
+  id: "",
+  questionId: "",
+  rating: "Flag for Human Review",
+  suggestions: [],
+  checklist: {
+    1: { pass: true, notes: "" },
+    2: { pass: true, notes: "" },
+    3: { pass: true, notes: "" },
+    4: { pass: true, notes: "" },
+    5: { pass: true, notes: "" },
+    6: { pass: true, notes: "" },
+    7: { pass: true, notes: "" },
+    8: { pass: true, notes: "" },
+    9: { pass: true, notes: "" },
+  },
+};
 
 export default function DevPage() {
   return (
-    <div className="flex h-full overflow-hidden">
-      <SideNav />
-      <main className="flex-4 bg-secondary h-full overflow-y-auto">
-        {/* <QuestionView question={QUESTION} /> */}
-        <AccountPage />
-      </main>
-    </div>
+    <>
+      <AdminHeader />
+      <AdminReviewProvider question={QUESTION} audit={AUDIT}>
+        <ReviewPageWrapper />
+      </AdminReviewProvider>
+    </>
   );
 }

@@ -1,6 +1,7 @@
 import { fetchQuestionById } from "@/db/question";
 import { notFound } from "next/navigation";
 import ReviewPageWrapper from "./_components/page-wrapper";
+import AdminReviewProvider from "@/contexts/admin-review-provider";
 
 type ReviewQuestionPageProps = {
   params: Promise<{
@@ -8,7 +9,6 @@ type ReviewQuestionPageProps = {
   }>;
 };
 
-// TODO: add information about question creator
 export default async function ReviewQuestionPage({
   params,
 }: ReviewQuestionPageProps) {
@@ -17,5 +17,9 @@ export default async function ReviewQuestionPage({
   if (!q) return notFound();
   const { question, audit } = q;
 
-  return <ReviewPageWrapper question={question} audit={audit} />;
+  return (
+    <AdminReviewProvider question={question} audit={audit}>
+      <ReviewPageWrapper />;
+    </AdminReviewProvider>
+  );
 }

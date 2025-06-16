@@ -1,7 +1,7 @@
 "use server";
 
 import db from "@/db/db";
-import { AuditRating } from "@/types";
+import { AuditRating, encodeQuestion, ParsedQuestion } from "@/types";
 
 export async function handleUpdateAuditStatus(
   questionId: string,
@@ -10,5 +10,13 @@ export async function handleUpdateAuditStatus(
   await db.audit.update({
     data: { rating },
     where: { questionId },
+  });
+}
+
+export async function handleSaveQuestionChanges(question: ParsedQuestion) {
+  const encodedQuestion = encodeQuestion(question);
+  await db.question.update({
+    data: encodedQuestion,
+    where: { id: question.id },
   });
 }
