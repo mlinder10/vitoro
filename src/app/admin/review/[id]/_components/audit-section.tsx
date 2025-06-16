@@ -2,16 +2,7 @@
 
 import { CHECKLIST } from "@/lib/constants";
 import { AuditRating, ParsedAudit, QuestionDifficulty } from "@/types";
-import {
-  Check,
-  Pencil,
-  Save,
-  Undo,
-  X,
-  Clipboard,
-  Loader,
-  Loader2,
-} from "lucide-react";
+import { Check, Pencil, Save, Undo, X, Clipboard, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { handleUpdateAuditStatus } from "../actions";

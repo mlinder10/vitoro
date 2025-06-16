@@ -45,13 +45,13 @@ type GeneratedQuestion = {
   nbmeStyleNotes: string[];
 };
 
-export type ParsedQuestion = GeneratedQuestion & {
+type ParsedQuestion = GeneratedQuestion & {
   id: string;
   createdAt: Date;
   creatorId: string;
 };
 
-export function encodeQuestion(question: ParsedQuestion) {
+function encodeQuestion(question: ParsedQuestion) {
   return {
     id: question.id,
     topic: question.topic,
@@ -69,11 +69,11 @@ export function encodeQuestion(question: ParsedQuestion) {
   };
 }
 
-export type ChecklistItem = { pass: boolean; notes: string };
+type ChecklistItem = { pass: boolean; notes: string };
 
-export type AuditRating = "Pass" | "Flag for Human Review" | "Reject";
+type AuditRating = "Pass" | "Flag for Human Review" | "Reject";
 
-export type GeneratedAudit = {
+type GeneratedAudit = {
   checklist: {
     1: ChecklistItem;
     2: ChecklistItem;
@@ -89,12 +89,12 @@ export type GeneratedAudit = {
   rating: AuditRating;
 };
 
-export type ParsedAudit = GeneratedAudit & {
+type ParsedAudit = GeneratedAudit & {
   id: string;
   questionId: string;
 };
 
-export function encodeAudit(audit: ParsedAudit) {
+function encodeAudit(audit: ParsedAudit) {
   return {
     id: audit.id,
     rating: audit.rating,

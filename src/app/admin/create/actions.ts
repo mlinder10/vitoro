@@ -1,7 +1,7 @@
 "use server";
 
 import { saveQuestion } from "@/db/question";
-import { generateAudit, generateQuestion } from "@/llm/gemini";
+import { generateAudit, generateQuestion } from "@/llm";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
