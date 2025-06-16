@@ -1,4 +1,10 @@
-export const SYSTEMS = [
+export const SYSTEMS: {
+  name: string;
+  categories: {
+    name: string;
+    subcategories: string[];
+  }[];
+}[] = [
   {
     name: "Human Development",
     categories: [
@@ -2083,8 +2089,14 @@ export type SystemsMap = {
 };
 
 export type System = keyof SystemsMap;
+
 export type Category<S extends System> = keyof SystemsMap[S];
+export type AnyCategory =
+  (typeof SYSTEMS)[number]["categories"][number]["name"];
+
 export type Subcategory<
   S extends System,
   C extends Category<S>,
 > = keyof SystemsMap[S][C];
+export type AnySubcategory =
+  (typeof SYSTEMS)[number]["categories"][number]["subcategories"][number];

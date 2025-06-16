@@ -4,6 +4,7 @@ import { ParsedAudit, ParsedQuestion } from "@/types";
 import AdminReviewProvider from "@/contexts/admin-review-provider";
 import AdminHeader from "../admin/_components/admin-header";
 import ReviewPageWrapper from "../admin/review/[id]/_components/page-wrapper";
+import { CreateQuestionPage } from "../admin/create/page";
 
 const QUESTION: ParsedQuestion = {
   id: "",
@@ -57,9 +58,10 @@ export default function DevPage() {
   return (
     <>
       <AdminHeader />
-      <AdminReviewProvider question={QUESTION} audit={AUDIT}>
+      <CreateQuestionPage />
+      {/* <AdminReviewProvider question={QUESTION} audit={AUDIT}>
         <ReviewPageWrapper />
-      </AdminReviewProvider>
+      </AdminReviewProvider> */}
     </>
   );
 }

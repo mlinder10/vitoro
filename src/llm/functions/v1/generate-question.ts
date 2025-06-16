@@ -1,6 +1,6 @@
 import { GeneratedAudit, GeneratedQuestion } from "@/types";
-import { Gemini } from "../../gemini";
 import { stripAndParse } from "../../helpers";
+import { promptGemini } from "@/llm/gemini";
 
 export async function generateQuestion(
   topic: string,
@@ -62,7 +62,7 @@ export async function generateQuestion(
   }
   `;
 
-  const result = await Gemini.shared.prompt(prompt);
+  const result = await promptGemini(prompt);
   return stripAndParse<GeneratedQuestion>(result);
 }
 
@@ -105,6 +105,6 @@ export async function generateAudit(question: GeneratedQuestion) {
     "rating": "Flag for Human Review"
   }
   `;
-  const result = await Gemini.shared.prompt(prompt);
+  const result = await promptGemini(prompt);
   return stripAndParse<GeneratedAudit>(result);
 }

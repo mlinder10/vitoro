@@ -4,6 +4,16 @@ export type QuestionChoice = "a" | "b" | "c" | "d" | "e";
 
 export type QuestionDifficulty = "easy" | "moderate" | "hard";
 
+export type QuestionType =
+  | "Next Best Step"
+  | "Most Likely Diagnosis"
+  | "Most Likely Etiology"
+  | "Most Likely Complication"
+  | "Best Initial Test"
+  | "Most Accurate Test"
+  | "Mechanism of Disease / Pathophysiology"
+  | "Pharmacologic Mechanism / Adverse Effect";
+
 export type GeneratedQuestion = {
   topic: string;
   concept: string;
