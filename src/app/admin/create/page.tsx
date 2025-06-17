@@ -1,6 +1,5 @@
 "use client";
 
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { handleGenerateQuestion } from "./actions";
 import { useActionState, useState } from "react";
@@ -16,7 +15,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-export function CreateQuestionPage() {
+export default function CreateQuestionPage() {
+  const { id } = useSession();
+  const [error, action, isPending] = useActionState(
+    handleGenerateQuestion.bind(null, id),
+    {}
+  );
   const [system, setSystem] = useState<System | undefined>();
   const [category, setCategory] = useState<AnyCategory | undefined>();
   const [subcategory, setSubcategory] = useState<AnySubcategory | undefined>();
@@ -46,7 +50,7 @@ export function CreateQuestionPage() {
   return (
     <main className="items-center grid h-page">
       <form
-        action=""
+        action={action}
         className="flex flex-col gap-4 bg-secondary mx-auto p-4 border-2 rounded-md w-1/3"
       >
         <div className="space-y-2">
@@ -63,6 +67,9 @@ export function CreateQuestionPage() {
               ))}
             </SelectContent>
           </Select>
+          {error.system && (
+            <p className="text-destructive text-sm">{error.system}</p>
+          )}
         </div>
         {system && (
           <div className="space-y-2">
@@ -79,6 +86,9 @@ export function CreateQuestionPage() {
                 ))}
               </SelectContent>
             </Select>
+            {error.category && (
+              <p className="text-destructive text-sm">{error.category}</p>
+            )}
           </div>
         )}
         {category && (
@@ -100,96 +110,22 @@ export function CreateQuestionPage() {
                 ))}
               </SelectContent>
             </Select>
+            {error.subcategory && (
+              <p className="text-destructive text-sm">{error.subcategory}</p>
+            )}
           </div>
         )}
         {subcategory && (
-          <Button className="w-full" type="submit" variant="accent">
-            <span>Generate Question</span>
-            <ArrowRight />
+          <Button
+            className="w-full"
+            type="submit"
+            variant="accent"
+            disabled={isPending}
+          >
+            <span>{isPending ? "Generating..." : "Generate"}</span>
+            {isPending ? <Loader className="animate-spin" /> : <ArrowRight />}
           </Button>
         )}
-      </form>
-    </main>
-  );
-}
-
-export default function CreateQBankPage() {
-  const session = useSession();
-  const [error, action, isPending] = useActionState(
-    handleGenerateQuestion.bind(null, session.id),
-    {}
-  );
-
-  return (
-    <main className="items-center grid h-page">
-      <form
-        action={action}
-        className="flex flex-col gap-4 bg-secondary mx-auto p-4 border-2 rounded-md w-1/3"
-      >
-        <div className="space-y-2">
-          <Label htmlFor="topic">Clinical Topic</Label>
-          <Input
-            id="topic"
-            name="topic"
-            type="text"
-            placeholder='e.g. "Cardiovascular Pathophysiology"'
-            required
-          />
-          {error.topic && (
-            <p className="text-destructive text-sm">{error.topic}</p>
-          )}
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="concept">Concept to Test</Label>
-          <Input
-            id="concept"
-            name="concept"
-            type="text"
-            placeholder='e.g. "Diagnosis, Treatment"'
-            required
-          />
-          {error.concept && (
-            <p className="text-destructive text-sm">{error.concept}</p>
-          )}
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="type">Question Type</Label>
-          <Input
-            id="type"
-            name="type"
-            type="text"
-            placeholder='e.g. "Most likely complication", "Next best step", etc.'
-            required
-          />
-          {error.type && (
-            <p className="text-destructive text-sm">{error.type}</p>
-          )}
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="sources">Reference Sources</Label>
-          <Input
-            id="sources"
-            name="sources"
-            type="text"
-            placeholder="e.g., StatPearls, UTD, etc."
-          />
-          {error.sources && (
-            <p className="text-destructive text-sm">{error.sources}</p>
-          )}
-        </div>
-        <Button type="submit" disabled={isPending} variant="accent">
-          {isPending ? (
-            <>
-              <span>Generating...</span>
-              <Loader className="animate-spin" />
-            </>
-          ) : (
-            <>
-              <span>Generate</span>
-              <ArrowRight />
-            </>
-          )}
-        </Button>
       </form>
     </main>
   );

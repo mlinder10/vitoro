@@ -1,7 +1,7 @@
 import systems from "./systems.json";
 
 export async function GET() {
-  let types: Record<string, Record<string, Record<string, boolean>>> = {};
+  const types: Record<string, Record<string, Record<string, boolean>>> = {};
   for (const system of systems) {
     for (const category of system.categories) {
       for (const subcategory of category.subcategories) {

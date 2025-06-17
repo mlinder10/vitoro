@@ -1,24 +1,24 @@
 import { Question } from "@prisma/client";
+import { AnyCategory, AnySubcategory, System } from "./systems";
 
 export type QuestionChoice = "a" | "b" | "c" | "d" | "e";
 
 export type QuestionDifficulty = "easy" | "moderate" | "hard";
 
-export type QuestionType =
-  | "Next Best Step"
-  | "Most Likely Diagnosis"
-  | "Most Likely Etiology"
-  | "Most Likely Complication"
-  | "Best Initial Test"
-  | "Most Accurate Test"
-  | "Mechanism of Disease / Pathophysiology"
-  | "Pharmacologic Mechanism / Adverse Effect";
+export const QUESTION_TYPES = [
+  "Next Best Step",
+  "Most Likely Diagnosis",
+  "Most Likely Etiology",
+  "Most Likely Complication",
+  "Best Initial Test",
+  "Most Accurate Test",
+  "Mechanism of Disease / Pathophysiology",
+  "Pharmacologic Mechanism / Adverse Effect",
+] as const;
+
+export type QuestionType = (typeof QUESTION_TYPES)[number];
 
 export type GeneratedQuestion = {
-  topic: string;
-  concept: string;
-  type: string;
-
   question: string;
   choices: {
     a: string;
@@ -45,13 +45,19 @@ export type ParsedQuestion = GeneratedQuestion & {
   id: string;
   createdAt: Date;
   creatorId: string;
+
+  system: System;
+  category: AnyCategory;
+  subcategory: AnySubcategory;
+  type: QuestionType;
 };
 
 export function encodeQuestion(question: ParsedQuestion): Question {
   return {
     id: question.id,
-    topic: question.topic,
-    concept: question.concept,
+    system: question.system,
+    category: question.category,
+    subcategory: question.subcategory,
     type: question.type,
     createdAt: question.createdAt,
     creatorId: question.creatorId,
@@ -68,9 +74,10 @@ export function encodeQuestion(question: ParsedQuestion): Question {
 export function parseQuestion(encoded: Question): ParsedQuestion {
   return {
     id: encoded.id,
-    topic: encoded.topic,
-    concept: encoded.concept,
-    type: encoded.type,
+    system: encoded.system as System,
+    category: encoded.category as AnyCategory,
+    subcategory: encoded.subcategory as AnySubcategory,
+    type: encoded.type as QuestionType,
     createdAt: encoded.createdAt,
     creatorId: encoded.creatorId,
     question: encoded.question,

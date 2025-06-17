@@ -48,9 +48,12 @@ model Question {
   createdAt DateTime @default(now())
   creatorId String
 
-  topic   String
-  concept String
-  type    String
+  // topic   String
+  // concept String
+  system      String
+  category    String
+  subcategory String
+  type        String
 
   question     String
   answer       String

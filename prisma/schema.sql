@@ -21,8 +21,11 @@ CREATE TABLE IF NOT EXISTS Question (
   createdAt TEXT DEFAULT (datetime('now')),
   creatorId TEXT NOT NULL,
 
-  topic TEXT NOT NULL,
-  concept TEXT NOT NULL,
+  -- topic TEXT NOT NULL,
+  -- concept TEXT NOT NULL,
+  system TEXT NOT NULL,
+  category TEXT NOT NULL,
+  subcategory TEXT NOT NULL,
   type TEXT NOT NULL,
 
   question TEXT NOT NULL,

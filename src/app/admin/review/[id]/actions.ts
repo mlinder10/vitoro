@@ -1,11 +1,11 @@
 "use server";
 
 import db from "@/db/db";
-import { AuditRating, encodeQuestion, ParsedQuestion } from "@/types";
+import { AuditStatus, encodeQuestion, ParsedQuestion } from "@/types";
 
 export async function handleUpdateAuditStatus(
   questionId: string,
-  rating: AuditRating
+  rating: AuditStatus
 ) {
   await db.audit.update({
     data: { rating },

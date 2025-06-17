@@ -2,7 +2,7 @@ import { Audit } from "@prisma/client";
 
 export type ChecklistItem = { pass: boolean; notes: string };
 
-export type AuditRating = "Pass" | "Flag for Human Review" | "Reject";
+export type AuditStatus = "Pass" | "Flag for Human Review" | "Reject";
 
 export type GeneratedAudit = {
   checklist: {
@@ -17,7 +17,7 @@ export type GeneratedAudit = {
     9: ChecklistItem;
   };
   suggestions: string[];
-  rating: AuditRating;
+  rating: AuditStatus;
 };
 
 export type ParsedAudit = GeneratedAudit & {
@@ -38,6 +38,6 @@ export function parseAudit(encoded: Audit): ParsedAudit {
     ...encoded,
     checklist: JSON.parse(encoded.checklist),
     suggestions: JSON.parse(encoded.suggestions),
-    rating: encoded.rating as AuditRating,
+    rating: encoded.rating as AuditStatus,
   };
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { CHECKLIST } from "@/lib/constants";
-import { AuditRating, ParsedAudit, QuestionDifficulty } from "@/types";
+import { AuditStatus, ParsedAudit, QuestionDifficulty } from "@/types";
 import { Check, Pencil, Save, Undo, X, Clipboard, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -30,7 +30,7 @@ export default function AuditSection() {
 
   return (
     <section className="flex-1/4 space-y-2 bg-secondary py-4 border-l-2 overflow-y-auto">
-      <AuditStatus rating={audit.rating} />
+      <AuditStatusView status={audit.rating} />
       <div className="px-2">
         <AuditDifficulty />
       </div>
@@ -52,8 +52,8 @@ export default function AuditSection() {
   );
 }
 
-function AuditStatus({ rating }: { rating: AuditRating }) {
-  switch (rating) {
+function AuditStatusView({ status }: { status: AuditStatus }) {
+  switch (status) {
     case "Pass":
       return (
         <p className="bg-green-500 mx-2 py-2 border-2 border-green-700 rounded-md text-green-950 text-center">
@@ -168,7 +168,7 @@ function AuditButtons() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
-  async function updateAuditStatus(rating: AuditRating) {
+  async function updateAuditStatus(rating: AuditStatus) {
     setIsLoading(true);
     await handleUpdateAuditStatus(question.id, rating);
     setIsLoading(false);

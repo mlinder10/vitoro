@@ -2,15 +2,15 @@
 
 import { saveQuestion } from "@/db/question";
 import { generateAudit, generateQuestion } from "@/llm";
+import {
+  AnyCategory,
+  AnySubcategory,
+  QUESTION_TYPES,
+  QuestionType,
+  System,
+} from "@/types";
 import { redirect } from "next/navigation";
 import { z } from "zod";
-
-const GenerateQuestionSchema = z.object({
-  topic: z.string().min(1, "Topic is required"),
-  concept: z.string().min(1, "Concept to test is required"),
-  type: z.string().min(1, "Question type is required"),
-  sources: z.string(),
-});
 
 export type GenerateQuestionResult = {
   topic?: string | string[];
@@ -19,18 +19,41 @@ export type GenerateQuestionResult = {
   sources?: string | string[];
 };
 
+const GenerateQuestionSchema = z.object({
+  system: z.string({ required_error: "System is required" }),
+  category: z.string({ required_error: "Category is required" }),
+  subcategory: z.string({ required_error: "Subcategory is required" }),
+  type: z.enum(QUESTION_TYPES, { required_error: "Question type is required" }),
+});
+
 export async function handleGenerateQuestion(
   userId: string,
   _: unknown,
-  formData: FormData
+  data: FormData
 ) {
-  const parsed = GenerateQuestionSchema.safeParse(Object.fromEntries(formData));
+  const parsed = GenerateQuestionSchema.safeParse(Object.fromEntries(data));
   if (!parsed.success) return parsed.error.formErrors.fieldErrors;
 
-  const { topic, concept, type } = parsed.data;
-  const question = await generateQuestion(topic, concept, type, []);
+  const system = parsed.data.system as System;
+  const category = parsed.data.category as AnyCategory;
+  const subcategory = parsed.data.subcategory as AnySubcategory;
+  const type = parsed.data.type as QuestionType;
+  const question = await generateQuestion(
+    system as System,
+    category,
+    subcategory,
+    type
+  );
   const audit = await generateAudit(question);
-  const saved = await saveQuestion(question, audit, userId);
+  const saved = await saveQuestion(
+    system,
+    category,
+    subcategory,
+    type,
+    question,
+    audit,
+    userId
+  );
 
   redirect(`/admin/review/${saved.id}`);
 }

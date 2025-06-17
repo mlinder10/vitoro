@@ -1,27 +1,46 @@
 "use server";
 
 import {
+  AnyCategory,
+  AnySubcategory,
+  AuditStatus,
   encodeAudit,
   encodeQuestion,
   GeneratedAudit,
   GeneratedQuestion,
   parseQuestion,
   parseQuestionAudit,
+  QuestionDifficulty,
+  QuestionType,
+  System,
 } from "@/types";
 import db from "./db";
 
 export async function fetchQuestions(
   offset: number,
   limit: number,
-  auditRating?: "Pass" | "Flag for Human Review" | "Reject"
+  status: AuditStatus | undefined,
+  difficulty: QuestionDifficulty | undefined,
+  system: System | undefined,
+  category: AnyCategory | undefined,
+  subcategory: AnySubcategory | undefined,
+  type: QuestionType | undefined
 ) {
   return (
     await db.question.findMany({
-      where: auditRating ? { audit: { rating: auditRating } } : undefined,
+      where: buildWhereClause(
+        status,
+        difficulty,
+        system,
+        category,
+        subcategory,
+        type
+      ),
       select: {
         id: true,
-        topic: true,
-        concept: true,
+        system: true,
+        category: true,
+        subcategory: true,
         type: true,
         question: true,
         choices: true,
@@ -40,13 +59,41 @@ export async function fetchQuestions(
   ).map(parseQuestionAudit);
 }
 
+type WhereClause = {
+  audit?: { rating: AuditStatus };
+  difficulty?: QuestionDifficulty;
+  system?: System;
+  category?: AnyCategory;
+  subcategory?: AnySubcategory;
+  type?: QuestionType;
+};
+
+function buildWhereClause(
+  status: AuditStatus | undefined,
+  difficulty: QuestionDifficulty | undefined,
+  system: System | undefined,
+  category: AnyCategory | undefined,
+  subcategory: AnySubcategory | undefined,
+  type: QuestionType | undefined
+) {
+  const where = {} as WhereClause;
+  if (status) where.audit = { rating: status };
+  if (difficulty) where.difficulty = difficulty;
+  if (system) where.system = system;
+  if (category) where.category = category;
+  if (subcategory) where.subcategory = subcategory;
+  if (type) where.type = type;
+  return where;
+}
+
 export async function fetchQuestionById(id: string) {
   const question = await db.question.findUnique({
     where: { id },
     select: {
       id: true,
-      topic: true,
-      concept: true,
+      system: true,
+      category: true,
+      subcategory: true,
       type: true,
       question: true,
       choices: true,
@@ -64,6 +111,10 @@ export async function fetchQuestionById(id: string) {
 }
 
 export async function saveQuestion(
+  system: System,
+  category: AnyCategory,
+  subcategory: AnySubcategory,
+  type: QuestionType,
   question: GeneratedQuestion,
   audit: GeneratedAudit,
   creatorId: string
@@ -73,6 +124,10 @@ export async function saveQuestion(
     id: crypto.randomUUID(),
     createdAt: new Date(),
     creatorId,
+    system,
+    category,
+    subcategory,
+    type,
   });
   const encodedAudit = encodeAudit({
     ...audit,
