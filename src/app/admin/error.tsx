@@ -14,9 +14,9 @@ export default function Custom500() {
         <p className="font-bold text-lg">It&apos;s not you, it&apos;s us</p>
         <p>We had an issue on our servers. Please try again later.</p>
         <Button asChild variant="accent">
-          <Link href="/">
+          <Link href="/admin">
             <ArrowLeft />
-            <span>Get back to studying</span>
+            <span>Back to dashboard</span>
           </Link>
         </Button>
       </div>

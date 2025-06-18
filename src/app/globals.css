@@ -37,6 +37,7 @@
   --color-custom-accent-tertiary-dark: var(--custom-accent-tertiary-dark);
 
   --animate-float: float 1s ease-in-out infinite;
+  --animate-jump: jump 1s ease-in-out infinite;
   --height-header: 6em;
   --height-page: calc(100% - var(--height-header));
 
