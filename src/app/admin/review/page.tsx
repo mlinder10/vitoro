@@ -28,6 +28,7 @@ import {
 const MAX_ITEMS_PER_PAGE = 30;
 
 export default function QuestionReviewListPage() {
+  const [count, setCount] = useState(0);
   const [status, setStatus] = useState<AuditStatus | undefined>();
   const [difficulty, setDifficulty] = useState<
     QuestionDifficulty | undefined
@@ -40,25 +41,36 @@ export default function QuestionReviewListPage() {
     data: questions,
     isLoading,
     containerRef,
-  } = useInfiniteScroll(
-    async (offset) =>
-      fetchQuestions(
-        offset,
-        MAX_ITEMS_PER_PAGE,
-        status,
-        difficulty,
-        system,
-        category,
-        subcategory,
-        type
-      ),
-    [status, difficulty, system, category, subcategory, type]
-  );
+  } = useInfiniteScroll(handleFetchQuestions, [
+    status,
+    difficulty,
+    system,
+    category,
+    subcategory,
+    type,
+  ]);
+
+  async function handleFetchQuestions(offset: number) {
+    const { count, questions } = await fetchQuestions(
+      offset,
+      MAX_ITEMS_PER_PAGE,
+      status,
+      difficulty,
+      system,
+      category,
+      subcategory,
+      type
+    );
+    setCount(count);
+    return questions;
+  }
 
   return (
     <main className="flex flex-col pb-2 h-page">
-      <section className="px-4">
-        <div></div>
+      <section className="flex justify-between items-center px-4">
+        <div className="flex items-center bg-secondary px-2 border-2 rounded-md h-9">
+          <p>Filtered Questions - {count}</p>
+        </div>
         <SelectInputs
           status={status}
           setStatus={setStatus}

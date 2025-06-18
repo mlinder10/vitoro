@@ -26,16 +26,18 @@ export async function fetchQuestions(
   subcategory: AnySubcategory | undefined,
   type: QuestionType | undefined
 ) {
-  return (
-    await db.question.findMany({
-      where: buildWhereClause(
-        status,
-        difficulty,
-        system,
-        category,
-        subcategory,
-        type
-      ),
+  const where = buildWhereClause(
+    status,
+    difficulty,
+    system,
+    category,
+    subcategory,
+    type
+  );
+  const [count, questions] = await Promise.all([
+    db.question.count({ where }),
+    db.question.findMany({
+      where,
       select: {
         id: true,
         system: true,
@@ -55,8 +57,9 @@ export async function fetchQuestions(
       },
       skip: offset,
       take: limit,
-    })
-  ).map(parseQuestionAudit);
+    }),
+  ]);
+  return { count, questions: questions.map(parseQuestionAudit) };
 }
 
 type WhereClause = {

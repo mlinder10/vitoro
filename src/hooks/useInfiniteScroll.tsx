@@ -49,6 +49,7 @@ export default function useInfiniteScroll<T>(
   const fetchFreshData = useCallback(async () => {
     isFetchingRef.current = true;
     setIsLoading(true);
+    setData([]); // clear previous data to make more responsive
     const freshData = await fetchMore(0);
     setIsLoading(false);
     isFetchingRef.current = false;
