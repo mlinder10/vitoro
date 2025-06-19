@@ -1,1 +1,1 @@
-GET http://localhost:3000/api
+GET https://main.d3g589sz66f9ek.amplifyapp.com/api
