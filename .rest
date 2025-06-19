@@ -1,1 +1,1 @@
-GET https://main.d3g589sz66f9ek.amplifyapp.com/api
+GET https://main.d3g589sz66f9ek.amplifyapp.com/api/env-test
