@@ -24,44 +24,49 @@ const loginSchema = z.object({
 });
 
 export async function handleLogin(_: unknown, data: FormData) {
-  const result = loginSchema.safeParse(Object.fromEntries(data.entries()));
-  if (!result.success) return result.error.formErrors.fieldErrors;
+  try {
+    const result = loginSchema.safeParse(Object.fromEntries(data.entries()));
+    if (!result.success) return result.error.formErrors.fieldErrors;
 
-  const user = await db.user.findUnique({
-    where: { email: result.data.email },
-    select: {
-      id: true,
-      email: true,
-      firstName: true,
-      lastName: true,
-      color: true,
-      password: true,
-      admin: { select: { userId: true } },
-    },
-  });
-  if (!user) return { email: ["Invalid email or password"] };
+    const user = await db.user.findUnique({
+      where: { email: result.data.email },
+      select: {
+        id: true,
+        email: true,
+        firstName: true,
+        lastName: true,
+        color: true,
+        password: true,
+        admin: { select: { userId: true } },
+      },
+    });
+    if (!user) return { email: ["Invalid email or password"] };
 
-  if (!(await verifyPassword(result.data.password, user.password)))
-    return { email: ["Invalid email or password"] };
+    if (!(await verifyPassword(result.data.password, user.password)))
+      return { email: ["Invalid email or password"] };
 
-  const token = await signToken({
-    id: user.id,
-    email: user.email,
-    firstName: user.firstName,
-    lastName: user.lastName,
-    color: user.color,
-    isAdmin: user.admin?.userId ? true : false,
-  });
+    const token = await signToken({
+      id: user.id,
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      color: user.color,
+      isAdmin: user.admin?.userId ? true : false,
+    });
 
-  (await cookies()).set({
-    name: process.env.JWT_KEY!,
-    value: token,
-    httpOnly: true,
-    secure: true,
-    path: "/",
-  });
+    (await cookies()).set({
+      name: process.env.JWT_KEY!,
+      value: token,
+      httpOnly: true,
+      secure: true,
+      path: "/",
+    });
 
-  redirect("/");
+    redirect("/");
+  } catch (error) {
+    console.error(error);
+    return { email: [error as string] };
+  }
 }
 
 // ============================
