@@ -1,1 +1,13 @@
 GET https://main.d3g589sz66f9ek.amplifyapp.com/api/env-test?key=DATABASE_AUTH_TOKEN
+
+###
+POST https://main.d3g589sz66f9ek.amplifyapp.com/login
+Content-Type: application/json
+
+{
+  "email": "test@test.com",
+  "password": "testtest"
+}
+
+###
+GET https://main.d3g589sz66f9ek.amplifyapp.com/
