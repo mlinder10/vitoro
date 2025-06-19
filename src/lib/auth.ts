@@ -3,7 +3,6 @@
 import db from "@/db/db";
 import { jwtVerify, SignJWT } from "jose";
 import { cookies, headers } from "next/headers";
-import { redirect } from "next/navigation";
 
 const SECRET_KEY = new TextEncoder().encode(process.env.JWT_SECRET!);
 
@@ -42,7 +41,7 @@ export async function logoutAndRedirect() {
     secure: true,
   });
 
-  redirect("/");
+  return { redirectTo: "/" };
 }
 
 export async function hashPassword(password: string) {

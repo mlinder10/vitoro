@@ -7,9 +7,17 @@ import { Label } from "@/components/ui/label";
 import { ArrowRight, Loader } from "lucide-react";
 import { useActionState } from "react";
 import { handleLogin } from "../actions";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
-  const [error, action, isPending] = useActionState(handleLogin, {});
+  const [error, action, isPending] = useActionState(onSubmit, {});
+  const router = useRouter();
+
+  async function onSubmit(_: unknown, data: FormData) {
+    const res = await handleLogin(data);
+    if (res.success) router.push(res.redirectTo);
+    else if (res.success === false) return res;
+  }
 
   return (
     <main className="place-items-center grid h-page">
@@ -27,7 +35,7 @@ export default function LoginPage() {
             type="email"
             placeholder="name@email.com"
           />
-          {error.email && (
+          {error?.email && (
             <p className="text-destructive text-sm">{error.email}</p>
           )}
         </div>
@@ -39,7 +47,7 @@ export default function LoginPage() {
             type="password"
             placeholder="••••••••"
           />
-          {error.password && (
+          {error?.password && (
             <p className="text-destructive text-sm">{error.password}</p>
           )}
         </div>

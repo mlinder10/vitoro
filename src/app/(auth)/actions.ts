@@ -6,7 +6,6 @@ import { sendResetPasswordEmail } from "@/email/reset-password";
 import { hashPassword, signToken, verifyPassword } from "@/lib/auth";
 import { generateColor } from "@/lib/utils";
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
 import { z } from "zod";
 // import { OAuth2Client } from "google-auth-library";
 
@@ -16,64 +15,70 @@ const TEN_MINUTES_IN_MS = 10 * 60 * 1000;
 // Login
 // ============================
 
-const loginSchema = z.object({
+const LoginSchema = z.object({
   email: z.string().email(),
   password: z.string().min(8, {
     message: "Password must be at least 8 characters",
   }),
 });
 
-export async function handleLogin(_: unknown, data: FormData) {
-  try {
-    const result = loginSchema.safeParse(Object.fromEntries(data.entries()));
-    if (!result.success) return result.error.formErrors.fieldErrors;
+type LoginResult =
+  | {
+      success?: false;
+      email?: string[];
+      password?: string[];
+    }
+  | {
+      success?: true;
+      redirectTo: string;
+    };
 
-    const user = await db.user.findUnique({
-      where: { email: result.data.email },
-      select: {
-        id: true,
-        email: true,
-        firstName: true,
-        lastName: true,
-        color: true,
-        password: true,
-        admin: { select: { userId: true } },
-      },
-    });
-    if (!user) return { email: ["Invalid email or password"] };
+export async function handleLogin(data: FormData): Promise<LoginResult> {
+  const result = LoginSchema.safeParse(Object.fromEntries(data.entries()));
+  if (!result.success) return result.error.formErrors.fieldErrors;
 
-    if (!(await verifyPassword(result.data.password, user.password)))
-      return { email: ["Invalid email or password"] };
+  const user = await db.user.findUnique({
+    where: { email: result.data.email },
+    select: {
+      id: true,
+      email: true,
+      firstName: true,
+      lastName: true,
+      color: true,
+      password: true,
+      admin: { select: { userId: true } },
+    },
+  });
+  if (!user) return { email: ["Invalid email or password"] };
 
-    const token = await signToken({
-      id: user.id,
-      email: user.email,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      color: user.color,
-      isAdmin: user.admin?.userId ? true : false,
-    });
+  if (!(await verifyPassword(result.data.password, user.password)))
+    return { email: ["Invalid email or password"] };
 
-    (await cookies()).set({
-      name: process.env.JWT_KEY!,
-      value: token,
-      httpOnly: true,
-      secure: true,
-      path: "/",
-    });
+  const token = await signToken({
+    id: user.id,
+    email: user.email,
+    firstName: user.firstName,
+    lastName: user.lastName,
+    color: user.color,
+    isAdmin: user.admin?.userId ? true : false,
+  });
 
-    redirect("/");
-  } catch (error) {
-    console.error(error);
-    return { email: [error as string] };
-  }
+  (await cookies()).set({
+    name: process.env.JWT_KEY!,
+    value: token,
+    httpOnly: true,
+    secure: true,
+    path: "/",
+  });
+
+  return { success: true, redirectTo: "/" };
 }
 
 // ============================
 // Register
 // ============================
 
-const registerSchema = z.object({
+const RegisterSchema = z.object({
   email: z.string().email(),
   firstName: z.string(),
   lastName: z.string(),
@@ -81,8 +86,22 @@ const registerSchema = z.object({
   confirmPassword: z.string().min(8),
 });
 
-export async function handleRegister(_: unknown, data: FormData) {
-  const result = registerSchema.safeParse(Object.fromEntries(data.entries()));
+type RegisterResult =
+  | {
+      success?: false;
+      email?: string[];
+      firstName?: string[];
+      lastName?: string[];
+      password?: string[];
+      confirmPassword?: string[];
+    }
+  | {
+      success?: true;
+      redirectTo: string;
+    };
+
+export async function handleRegister(data: FormData): Promise<RegisterResult> {
+  const result = RegisterSchema.safeParse(Object.fromEntries(data.entries()));
   if (!result.success) return result.error.formErrors.fieldErrors;
 
   if (result.data.password !== result.data.confirmPassword)
@@ -122,26 +141,32 @@ export async function handleRegister(_: unknown, data: FormData) {
     path: "/",
   });
   sendRegisterEmail(result.data.email);
-  redirect("/");
+
+  return { success: true, redirectTo: "/" };
 }
 
 // ============================
 // Reset Password
 // ============================
 
-const resetPasswordSchemaEmail = z.object({
+const ResetPasswordSchemaEmail = z.object({
   email: z.string().email(),
 });
 
-export type HandleEmailSendingResult = {
-  email?: string | string[];
-};
+export type HandleEmailSendingResult =
+  | {
+      success?: false;
+      email?: string | string[];
+    }
+  | {
+      success?: true;
+      redirectTo: string;
+    };
 
 export async function handleEmailSending(
-  _: unknown,
   data: FormData
 ): Promise<HandleEmailSendingResult> {
-  const result = resetPasswordSchemaEmail.safeParse(
+  const result = ResetPasswordSchemaEmail.safeParse(
     Object.fromEntries(data.entries())
   );
   if (!result.success) return result.error.formErrors.fieldErrors;
@@ -167,20 +192,27 @@ export async function handleEmailSending(
     },
   });
 
-  redirect("/reset-code");
+  return { success: true, redirectTo: "/" };
 }
 
-const resetPasswordSchemaVerification = z.object({
+const ResetPasswordSchemaVerification = z.object({
   code: z.string(),
 });
-type HandleVerificationProps = {
-  code?: string[] | string;
-};
+
+type HandleVerificationProps =
+  | {
+      success?: false;
+      code?: string[] | string;
+    }
+  | {
+      success?: true;
+      redirectTo: string;
+    };
+
 export async function handleVerification(
-  _: unknown,
   data: FormData
 ): Promise<HandleVerificationProps> {
-  const result = resetPasswordSchemaVerification.safeParse(
+  const result = ResetPasswordSchemaVerification.safeParse(
     Object.fromEntries(data.entries())
   );
   if (!result.success) return result.error.formErrors.fieldErrors;
@@ -188,13 +220,16 @@ export async function handleVerification(
   const resetPassword = await db.resetPassword.findUnique({
     where: { code: result.data.code },
   });
+
   if (!resetPassword) return { code: "Invalid code" };
+
   if (resetPassword.validUntil < new Date())
     return { code: "Code has expired" };
-  redirect(`/reset-code/${resetPassword.id}`);
+
+  return { redirectTo: `/reset-code/${resetPassword.id}` };
 }
 
-const handlPasswordSchema = z.object({
+const HandlPasswordSchema = z.object({
   password: z.string().min(8, {
     message: "Password must be at least 8 characters",
   }),
@@ -214,7 +249,7 @@ export async function handlePasswordReset(
   _: unknown,
   data: FormData
 ): Promise<handlePasswordResetProps> {
-  const result = handlPasswordSchema.safeParse(
+  const result = HandlPasswordSchema.safeParse(
     Object.fromEntries(data.entries())
   );
   if (!result.success) return result.error.formErrors.fieldErrors;

@@ -9,15 +9,7 @@ import {
   QuestionType,
   System,
 } from "@/types";
-import { redirect } from "next/navigation";
 import { z } from "zod";
-
-export type GenerateQuestionResult = {
-  topic?: string | string[];
-  concept?: string | string[];
-  type?: string | string[];
-  sources?: string | string[];
-};
 
 const GenerateQuestionSchema = z.object({
   system: z.string({ required_error: "System is required" }),
@@ -26,11 +18,23 @@ const GenerateQuestionSchema = z.object({
   type: z.enum(QUESTION_TYPES, { required_error: "Question type is required" }),
 });
 
+type GenerateQuestionResult =
+  | {
+      success?: false;
+      system?: string[];
+      category?: string[];
+      subcategory?: string[];
+      type?: string[];
+    }
+  | {
+      success?: true;
+      redirectTo: string;
+    };
+
 export async function handleGenerateQuestion(
   userId: string,
-  _: unknown,
   data: FormData
-) {
+): Promise<GenerateQuestionResult> {
   const parsed = GenerateQuestionSchema.safeParse(Object.fromEntries(data));
   if (!parsed.success) return parsed.error.formErrors.fieldErrors;
 
@@ -55,5 +59,5 @@ export async function handleGenerateQuestion(
     userId
   );
 
-  redirect(`/admin/review/${saved.id}`);
+  return { success: true, redirectTo: `/admin/review/${saved.id}` };
 }

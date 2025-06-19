@@ -14,13 +14,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useRouter } from "next/navigation";
 
 export default function CreateQuestionPage() {
   const { id } = useSession();
-  const [error, action, isPending] = useActionState(
-    handleGenerateQuestion.bind(null, id),
-    {}
-  );
+  const [error, action, isPending] = useActionState(onSubmit, {});
   const [system, setSystem] = useState<System | undefined>();
   const [category, setCategory] = useState<AnyCategory | undefined>();
   const [subcategory, setSubcategory] = useState<AnySubcategory | undefined>();
@@ -31,6 +29,13 @@ export default function CreateQuestionPage() {
     SYSTEMS.find((s) => s.name === system)?.categories.find(
       (c) => c.name === category
     )?.subcategories ?? [];
+  const router = useRouter();
+
+  async function onSubmit(_: unknown, data: FormData) {
+    const res = await handleGenerateQuestion(id, data);
+    if (res.success) router.push(res.redirectTo);
+    else if (res.success === false) return res;
+  }
 
   function handleSelectSystem(system: System) {
     setSystem(system);
@@ -67,7 +72,7 @@ export default function CreateQuestionPage() {
               ))}
             </SelectContent>
           </Select>
-          {error.system && (
+          {error?.system && (
             <p className="text-destructive text-sm">{error.system}</p>
           )}
         </div>
@@ -86,7 +91,7 @@ export default function CreateQuestionPage() {
                 ))}
               </SelectContent>
             </Select>
-            {error.category && (
+            {error?.category && (
               <p className="text-destructive text-sm">{error.category}</p>
             )}
           </div>
@@ -110,7 +115,7 @@ export default function CreateQuestionPage() {
                 ))}
               </SelectContent>
             </Select>
-            {error.subcategory && (
+            {error?.subcategory && (
               <p className="text-destructive text-sm">{error.subcategory}</p>
             )}
           </div>

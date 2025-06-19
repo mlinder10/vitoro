@@ -6,9 +6,17 @@ import { Label } from "@/components/ui/label";
 import { ArrowRight, Loader } from "lucide-react";
 import { useActionState } from "react";
 import { handleRegister } from "../actions";
+import { useRouter } from "next/navigation";
 
 export default function RegisterPage() {
-  const [error, action, isPending] = useActionState(handleRegister, {});
+  const [error, action, isPending] = useActionState(onSubmit, {});
+  const router = useRouter();
+
+  async function onSubmit(_: unknown, data: FormData) {
+    const res = await handleRegister(data);
+    if (res.success) router.push(res.redirectTo);
+    else if (res.success === false) return res;
+  }
 
   return (
     <main className="place-items-center grid h-page">
@@ -26,7 +34,7 @@ export default function RegisterPage() {
             type="email"
             placeholder="name@email.com"
           />
-          {error.email && (
+          {error?.email && (
             <p className="text-destructive text-sm">{error.email}</p>
           )}
         </div>
@@ -38,14 +46,14 @@ export default function RegisterPage() {
             type="text"
             placeholder="First"
           />
-          {error.firstName && (
+          {error?.firstName && (
             <p className="text-destructive text-sm">{error.firstName}</p>
           )}
         </div>
         <div className="space-y-2 w-full">
           <Label htmlFor="lastname">Last Name</Label>
           <Input id="lastname" name="lastName" type="text" placeholder="Name" />
-          {error.lastName && (
+          {error?.lastName && (
             <p className="text-destructive text-sm">{error.lastName}</p>
           )}
         </div>
@@ -57,7 +65,7 @@ export default function RegisterPage() {
             type="password"
             placeholder="••••••••"
           />
-          {error.password && (
+          {error?.password && (
             <p className="text-destructive text-sm">{error.password}</p>
           )}
         </div>
@@ -69,7 +77,7 @@ export default function RegisterPage() {
             type="password"
             placeholder="••••••••"
           />
-          {error.confirmPassword && (
+          {error?.confirmPassword && (
             <p className="text-destructive text-sm">{error.confirmPassword}</p>
           )}
         </div>
