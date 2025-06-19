@@ -37,12 +37,9 @@ export async function verifyToken(token: string) {
 export async function logoutAndRedirect() {
   (await cookies()).set(process.env.JWT_KEY!, "", {
     path: "/",
-    domain:
-      process.env.NODE_ENV === "development" ? "localhost" : process.env.DOMAIN,
     expires: new Date(0),
     httpOnly: true,
     secure: true,
-    sameSite: "none",
   });
 
   redirect("/");

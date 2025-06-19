@@ -58,8 +58,6 @@ export async function handleLogin(_: unknown, data: FormData) {
     value: token,
     httpOnly: true,
     secure: true,
-    sameSite: "none",
-    domain: process.env.DOMAIN,
     path: "/",
   });
 
@@ -116,8 +114,6 @@ export async function handleRegister(_: unknown, data: FormData) {
     value: token,
     httpOnly: true,
     secure: true,
-    sameSite: "none",
-    domain: process.env.DOMAIN!,
     path: "/",
   });
   sendRegisterEmail(result.data.email);
@@ -286,8 +282,6 @@ function generateResetCode(): string {
 //     value: jwt,
 //     httpOnly: true,
 //     secure: true,
-//     sameSite: "none",
-//     domain: process.env.DOMAIN,
 //     path: "/",
 //   });
 
