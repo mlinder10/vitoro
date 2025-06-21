@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { handleFetchUsers, handleUpdateAdminStatus } from "./actions";
 import { Button } from "@/components/ui/button";
 import { Loader, Minus, Plus } from "lucide-react";
@@ -10,28 +10,37 @@ import useInfiniteScroll, { LoadingFooter } from "@/hooks/useInfiniteScroll";
 type User = Awaited<ReturnType<typeof handleFetchUsers>>[number];
 
 const MAX_ITEMS_PER_PAGE = 30;
+const DELAY = 500; // 0.5 seconds
 
 export default function PromotePage() {
   const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState(search);
+
+  useEffect(() => {
+    const handler = setTimeout(() => setDebouncedSearch(search), DELAY);
+    return () => clearTimeout(handler);
+  }, [search]);
+
   const {
     data: users,
     isLoading,
     containerRef,
   } = useInfiniteScroll<User>(
-    async (offset) => handleFetchUsers(offset, MAX_ITEMS_PER_PAGE, search),
-    [search]
+    async (offset) =>
+      handleFetchUsers(offset, MAX_ITEMS_PER_PAGE, debouncedSearch),
+    [debouncedSearch]
   );
 
   return (
     <main className="flex flex-col h-page">
-      <section>
+      <section className="p-4 border-b-2">
         <Searchbar
           placeholder="Search by name or email"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
       </section>
-      <section className="flex-1 overflow-y-auto" ref={containerRef}>
+      <section className="flex-1 p-4 overflow-y-auto" ref={containerRef}>
         <ul>
           {users.map((user) => (
             <UserItem key={user.id} user={user} />
@@ -59,7 +68,7 @@ function UserItem({ user }: UserItemProps) {
   }
 
   return (
-    <li className="flex justify-between items-center p-2">
+    <li className="flex justify-between items-center p-2 border-b-2">
       <div>
         <p>
           {user.firstName} {user.lastName}

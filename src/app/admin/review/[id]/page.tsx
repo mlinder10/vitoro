@@ -19,7 +19,7 @@ export default async function ReviewQuestionPage({
 
   return (
     <AdminReviewProvider question={question} audit={audit}>
-      <ReviewPageWrapper />;
+      <ReviewPageWrapper />
     </AdminReviewProvider>
   );
 }

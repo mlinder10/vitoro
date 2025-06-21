@@ -19,8 +19,13 @@ export default function AdminHeader() {
             </Link>
           </li>
           <li>
-            <Link href="/admin/promote" className="ml-4 text-muted-foreground">
-              Promote
+            <Link href="/admin/users" className="ml-4 text-muted-foreground">
+              Users
+            </Link>
+          </li>
+          <li>
+            <Link href="/" className="ml-4 text-muted-foreground">
+              Main Site
             </Link>
           </li>
         </ul>

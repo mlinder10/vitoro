@@ -75,8 +75,10 @@ export default function ResetPasswordCodeEmail({
           <Hr />
           <Text style={{ fontSize: "12px", color: "#888" }}>
             Didn’t request this? You can ignore this message or contact us at{" "}
-            {/* TODO: replace with vitado email */}
-            <Link href=""></Link>.
+            <Link href="mailto:teamvitado@gmail.com">
+              {"teamvitado@gmail.com"}
+            </Link>
+            .
           </Text>
         </Container>
       </Body>

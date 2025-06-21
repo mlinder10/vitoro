@@ -33,15 +33,13 @@ export async function verifyToken(token: string) {
   }
 }
 
-export async function logoutAndRedirect() {
+export async function logout() {
   (await cookies()).set(process.env.JWT_KEY!, "", {
     path: "/",
     expires: new Date(0),
     httpOnly: true,
     secure: true,
   });
-
-  return { redirectTo: "/" };
 }
 
 export async function hashPassword(password: string) {

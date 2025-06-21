@@ -32,7 +32,7 @@ function QuestionSection() {
           onChange={(e) => updateQuestion("question", e.target.value)}
           className={cn(
             question.question !== editQuestion.question &&
-              "border-custom-accent-secondary border-2 shadow-md focus-visible:border-custom-accent-secondary focus-visible:ring-custom-accent-secondary-dark"
+              "border-custom-accent-secondary border-2 shadow-md"
           )}
         />
       </div>

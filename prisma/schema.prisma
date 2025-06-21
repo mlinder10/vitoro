@@ -1,7 +1,7 @@
 generator client {
   provider        = "prisma-client-js"
   previewFeatures = ["driverAdapters"]
-  binaryTargets   = ["native", "rhel-openssl-1.0.x"] // add your target explicitly
+  binaryTargets   = ["native", "rhel-openssl-1.0.x"]
 }
 
 datasource db {
@@ -40,30 +40,24 @@ model ResetPassword {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-// model PracticeExam {
-//   id String @id @default(uuid())
-// }
-
 model Question {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())
   creatorId String
 
-  // topic   String
-  // concept String
   system      String
   category    String
   subcategory String
   type        String
 
-  question     String
-  answer       String
-  choices      String
-  explanations String
+  question     String @db.Text
+  answer       String @db.Char(1)
+  choices      String @db.Text
+  explanations String @db.Text
 
   sources        String
   difficulty     String
-  nbmeStyleNotes String
+  nbmeStyleNotes String @db.Text
 
   creator           Admin              @relation(fields: [creatorId], references: [userId], onDelete: NoAction)
   audit             Audit?
@@ -74,8 +68,8 @@ model Audit {
   id         String @id @default(uuid())
   questionId String @unique
 
-  checklist   String
-  suggestions String
+  checklist   String @db.Text
+  suggestions String @db.Text
   rating      String
 
   question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)

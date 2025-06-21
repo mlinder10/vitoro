@@ -24,6 +24,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { CircleHelp } from "lucide-react";
 
 const MAX_ITEMS_PER_PAGE = 30;
 
@@ -67,7 +68,7 @@ export default function QuestionReviewListPage() {
 
   return (
     <main className="flex flex-col pb-2 h-page">
-      <section className="flex justify-between items-center px-4">
+      <section className="flex justify-between items-center p-4">
         <div className="flex items-center bg-secondary px-2 border-2 rounded-md h-9">
           <p>Filtered Questions - {count}</p>
         </div>
@@ -87,14 +88,24 @@ export default function QuestionReviewListPage() {
         />
       </section>
       <section className="flex-1 px-4 overflow-y-auto" ref={containerRef}>
-        <ul>
-          {questions.map((q) => (
-            <QuestionItem key={q.question.id} qa={q} />
-          ))}
-          {questions.length === 0 && !isLoading && (
-            <li>No flagged questions to review.</li>
-          )}
-        </ul>
+        {questions.length === 0 && !isLoading ? (
+          <div className="place-items-center grid px-6 h-full text-muted-foreground text-center">
+            <div className="flex flex-col items-center space-y-4">
+              <CircleHelp size={60} />
+              <p className="font-bold text-2xl">No Questions Found</p>
+              <p className="max-w-md text-sm">
+                Try adjusting the filters above. You can change the difficulty,
+                category, or type to see more results.
+              </p>
+            </div>
+          </div>
+        ) : (
+          <ul>
+            {questions.map((q) => (
+              <QuestionItem key={q.question.id} qa={q} />
+            ))}
+          </ul>
+        )}
         <LoadingFooter isLoading={isLoading} />
       </section>
     </main>

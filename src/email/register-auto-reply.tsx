@@ -73,8 +73,11 @@ export default async function RegisterAutoReply() {
           <Hr />
           <Text style={{ fontSize: "12px", color: "#888" }}>
             If you didn’t sign up for Vitado, you can ignore this message or
-            contact us at {/* TODO: replace with vitado email */}
-            <Link href=""></Link>.
+            contact us at
+            <Link href="mailto:teamvitado@gmail.com">
+              {"teamvitado@gmail.com"}
+            </Link>
+            .
           </Text>
         </Container>
       </Body>

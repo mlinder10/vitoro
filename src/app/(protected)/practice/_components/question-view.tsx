@@ -6,14 +6,26 @@ import { cn } from "@/lib/utils";
 import { ArrowRight, Circle, CircleCheck, CircleX } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+import { useSession } from "@/contexts/session-provider";
+import { answerQuestion } from "../actions";
 
 type QuestionViewProps = {
   question: ParsedQuestion;
 };
 
 export default function QuestionView({ question }: QuestionViewProps) {
+  const { id } = useSession();
+  const [isLoading, setIsLoading] = useState(false);
   const [selection, setSelection] = useState<QuestionChoice | null>(null);
   const [isChecked, setIsChecked] = useState(false);
+
+  async function handleSubmit() {
+    if (!selection) return;
+    setIsLoading(true);
+    await answerQuestion(id, question.id, selection);
+    setIsLoading(false);
+    setIsChecked(true);
+  }
 
   return (
     <div className="flex flex-col h-full">
@@ -31,6 +43,7 @@ export default function QuestionView({ question }: QuestionViewProps) {
               isChecked={isChecked}
               isSelected={letter === selection}
               isCorrect={letter === question.answer}
+              isLoading={isLoading}
               select={setSelection}
             />
           ))}
@@ -43,7 +56,7 @@ export default function QuestionView({ question }: QuestionViewProps) {
             </Link>
           </Button>
         ) : (
-          <Button variant="accent" onClick={() => setIsChecked(true)}>
+          <Button variant="accent" onClick={handleSubmit} disabled={isLoading}>
             <span>Submit</span>
           </Button>
         )}
@@ -59,6 +72,7 @@ type QuestionChoiceViewProps = {
   isChecked: boolean;
   isSelected: boolean;
   isCorrect: boolean;
+  isLoading: boolean;
   select: (letter: QuestionChoice) => void;
 };
 
@@ -69,10 +83,11 @@ function QuestionChoiceView({
   isChecked,
   isSelected,
   isCorrect,
+  isLoading,
   select,
 }: QuestionChoiceViewProps) {
   function handleSelect() {
-    if (!isChecked) select(letter);
+    if (!isChecked && !isLoading) select(letter);
   }
 
   function renderIcon() {
@@ -87,7 +102,7 @@ function QuestionChoiceView({
       onClick={handleSelect}
       className={cn(
         "flex items-center gap-2 bg-background p-2 border-2 rounded-md",
-        !isChecked && "cursor-pointer"
+        !isChecked && !isLoading && "cursor-pointer"
       )}
     >
       {renderIcon()}

@@ -1,0 +1,6 @@
+-- Create Admin
+INSERT INTO Admin 
+  (userId)
+VALUES
+  ((SELECT id FROM User WHERE email = 'linder2015@outlook.com'));
+

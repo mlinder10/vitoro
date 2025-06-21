@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useSession } from "@/contexts/session-provider";
 import { cn } from "@/lib/utils";
 import {
+  Home,
   LogOut,
   Menu,
   Notebook,
@@ -12,12 +13,23 @@ import {
   X,
 } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { ComponentType, useState } from "react";
 import AccountIcon from "./account-icon";
+import { useRouter } from "next/navigation";
+import { logout } from "@/lib/auth";
 
 export default function SideNav() {
   const [isOpen, setIsOpen] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const session = useSession();
+  const router = useRouter();
+
+  async function handleLogout() {
+    await logout();
+    setIsLoading(true);
+    router.replace("/login");
+    setIsLoading(false);
+  }
 
   return (
     <nav
@@ -37,32 +49,44 @@ export default function SideNav() {
             {isOpen ? <X /> : <Menu />}
           </Button>
         </div>
-        {isOpen && (
-          <ul>
-            <ListLink href="/practice">
-              <Notebook size={16} />
-              <span>Practice</span>
-            </ListLink>
-            {session.isAdmin && (
-              <ListLink href="/admin">
-                <ShieldUserIcon size={16} />
-                <span>Admin</span>
-              </ListLink>
-            )}
-            <ListLink href="/account">
-              <AccountIcon className="-ml-2" />
-              <span>Account</span>
-            </ListLink>
-          </ul>
-        )}
+        <ul>
+          <ListLink href="/" icon={Home} label="Home" isOpen={isOpen} />
+          <ListLink
+            href="/practice"
+            icon={Notebook}
+            label="Practice"
+            isOpen={isOpen}
+          />
+          {session.isAdmin && (
+            <ListLink
+              href="/admin"
+              icon={ShieldUserIcon}
+              label="Admin"
+              isOpen={isOpen}
+            />
+          )}
+          <ListLink
+            href="/account"
+            icon={AccountIcon}
+            size={24}
+            label="Account"
+            isOpen={isOpen}
+          />
+        </ul>
       </div>
       {isOpen && (
         <div className="flex flex-col gap-2">
-          <Button variant="outline">
-            <Settings />
-            <span>Settings</span>
+          <Button variant="outline" asChild>
+            <Link href="/settings">
+              <Settings />
+              <span>Settings</span>
+            </Link>
           </Button>
-          <Button variant="accent-tertiary">
+          <Button
+            variant="accent-tertiary"
+            onClick={handleLogout}
+            disabled={isLoading}
+          >
             <LogOut />
             <span>Logout</span>
           </Button>
@@ -74,20 +98,28 @@ export default function SideNav() {
 
 type ListLinkProps = {
   href: string;
-  children: React.ReactNode;
+  icon: ComponentType<{ size?: number; className?: string }>;
+  size?: number;
+  label: string;
+  isOpen: boolean;
 };
 
-function ListLink({ href, children }: ListLinkProps) {
+function ListLink({
+  href,
+  icon: Icon,
+  size = 16,
+  label,
+  isOpen,
+}: ListLinkProps) {
   return (
     <li>
-      <Button asChild variant="ghost">
-        <Link
-          href={href}
-          className="flex justify-start items-center gap-2 w-full text-muted-foreground text-sm"
-        >
-          {children}
-        </Link>
-      </Button>
+      <Link
+        href={href}
+        className="flex justify-start items-center gap-2 hover:bg-secondary focus:bg-secondary px-2 py-2 rounded-md w-full text-muted-foreground text-sm"
+      >
+        <Icon size={size} />
+        {isOpen && <span>{label}</span>}
+      </Link>
     </li>
   );
 }

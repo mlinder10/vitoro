@@ -59,6 +59,7 @@ export default function useInfiniteScroll<T>(
 
   useEffect(() => {
     fetchFreshData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);
 
   return { data, isLoading, containerRef };
