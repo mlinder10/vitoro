@@ -1,4 +1,4 @@
-GET https://main.d3g589sz66f9ek.amplifyapp.com/api/env-test?key=DATABASE_AUTH_TOKEN
+GET https://main.d3g589sz66f9ek.amplifyapp.com
 
 ###
 POST https://main.d3g589sz66f9ek.amplifyapp.com/login
