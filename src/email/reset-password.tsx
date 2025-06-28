@@ -21,7 +21,7 @@ export default function ResetPasswordCodeEmail({
   return (
     <Html>
       <Head />
-      <Preview>Your Vitado password reset code</Preview>
+      <Preview>Your Vitoro password reset code</Preview>
       <Body
         style={{
           backgroundColor: "#f9fafb",
@@ -48,7 +48,7 @@ export default function ResetPasswordCodeEmail({
             Reset Your Password
           </Heading>
           <Text style={{ fontSize: "16px", lineHeight: "1.6" }}>
-            Use the code below to reset your Vitado password. It will expire in
+            Use the code below to reset your Vitoro password. It will expire in
             10 minutes.
           </Text>
 
@@ -68,7 +68,7 @@ export default function ResetPasswordCodeEmail({
           </div>
 
           <Text style={{ fontSize: "14px", lineHeight: "1.6" }}>
-            Enter this code on the Vitado website to continue resetting your
+            Enter this code on the Vitoro website to continue resetting your
             password.
           </Text>
 
@@ -90,11 +90,11 @@ export async function sendResetPasswordEmail(email: string, code: string) {
   const resend = new Resend(process.env.RESEND_API_KEY);
   try {
     await resend.emails.send({
-      from: process.env.VITADO_EMAIL!,
+      from: process.env.VITORO_EMAIL!,
       to: email,
-      subject: "Your Vitado Password Reset Code",
+      subject: "Your Vitoro Password Reset Code",
       react: <ResetPasswordCodeEmail code={code} />,
-      text: `Your Vitado password reset code is: ${code}`,
+      text: `Your Vitoro password reset code is: ${code}`,
     });
   } catch {
     return { error: "Failed to send reset code email" };

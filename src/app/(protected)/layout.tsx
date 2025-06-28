@@ -16,9 +16,7 @@ export default async function ProtectedLayout({
     <SessionProvider session={session}>
       <div className="flex h-full overflow-hidden">
         <SideNav />
-        <main className="flex-4 bg-secondary h-full overflow-y-auto">
-          {children}
-        </main>
+        <main className="flex-4 bg-secondary h-full">{children}</main>
       </div>
     </SessionProvider>
   );

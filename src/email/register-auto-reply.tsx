@@ -18,7 +18,7 @@ export default async function RegisterAutoReply() {
   return (
     <Html>
       <Head />
-      <Preview>Welcome to Vitado — your new favorite study space</Preview>
+      <Preview>Welcome to Vitoro — your new favorite study space</Preview>
       <Body
         style={{
           backgroundColor: "#f9fafb",
@@ -42,10 +42,10 @@ export default async function RegisterAutoReply() {
               marginBottom: "12px",
             }}
           >
-            Welcome to Vitado 👋
+            Welcome to Vitoro 👋
           </Heading>
           <Text style={{ fontSize: "16px", lineHeight: "1.6" }}>
-            We&apos;re so excited you&apos;ve joined us! Vitado is your
+            We&apos;re so excited you&apos;ve joined us! Vitoro is your
             intelligent study space.
           </Text>
           <Text style={{ fontSize: "16px", lineHeight: "1.6" }}>
@@ -72,7 +72,7 @@ export default async function RegisterAutoReply() {
 
           <Hr />
           <Text style={{ fontSize: "12px", color: "#888" }}>
-            If you didn’t sign up for Vitado, you can ignore this message or
+            If you didn’t sign up for Vitoro, you can ignore this message or
             contact us at
             <Link href="mailto:teamvitado@gmail.com">
               {"teamvitado@gmail.com"}
@@ -89,11 +89,11 @@ export async function sendRegisterEmail(email: string) {
   const resend = new Resend(process.env.RESEND_API_KEY);
   try {
     await resend.emails.send({
-      from: process.env.VITADO_EMAIL!,
+      from: process.env.VITORO_EMAIL!,
       to: email,
-      subject: "Welcome to Vitado — Let’s study ✍️",
+      subject: "Welcome to Vitoro — Let’s study ✍️",
       react: <RegisterAutoReply />,
-      text: "Welcome to Vitado — Let’s study ✍️",
+      text: "Welcome to Vitoro — Let’s study ✍️",
     });
   } catch {
     return { error: "Failed to send email" };

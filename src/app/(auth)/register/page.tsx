@@ -25,7 +25,7 @@ export default function RegisterPage() {
           <h1 className="font-bold text-4xl">Register</h1>
           <div className="top-[110%] absolute bg-gradient-to-r from-custom-accent w-full h-[2px] to-custom-accent-secondary" />
         </div>
-        <p className="text-muted-foreground">Welcome to Vitado!</p>
+        <p className="text-muted-foreground">Welcome to Vitoro!</p>
         <div className="space-y-2 w-full">
           <Label htmlFor="email">Email</Label>
           <Input

@@ -5,7 +5,7 @@ export default function AdminHeader() {
     <header className="flex items-center bg-secondary px-6 border-b-2 h-header">
       <nav className="flex justify-between w-full">
         <Link href="/admin">
-          <h1 className="font-bold text-xl">Vitado - Admin</h1>
+          <h1 className="font-bold text-xl">Vitoro - Admin</h1>
         </Link>
         <ul className="flex gap-4">
           <li>

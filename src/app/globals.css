@@ -29,13 +29,20 @@
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
 
+  /* Custom Colors */
   --color-custom-accent: var(--custom-accent);
   --color-custom-accent-dark: var(--custom-accent-dark);
+  --color-custom-accent-light: var(--custom-accent-light);
+
   --color-custom-accent-secondary: var(--custom-accent-secondary);
   --color-custom-accent-secondary-dark: var(--custom-accent-secondary-dark);
+  --color-custom-accent-secondary-light: var(--custom-accent-secondary-light);
+
   --color-custom-accent-tertiary: var(--custom-accent-tertiary);
   --color-custom-accent-tertiary-dark: var(--custom-accent-tertiary-dark);
+  --color-custom-accent-tertiary-light: var(--custom-accent-tertiary-light);
 
+  /* Animations and Sizes */
   --animate-float: float 1s ease-in-out infinite;
   --animate-jump: jump 1s ease-in-out infinite;
   --height-header: 6em;
@@ -140,12 +147,15 @@
 :root {
   --custom-accent: #0062ff;
   --custom-accent-dark: rgb(32, 104, 220);
+  --custom-accent-light: #0062ff66;
 
   --custom-accent-secondary: #0fd5d8;
   --custom-accent-secondary-dark: #0dbabd;
+  --custom-accent-secondary-light: #0fd5d866;
 
-  --custom-accent-tertiary: #ef6018fa;
-  --custom-accent-tertiary-dark: #cf5111fa;
+  --custom-accent-tertiary: #ef6018;
+  --custom-accent-tertiary-dark: #cf5111;
+  --custom-accent-tertiary-light: #ef601866;
 }
 
 button {

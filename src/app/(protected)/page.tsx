@@ -21,7 +21,7 @@ import { ComponentType } from "react";
 export default function HomePage() {
   return (
     <div className="pt-24 h-full">
-      <p className="ml-8 font-bold text-4xl">Welcome to Vitado!</p>
+      <p className="ml-8 font-bold text-4xl">Welcome to Vitoro!</p>
       <section className="py-8">
         <p className="ml-12 font-semibold">Study Materials</p>
         <div className="flex gap-4 py-4 pl-8 w-full overflow-x-auto snap-x">

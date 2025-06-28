@@ -34,7 +34,7 @@ export default function SideNav() {
   return (
     <nav
       className={cn(
-        "flex flex-col justify-between p-4 border-r-2 h-full max-w-[320px]",
+        "flex flex-col justify-between p-4 border-r-2 h-full max-w-[320px] transition-all",
         isOpen && "flex-1"
       )}
     >
@@ -42,7 +42,7 @@ export default function SideNav() {
         <div className="flex justify-between items-center">
           {isOpen && (
             <Link href="/">
-              <h1 className="font-bold text-lg">Vitado</h1>
+              <h1 className="font-bold text-lg">Vitoro</h1>
             </Link>
           )}
           <Button variant="ghost" onClick={() => setIsOpen((prev) => !prev)}>

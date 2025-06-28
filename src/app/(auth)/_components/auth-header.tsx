@@ -6,7 +6,7 @@ export default function AuthHeader() {
     <header className="flex items-center w-full h-header">
       <nav className="flex justify-between px-8 w-full">
         <Link href="/">
-          <h1 className="font-bold text-2xl">Vitado</h1>
+          <h1 className="font-bold text-2xl">Vitoro</h1>
         </Link>
         <ul>
           <li>
