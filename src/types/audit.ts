@@ -33,11 +33,16 @@ export function encodeAudit(audit: ParsedAudit): Audit {
   };
 }
 
-export function parseAudit(encoded: Audit): ParsedAudit {
-  return {
-    ...encoded,
-    checklist: JSON.parse(encoded.checklist),
-    suggestions: JSON.parse(encoded.suggestions),
-    rating: encoded.rating as AuditStatus,
-  };
+export function parseAudit(encoded: Audit): ParsedAudit | null {
+  try {
+    return {
+      ...encoded,
+      checklist: JSON.parse(encoded.checklist),
+      suggestions: JSON.parse(encoded.suggestions),
+      rating: encoded.rating as AuditStatus,
+    };
+  } catch (e) {
+    console.error(e);
+    return null;
+  }
 }

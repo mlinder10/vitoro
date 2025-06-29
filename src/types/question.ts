@@ -71,21 +71,26 @@ export function encodeQuestion(question: ParsedQuestion): Question {
   };
 }
 
-export function parseQuestion(encoded: Question): ParsedQuestion {
-  return {
-    id: encoded.id,
-    system: encoded.system as System,
-    category: encoded.category as AnyCategory,
-    subcategory: encoded.subcategory as AnySubcategory,
-    type: encoded.type as QuestionType,
-    createdAt: encoded.createdAt,
-    creatorId: encoded.creatorId,
-    question: encoded.question,
-    sources: JSON.parse(encoded.sources),
-    choices: JSON.parse(encoded.choices),
-    answer: encoded.answer as QuestionChoice,
-    explanations: JSON.parse(encoded.explanations),
-    difficulty: encoded.difficulty as QuestionDifficulty,
-    nbmeStyleNotes: JSON.parse(encoded.nbmeStyleNotes),
-  };
+export function parseQuestion(encoded: Question): ParsedQuestion | null {
+  try {
+    return {
+      id: encoded.id,
+      system: encoded.system as System,
+      category: encoded.category as AnyCategory,
+      subcategory: encoded.subcategory as AnySubcategory,
+      type: encoded.type as QuestionType,
+      createdAt: encoded.createdAt,
+      creatorId: encoded.creatorId,
+      question: encoded.question,
+      sources: JSON.parse(encoded.sources),
+      choices: JSON.parse(encoded.choices),
+      answer: encoded.answer as QuestionChoice,
+      explanations: JSON.parse(encoded.explanations),
+      difficulty: encoded.difficulty as QuestionDifficulty,
+      nbmeStyleNotes: JSON.parse(encoded.nbmeStyleNotes),
+    };
+  } catch (e) {
+    console.error(e);
+    return null;
+  }
 }

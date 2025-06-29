@@ -50,6 +50,8 @@ export async function handleGenerateQuestion(
       userId
     );
 
+    if (!saved) return { success: false, error: "Failed to save question" };
+
     return { success: true, redirectTo: `/admin/review/${saved.id}` };
   } catch (error) {
     console.error(error);

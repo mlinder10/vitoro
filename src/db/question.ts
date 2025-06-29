@@ -59,7 +59,10 @@ export async function fetchQuestions(
       take: limit,
     }),
   ]);
-  return { count, questions: questions.map(parseQuestionAudit) };
+  return {
+    count,
+    questions: questions.map(parseQuestionAudit).filter((q) => q !== null),
+  };
 }
 
 type WhereClause = {

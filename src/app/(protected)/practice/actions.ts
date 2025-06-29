@@ -11,6 +11,9 @@ export async function fetchUnansweredQuestion(userId: string) {
           userId,
         },
       },
+      audit: {
+        rating: "Pass",
+      },
     },
     orderBy: {
       createdAt: "asc",
