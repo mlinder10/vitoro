@@ -9,3 +9,8 @@ INSERT INTO Admin
 VALUES
   ((SELECT id FROM User WHERE email = 'keaton.vitado@gmail.com'));
 
+INSERT INTO Admin 
+  (userId)
+VALUES
+  ((SELECT id FROM User WHERE email = 'adam.plotkin49@gmail.com'));
+
