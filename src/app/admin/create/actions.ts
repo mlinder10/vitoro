@@ -39,7 +39,12 @@ export async function handleGenerateQuestion(
       subcategory,
       type
     );
+    if (!question)
+      return { success: false, error: "Failed to generate question" };
+
     const audit = await generateAudit(question);
+    if (!audit) return { success: false, error: "Failed to generate audit" };
+
     const saved = await saveQuestion(
       system,
       category,

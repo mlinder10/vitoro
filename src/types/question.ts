@@ -52,6 +52,29 @@ export type ParsedQuestion = GeneratedQuestion & {
   type: QuestionType;
 };
 
+export function isValidGeneratedQuestion(question: GeneratedQuestion) {
+  return (
+    typeof question === "object" &&
+    typeof question.question === "string" &&
+    ["a", "b", "c", "d", "e"].includes(question.answer) &&
+    typeof question.choices === "object" &&
+    typeof question.choices.a === "string" &&
+    typeof question.choices.b === "string" &&
+    typeof question.choices.c === "string" &&
+    typeof question.choices.d === "string" &&
+    typeof question.choices.e === "string" &&
+    typeof question.explanations === "object" &&
+    typeof question.explanations.a === "string" &&
+    typeof question.explanations.b === "string" &&
+    typeof question.explanations.c === "string" &&
+    typeof question.explanations.d === "string" &&
+    typeof question.explanations.e === "string" &&
+    Array.isArray(question.sources) &&
+    ["easy", "moderate", "hard"].includes(question.difficulty) &&
+    Array.isArray(question.nbmeStyleNotes)
+  );
+}
+
 export function encodeQuestion(question: ParsedQuestion): Question {
   return {
     id: question.id,
@@ -71,7 +94,7 @@ export function encodeQuestion(question: ParsedQuestion): Question {
   };
 }
 
-export function parseQuestion(encoded: Question): ParsedQuestion | null {
+export function parseQuestion(encoded: Question): ParsedQuestion {
   try {
     return {
       id: encoded.id,
@@ -89,8 +112,8 @@ export function parseQuestion(encoded: Question): ParsedQuestion | null {
       difficulty: encoded.difficulty as QuestionDifficulty,
       nbmeStyleNotes: JSON.parse(encoded.nbmeStyleNotes),
     };
-  } catch (e) {
-    console.error(e);
-    return null;
+  } catch {
+    console.log(encoded.id);
+    return {} as ParsedQuestion;
   }
 }

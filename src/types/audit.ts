@@ -25,6 +25,32 @@ export type ParsedAudit = GeneratedAudit & {
   questionId: string;
 };
 
+export function isValidGeneratedAudit(audit: GeneratedAudit) {
+  return (
+    typeof audit === "object" &&
+    typeof audit.checklist === "object" &&
+    isValidChecklistItem(audit.checklist["1"]) &&
+    isValidChecklistItem(audit.checklist["2"]) &&
+    isValidChecklistItem(audit.checklist["3"]) &&
+    isValidChecklistItem(audit.checklist["4"]) &&
+    isValidChecklistItem(audit.checklist["5"]) &&
+    isValidChecklistItem(audit.checklist["6"]) &&
+    isValidChecklistItem(audit.checklist["7"]) &&
+    isValidChecklistItem(audit.checklist["8"]) &&
+    isValidChecklistItem(audit.checklist["9"]) &&
+    Array.isArray(audit.suggestions) &&
+    ["Pass", "Flag for Human Review", "Reject"].includes(audit.rating)
+  );
+}
+
+function isValidChecklistItem(checklistItem: ChecklistItem) {
+  return (
+    typeof checklistItem === "object" &&
+    typeof checklistItem.pass === "boolean" &&
+    typeof checklistItem.notes === "string"
+  );
+}
+
 export function encodeAudit(audit: ParsedAudit): Audit {
   return {
     ...audit,
@@ -33,16 +59,11 @@ export function encodeAudit(audit: ParsedAudit): Audit {
   };
 }
 
-export function parseAudit(encoded: Audit): ParsedAudit | null {
-  try {
-    return {
-      ...encoded,
-      checklist: JSON.parse(encoded.checklist),
-      suggestions: JSON.parse(encoded.suggestions),
-      rating: encoded.rating as AuditStatus,
-    };
-  } catch (e) {
-    console.error(e);
-    return null;
-  }
+export function parseAudit(encoded: Audit): ParsedAudit {
+  return {
+    ...encoded,
+    checklist: JSON.parse(encoded.checklist),
+    suggestions: JSON.parse(encoded.suggestions),
+    rating: encoded.rating as AuditStatus,
+  };
 }

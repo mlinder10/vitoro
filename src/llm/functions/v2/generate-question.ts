@@ -1,4 +1,11 @@
-import { AnyCategory, AnySubcategory, QuestionType, System } from "@/types";
+import {
+  AnyCategory,
+  AnySubcategory,
+  isValidGeneratedAudit,
+  isValidGeneratedQuestion,
+  QuestionType,
+  System,
+} from "@/types";
 import { GeneratedAudit, GeneratedQuestion } from "@/types";
 import { stripAndParse } from "../../helpers";
 import { promptGemini } from "@/llm/gemini";
@@ -55,14 +62,16 @@ export async function generateQuestion(
       "d": <explanation D> (string),
       "e": <explanation E> (string)
     },
-    "sources": ["e.g., StatPearls - BPH 2024, or UTD file snippet ID"],
+    "sources": ["<source 1>", "<source 2>", etc.],
     "difficulty": "easy" | "moderate" | "hard",
-    "nbmeStyleNotes": ["e.g., uses vague symptoms; distractors anchored to benign findings"]
+    "nbmeStyleNotes": ["<note 1>", "<note 2>", etc.]
   }
   `;
 
   const result = await promptGemini(prompt);
-  return stripAndParse<GeneratedQuestion>(result);
+  const question = stripAndParse<GeneratedQuestion>(result);
+  if (!isValidGeneratedQuestion(question)) return null;
+  return question;
 }
 
 export async function generateAudit(question: GeneratedQuestion) {
@@ -105,5 +114,7 @@ export async function generateAudit(question: GeneratedQuestion) {
   }
   `;
   const result = await promptGemini(prompt);
-  return stripAndParse<GeneratedAudit>(result);
+  const audit = stripAndParse<GeneratedAudit>(result);
+  if (!isValidGeneratedAudit(audit)) return null;
+  return audit;
 }

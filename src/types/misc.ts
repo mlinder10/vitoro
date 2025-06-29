@@ -9,11 +9,9 @@ export type QuestionAudit = {
 
 export function parseQuestionAudit(
   encoded: Question & { audit: Audit | null }
-): QuestionAudit | null {
-  const question = parseQuestion(encoded);
-  if (!question) return null;
+): QuestionAudit {
   return {
-    question,
+    question: parseQuestion(encoded),
     audit: encoded.audit ? parseAudit(encoded.audit) : null,
   };
 }

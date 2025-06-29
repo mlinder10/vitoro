@@ -16,7 +16,6 @@ export default async function PracticeQuestionPageProps({
   const question = await db.question.findUnique({ where: { id } });
   if (!question) return notFound();
   const parsed = parseQuestion(question);
-  if (!parsed) return notFound();
 
   return <QuestionView question={parsed} />;
 }

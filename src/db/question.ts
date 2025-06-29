@@ -61,7 +61,7 @@ export async function fetchQuestions(
   ]);
   return {
     count,
-    questions: questions.map(parseQuestionAudit).filter((q) => q !== null),
+    questions: questions.map(parseQuestionAudit),
   };
 }
 
