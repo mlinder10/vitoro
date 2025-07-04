@@ -1,7 +1,7 @@
 "use client";
 
 import { handleSaveQuestionChanges } from "@/app/admin/review/[id]/actions";
-import { ParsedAudit, ParsedQuestion } from "@/types";
+import { Audit, Question } from "@/types";
 import { useRouter } from "next/navigation";
 import {
   createContext,
@@ -13,13 +13,13 @@ import {
 } from "react";
 
 type AdminReviewContextType = {
-  question: ParsedQuestion;
-  audit: ParsedAudit | null;
-  editQuestion: ParsedQuestion;
+  question: Question;
+  audit: Audit | null;
+  editQuestion: Question;
   hasChanges: boolean;
-  updateQuestion: <T extends keyof ParsedQuestion>(
+  updateQuestion: <T extends keyof Question>(
     key: T,
-    value: ((prev: ParsedQuestion[T]) => ParsedQuestion[T]) | ParsedQuestion[T]
+    value: ((prev: Question[T]) => Question[T]) | Question[T]
   ) => void;
   pageType: ReviewPageType;
   setPageType: Dispatch<SetStateAction<ReviewPageType>>;
@@ -29,9 +29,9 @@ type AdminReviewContextType = {
 };
 
 const AdminReviewContext = createContext<AdminReviewContextType>({
-  question: {} as ParsedQuestion,
+  question: {} as Question,
   audit: null,
-  editQuestion: {} as ParsedQuestion,
+  editQuestion: {} as Question,
   hasChanges: false,
   updateQuestion: () => {},
   pageType: "review",
@@ -43,8 +43,8 @@ const AdminReviewContext = createContext<AdminReviewContextType>({
 
 type AdminReviewProviderProps = {
   children: ReactNode;
-  question: ParsedQuestion;
-  audit: ParsedAudit | null;
+  question: Question;
+  audit: Audit | null;
 };
 
 export type ReviewPageType = "review" | "edit";
@@ -60,9 +60,9 @@ export default function AdminReviewProvider({
   const hasChanges = JSON.stringify(question) !== JSON.stringify(editQuestion);
   const router = useRouter();
 
-  function updateQuestion<T extends keyof ParsedQuestion>(
+  function updateQuestion<T extends keyof Question>(
     key: T,
-    value: ((prev: ParsedQuestion[T]) => ParsedQuestion[T]) | ParsedQuestion[T]
+    value: ((prev: Question[T]) => Question[T]) | Question[T]
   ) {
     if (typeof value === "function") value = value(editQuestion[key]);
     setEditQuestion((prev) => ({ ...prev, [key]: value }));

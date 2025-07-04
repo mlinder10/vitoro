@@ -1,5 +1,4 @@
 import { fetchUnansweredQuestion } from "@/app/(protected)/practice/actions";
-import { parseQuestion } from "@/types";
 
 export async function POST(request: Request) {
   const { userId } = await request.json();
@@ -9,7 +8,5 @@ export async function POST(request: Request) {
   const question = await fetchUnansweredQuestion(userId);
   if (!question) return new Response("No question found", { status: 404 });
 
-  const parsed = parseQuestion(question);
-
-  return new Response(JSON.stringify(parsed));
+  return new Response(JSON.stringify(question));
 }

@@ -6,17 +6,9 @@ import { Label } from "@/components/ui/label";
 import { Loader, LogIn } from "lucide-react";
 import { useActionState } from "react";
 import { handleEmailSending } from "../actions";
-import { useRouter } from "next/navigation";
 
 export default function ForgotPasswordPage() {
-  const [error, action, isPending] = useActionState(onSubmit, {});
-  const router = useRouter();
-
-  async function onSubmit(_: unknown, data: FormData) {
-    const res = await handleEmailSending(data);
-    if (res.success) router.push(res.redirectTo);
-    else if (res.success === false) return res;
-  }
+  const [error, action, isPending] = useActionState(handleEmailSending, {});
 
   return (
     <main className="place-items-center grid h-page">

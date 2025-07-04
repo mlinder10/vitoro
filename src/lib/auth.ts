@@ -1,6 +1,5 @@
 "use server";
 
-import db from "@/db/db";
 import { jwtVerify, SignJWT } from "jose";
 import { cookies, headers } from "next/headers";
 
@@ -15,14 +14,14 @@ export type Session = {
   isAdmin?: boolean;
 };
 
-export async function signToken(payload: Session) {
+async function signToken(payload: Session) {
   return await new SignJWT(payload)
     .setProtectedHeader({ alg: "HS256" })
     .setExpirationTime(process.env.NODE_ENV === "development" ? "1y" : "1d")
     .sign(SECRET_KEY);
 }
 
-export async function verifyToken(token: string) {
+async function verifyToken(token: string) {
   try {
     const { payload } = await jwtVerify(token, SECRET_KEY, {
       algorithms: ["HS256"],
@@ -33,13 +32,21 @@ export async function verifyToken(token: string) {
   }
 }
 
-export async function logout() {
-  (await cookies()).set(process.env.JWT_KEY!, "", {
-    path: "/",
-    expires: new Date(0),
+export async function authenticate(session: Session) {
+  const token = await signToken(session);
+  (await cookies()).set({
+    name: process.env.JWT_KEY!,
+    value: token,
     httpOnly: true,
     secure: true,
+    sameSite: "lax",
+    path: "/",
   });
+  return token;
+}
+
+export async function unauthenticate() {
+  (await cookies()).delete(process.env.JWT_KEY!);
 }
 
 export async function hashPassword(password: string) {
@@ -68,24 +75,5 @@ export async function getSession(): Promise<Session | null> {
   if (!token) return null;
   const decoded = await verifyToken(token);
   if (!decoded) return null;
-  const user = await db.user.findUnique({
-    where: { id: decoded.id },
-    select: {
-      id: true,
-      email: true,
-      firstName: true,
-      lastName: true,
-      color: true,
-      admin: { select: { userId: true } },
-    },
-  });
-  if (!user) return null;
-  return {
-    id: user.id,
-    email: user.email,
-    firstName: user.firstName,
-    lastName: user.lastName,
-    color: user.color,
-    isAdmin: user.admin?.userId ? true : false,
-  };
+  return decoded;
 }

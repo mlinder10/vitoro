@@ -1,7 +1,7 @@
 "use client";
 
 import { CHECKLIST } from "@/lib/constants";
-import { AuditStatus, ParsedAudit, QuestionDifficulty } from "@/types";
+import { AuditRating, ParsedAudit, QuestionDifficulty } from "@/types";
 import { Check, Pencil, Save, Undo, X, Clipboard, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -52,7 +52,7 @@ export default function AuditSection() {
   );
 }
 
-function AuditStatusView({ status }: { status: AuditStatus }) {
+function AuditStatusView({ status }: { status: AuditRating }) {
   switch (status) {
     case "Pass":
       return (
@@ -168,7 +168,7 @@ function AuditButtons() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
-  async function updateAuditStatus(rating: AuditStatus) {
+  async function updateAuditStatus(rating: AuditRating) {
     setIsLoading(true);
     await handleUpdateAuditStatus(question.id, rating);
     setIsLoading(false);

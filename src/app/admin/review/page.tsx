@@ -1,13 +1,12 @@
 "use client";
 
-import { fetchQuestions } from "@/db/question";
 import useInfiniteScroll, { LoadingFooter } from "@/hooks/useInfiniteScroll";
 import {
   AnyCategory,
   AnySubcategory,
-  AuditStatus,
-  ParsedAudit,
-  ParsedQuestion,
+  Audit,
+  AuditRating,
+  Question,
   QUESTION_TYPES,
   QuestionDifficulty,
   QuestionType,
@@ -25,12 +24,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { CircleHelp } from "lucide-react";
+import { fetchQuestionsWithAudits } from "./actions";
 
 const MAX_ITEMS_PER_PAGE = 30;
 
 export default function QuestionReviewListPage() {
   const [count, setCount] = useState(0);
-  const [status, setStatus] = useState<AuditStatus | undefined>();
+  const [status, setStatus] = useState<AuditRating | undefined>();
   const [difficulty, setDifficulty] = useState<
     QuestionDifficulty | undefined
   >();
@@ -52,7 +52,7 @@ export default function QuestionReviewListPage() {
   ]);
 
   async function handleFetchQuestions(offset: number) {
-    const { count, questions } = await fetchQuestions(
+    const { count, questions } = await fetchQuestionsWithAudits(
       offset,
       MAX_ITEMS_PER_PAGE,
       status,
@@ -116,8 +116,8 @@ export default function QuestionReviewListPage() {
 
 type QuestionItemProps = {
   qa: {
-    question: ParsedQuestion;
-    audit: ParsedAudit | null;
+    question: Question;
+    audit: Audit | null;
   };
   isLast?: boolean;
 };
@@ -176,8 +176,8 @@ function QuestionItem({ qa, isLast = false }: QuestionItemProps) {
 // Inputs ---------------------------------------------------------------------
 
 type SelectInputsProps = {
-  status: AuditStatus | undefined;
-  setStatus: (status: AuditStatus | undefined) => void;
+  status: AuditRating | undefined;
+  setStatus: (status: AuditRating | undefined) => void;
   difficulty: QuestionDifficulty | undefined;
   setDifficulty: (difficulty: QuestionDifficulty | undefined) => void;
   system: System | undefined;
@@ -208,7 +208,7 @@ function SelectInputs({
     <div className="flex gap-2">
       <SimpleSelect
         value={status}
-        updateValue={(value) => setStatus(value as AuditStatus)}
+        updateValue={(value) => setStatus(value as AuditRating)}
         options={[
           { value: "Pass", label: "Passed" },
           { value: "Flag for Human Review", label: "Flagged" },

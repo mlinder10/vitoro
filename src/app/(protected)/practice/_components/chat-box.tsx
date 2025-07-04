@@ -1,11 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { ParsedQuestion, QuestionChoice } from "@/types";
+import { Question, QuestionChoice } from "@/types";
 import { ArrowUp, Loader } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 type ChatboxProps = {
-  question: ParsedQuestion;
+  question: Question;
   answer: QuestionChoice | null;
 };
 

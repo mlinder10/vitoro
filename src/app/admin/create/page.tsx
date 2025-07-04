@@ -25,7 +25,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useRouter } from "next/navigation";
 
 export default function CreateQuestionPage() {
   const { id } = useSession();
@@ -43,7 +42,6 @@ export default function CreateQuestionPage() {
     SYSTEMS.find((s) => s.name === system)?.categories.find(
       (c) => c.name === category
     )?.subcategories ?? [];
-  const router = useRouter();
 
   async function onGenerateClick() {
     if (!system || !category || !subcategory || !type) return;
@@ -56,9 +54,8 @@ export default function CreateQuestionPage() {
       subcategory,
       type
     );
-    if (res.success) router.push(res.redirectTo);
-    else if (res.success === false) setError(res);
     setIsGenerating(false);
+    setError(res);
   }
 
   async function onCreateClick() {
@@ -72,9 +69,8 @@ export default function CreateQuestionPage() {
       subcategory,
       type
     );
-    if (res.success) router.push(res.redirectTo);
-    else if (res.success === false) setError(res);
     setIsCreating(false);
+    setError(res);
   }
 
   function handleSelectSystem(system: System) {

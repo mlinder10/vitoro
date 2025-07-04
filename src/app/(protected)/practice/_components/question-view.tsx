@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { ParsedQuestion, QuestionChoice } from "@/types";
+import { Question, QuestionChoice } from "@/types";
 import { cn } from "@/lib/utils";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
@@ -11,7 +11,7 @@ import { answerQuestion } from "../actions";
 import ChatBox from "./chat-box";
 
 type QuestionViewProps = {
-  question: ParsedQuestion;
+  question: Question;
 };
 
 export default function QuestionView({ question }: QuestionViewProps) {

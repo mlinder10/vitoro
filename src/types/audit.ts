@@ -1,8 +1,22 @@
-import { Audit } from "@prisma/client";
+import { audits } from "@/db";
+import { InferSelectModel } from "drizzle-orm";
 
+export type Audit = InferSelectModel<typeof audits>;
 export type ChecklistItem = { pass: boolean; notes: string };
 
-export type AuditStatus = "Pass" | "Flag for Human Review" | "Reject";
+export type AuditRating = "Pass" | "Flag for Human Review" | "Reject";
+
+export type Checklist = {
+  1: ChecklistItem;
+  2: ChecklistItem;
+  3: ChecklistItem;
+  4: ChecklistItem;
+  5: ChecklistItem;
+  6: ChecklistItem;
+  7: ChecklistItem;
+  8: ChecklistItem;
+  9: ChecklistItem;
+};
 
 export type GeneratedAudit = {
   checklist: {
@@ -17,7 +31,7 @@ export type GeneratedAudit = {
     9: ChecklistItem;
   };
   suggestions: string[];
-  rating: AuditStatus;
+  rating: AuditRating;
 };
 
 export type ParsedAudit = GeneratedAudit & {
@@ -49,21 +63,4 @@ function isValidChecklistItem(checklistItem: ChecklistItem) {
     typeof checklistItem.pass === "boolean" &&
     typeof checklistItem.notes === "string"
   );
-}
-
-export function encodeAudit(audit: ParsedAudit): Audit {
-  return {
-    ...audit,
-    checklist: JSON.stringify(audit.checklist),
-    suggestions: JSON.stringify(audit.suggestions),
-  };
-}
-
-export function parseAudit(encoded: Audit): ParsedAudit {
-  return {
-    ...encoded,
-    checklist: JSON.parse(encoded.checklist),
-    suggestions: JSON.parse(encoded.suggestions),
-    rating: encoded.rating as AuditStatus,
-  };
 }

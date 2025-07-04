@@ -16,7 +16,7 @@ import Link from "next/link";
 import { ComponentType, useState } from "react";
 import AccountIcon from "./account-icon";
 import { useRouter } from "next/navigation";
-import { logout } from "@/lib/auth";
+import { unauthenticate } from "@/lib/auth";
 
 export default function SideNav() {
   const [isOpen, setIsOpen] = useState(true);
@@ -25,7 +25,7 @@ export default function SideNav() {
   const router = useRouter();
 
   async function handleLogout() {
-    await logout();
+    await unauthenticate();
     setIsLoading(true);
     router.replace("/login");
     setIsLoading(false);

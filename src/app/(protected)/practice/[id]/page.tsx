@@ -1,7 +1,7 @@
-import db from "@/db/db";
+import { db, questions } from "@/db";
+import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import QuestionView from "../_components/question-view";
-import { parseQuestion } from "@/types";
 
 type PracticeQuestionPageProps = {
   params: Promise<{
@@ -13,9 +13,12 @@ export default async function PracticeQuestionPageProps({
   params,
 }: PracticeQuestionPageProps) {
   const { id } = await params;
-  const question = await db.question.findUnique({ where: { id } });
+  const [question] = await db
+    .select()
+    .from(questions)
+    .where(eq(questions.id, id))
+    .limit(1);
   if (!question) return notFound();
-  const parsed = parseQuestion(question);
 
-  return <QuestionView question={parsed} />;
+  return <QuestionView question={question} />;
 }

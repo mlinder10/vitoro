@@ -1,17 +1,16 @@
 "use server";
 
-import db from "@/db/db";
-import { saveQuestion } from "@/db/question";
+import { audits, db, questions } from "@/db";
 import { generateAudit, generateQuestion } from "@/llm";
 import {
   AnyCategory,
   AnySubcategory,
-  encodeQuestion,
   ParsedAudit,
-  ParsedQuestion,
+  Question,
   QuestionType,
   System,
 } from "@/types";
+import { redirect } from "next/navigation";
 
 export type CreateQuestionError = {
   system?: string;
@@ -21,17 +20,13 @@ export type CreateQuestionError = {
   error?: string;
 };
 
-type CreateQuestionResult =
-  | { success: true; redirectTo: string }
-  | ({ success: false } & CreateQuestionError);
-
 export async function handleGenerateQuestion(
   userId: string,
   system: System,
   category: AnyCategory,
   subcategory: AnySubcategory,
   type: QuestionType
-): Promise<CreateQuestionResult> {
+): Promise<CreateQuestionError> {
   try {
     const question = await generateQuestion(
       system as System,
@@ -39,28 +34,35 @@ export async function handleGenerateQuestion(
       subcategory,
       type
     );
-    if (!question)
-      return { success: false, error: "Failed to generate question" };
+    if (!question) return { error: "Failed to generate question" };
 
     const audit = await generateAudit(question);
-    if (!audit) return { success: false, error: "Failed to generate audit" };
+    if (!audit) return { error: "Failed to generate audit" };
 
-    const saved = await saveQuestion(
-      system,
-      category,
-      subcategory,
-      type,
-      question,
-      audit,
-      userId
-    );
+    const [savedQuestion] = await db
+      .insert(questions)
+      .values({
+        ...question,
+        topic: "",
+        concept: "",
+        system,
+        category,
+        subcategory,
+        type,
+        creatorId: userId,
+      })
+      .returning({ id: questions.id });
+    if (!savedQuestion) return { error: "Failed to save question" };
 
-    if (!saved) return { success: false, error: "Failed to save question" };
+    await db.insert(audits).values({
+      ...audit,
+      questionId: savedQuestion.id,
+    });
 
-    return { success: true, redirectTo: `/admin/review/${saved.id}` };
+    redirect(`/admin/review/${savedQuestion.id}`);
   } catch (error) {
     console.error(error);
-    return { success: false, error: "Failed to generate question" };
+    return { error: "Failed to generate question" };
   }
 }
 
@@ -78,15 +80,23 @@ const DEFAULT_CHECKLIST: ParsedAudit["checklist"] = {
   "9": { pass: true, notes: "" },
 };
 
+const CHOICES = ["a", "b", "c", "d", "e"] as const;
+
+function getRandomChoice() {
+  return CHOICES[Math.floor(Math.random() * CHOICES.length)];
+}
+
 export async function handleCreateBlankQuestion(
   userId: string,
   system: System,
   category: AnyCategory,
   subcategory: AnySubcategory,
   type: QuestionType
-): Promise<CreateQuestionResult> {
+): Promise<CreateQuestionError> {
   try {
-    const question: ParsedQuestion = {
+    const question: Question = {
+      topic: "",
+      concept: "",
       system,
       category,
       subcategory,
@@ -112,32 +122,23 @@ export async function handleCreateBlankQuestion(
         e: "",
       },
       difficulty: "easy",
-      nbmeStyleNotes: [],
     };
-    const encodedQuestion = encodeQuestion(question);
 
-    const saved = await db.question.create({
-      data: {
-        ...encodedQuestion,
-        audit: {
-          create: {
-            rating: DEFAULT_RATING,
-            suggestions: JSON.stringify(DEFAULT_SUGGESTIONS),
-            checklist: JSON.stringify(DEFAULT_CHECKLIST),
-          },
-        },
-      },
+    const [savedQuestion] = await db
+      .insert(questions)
+      .values(question)
+      .returning({ id: questions.id });
+    if (!savedQuestion) return { error: "Failed to save question" };
+    await db.insert(audits).values({
+      rating: DEFAULT_RATING,
+      suggestions: DEFAULT_SUGGESTIONS,
+      checklist: DEFAULT_CHECKLIST,
+      questionId: savedQuestion.id,
     });
 
-    return { success: true, redirectTo: `/admin/review/${saved.id}` };
+    redirect(`/admin/review/${savedQuestion.id}`);
   } catch (error) {
     console.error(error);
-    return { success: false, error: "Failed to generate question" };
+    return { error: "Failed to generate question" };
   }
-}
-
-const CHOICES = ["a", "b", "c", "d", "e"] as const;
-
-function getRandomChoice() {
-  return CHOICES[Math.floor(Math.random() * CHOICES.length)];
 }

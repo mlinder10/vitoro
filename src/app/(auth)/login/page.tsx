@@ -7,17 +7,9 @@ import { Label } from "@/components/ui/label";
 import { ArrowRight, Loader } from "lucide-react";
 import { useActionState } from "react";
 import { handleLogin } from "../actions";
-import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
-  const [error, action, isPending] = useActionState(onSubmit, {});
-  const router = useRouter();
-
-  async function onSubmit(_: unknown, data: FormData) {
-    const res = await handleLogin(data);
-    if (res.success) router.push(res.redirectTo);
-    else if (res.success === false) return res;
-  }
+  const [error, action, isPending] = useActionState(handleLogin, {});
 
   return (
     <main className="place-items-center grid h-page">

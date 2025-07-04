@@ -1,28 +1,23 @@
 "use server";
 
-import db from "@/db/db";
+import { db, questions, answeredQuestions } from "@/db";
+import { eq } from "drizzle-orm";
 import { QuestionChoice } from "@/types";
 
 export async function fetchUnansweredQuestion(userId: string) {
-  return await db.question.findFirst({
-    where: {
-      answeredQuestions: {
-        none: {
-          userId,
-        },
-      },
-      audit: {
-        rating: "Pass",
-      },
-    },
-    orderBy: {
-      createdAt: "asc",
-    },
-  });
+  const [question] = await db
+    .select({ question: questions })
+    .from(answeredQuestions)
+    .leftJoin(questions, eq(questions.id, answeredQuestions.questionId))
+    .where(eq(answeredQuestions.userId, userId))
+    .limit(1);
+  return question ? question.question : null;
 }
 
 export async function resetProgress(userId: string) {
-  await db.answeredQuestion.deleteMany({ where: { userId } });
+  await db
+    .delete(answeredQuestions)
+    .where(eq(answeredQuestions.userId, userId));
 }
 
 export async function answerQuestion(
@@ -30,11 +25,9 @@ export async function answerQuestion(
   questionId: string,
   answer: QuestionChoice
 ) {
-  await db.answeredQuestion.create({
-    data: {
-      userId,
-      questionId,
-      userAnswer: answer,
-    },
+  await db.insert(answeredQuestions).values({
+    userId,
+    questionId,
+    answer,
   });
 }
