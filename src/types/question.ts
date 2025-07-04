@@ -28,25 +28,12 @@ export type Choices = {
 
 export type GeneratedQuestion = {
   question: string;
-  choices: {
-    a: string;
-    b: string;
-    c: string;
-    d: string;
-    e: string;
-  };
+  choices: Choices;
   answer: QuestionChoice;
-  explanations: {
-    a: string;
-    b: string;
-    c: string;
-    d: string;
-    e: string;
-  };
+  explanations: Choices;
 
   sources: string[];
   difficulty: QuestionDifficulty;
-  nbmeStyleNotes: string[];
 };
 
 export function isValidGeneratedQuestion(question: GeneratedQuestion) {
@@ -67,7 +54,6 @@ export function isValidGeneratedQuestion(question: GeneratedQuestion) {
     typeof question.explanations.d === "string" &&
     typeof question.explanations.e === "string" &&
     Array.isArray(question.sources) &&
-    ["easy", "moderate", "hard"].includes(question.difficulty) &&
-    Array.isArray(question.nbmeStyleNotes)
+    ["easy", "moderate", "hard"].includes(question.difficulty)
   );
 }

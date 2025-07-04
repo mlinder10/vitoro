@@ -1,7 +1,7 @@
 "use client";
 
 import { CHECKLIST } from "@/lib/constants";
-import { AuditRating, ParsedAudit, QuestionDifficulty } from "@/types";
+import { AuditRating, Checklist, QuestionDifficulty } from "@/types";
 import { Check, Pencil, Save, Undo, X, Clipboard, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -110,11 +110,7 @@ function AuditDifficulty() {
   );
 }
 
-function AuditChecklist({
-  checklist,
-}: {
-  checklist: ParsedAudit["checklist"];
-}) {
+function AuditChecklist({ checklist }: { checklist: Checklist }) {
   return (
     <ul>
       {Object.entries(checklist || {}).map(([index, item]) => (

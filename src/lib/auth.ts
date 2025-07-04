@@ -2,6 +2,8 @@
 
 import { jwtVerify, SignJWT } from "jose";
 import { cookies, headers } from "next/headers";
+import { redirect } from "next/navigation";
+import { LOGIN_PATH } from "./constants";
 
 const SECRET_KEY = new TextEncoder().encode(process.env.JWT_SECRET!);
 
@@ -62,7 +64,7 @@ export async function verifyPassword(password: string, hash: string) {
   return passwordHash === hash;
 }
 
-export async function getSession(): Promise<Session | null> {
+export async function tryGetSession(): Promise<Session | null> {
   const head = await headers();
   const jwt = head
     .get("cookie")
@@ -76,4 +78,10 @@ export async function getSession(): Promise<Session | null> {
   const decoded = await verifyToken(token);
   if (!decoded) return null;
   return decoded;
+}
+
+export async function getSession(): Promise<Session> {
+  const session = await tryGetSession();
+  if (!session) redirect(LOGIN_PATH);
+  return session;
 }

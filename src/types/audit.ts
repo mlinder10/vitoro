@@ -19,24 +19,9 @@ export type Checklist = {
 };
 
 export type GeneratedAudit = {
-  checklist: {
-    1: ChecklistItem;
-    2: ChecklistItem;
-    3: ChecklistItem;
-    4: ChecklistItem;
-    5: ChecklistItem;
-    6: ChecklistItem;
-    7: ChecklistItem;
-    8: ChecklistItem;
-    9: ChecklistItem;
-  };
+  checklist: Checklist;
   suggestions: string[];
   rating: AuditRating;
-};
-
-export type ParsedAudit = GeneratedAudit & {
-  id: string;
-  questionId: string;
 };
 
 export function isValidGeneratedAudit(audit: GeneratedAudit) {
