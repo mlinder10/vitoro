@@ -1,11 +1,11 @@
 export type Prompt = TextPrompt | ImagePrompt;
 
-type TextPrompt = {
+export type TextPrompt = {
   type: "text";
   content: string;
 };
 
-type ImagePrompt = {
+export type ImagePrompt = {
   type: "image";
   mimeType: string;
   content: Uint8Array;

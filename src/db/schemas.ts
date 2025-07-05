@@ -146,3 +146,17 @@ export const answeredQuestions = sqliteTable("answered_questions", {
   createdAt: date("created_at").default(SQL_NOW).notNull(),
   answer: json<QuestionChoice>("answer").notNull(),
 });
+
+export const reviewQuestions = sqliteTable("review_questions", {
+  id: text("id").primaryKey().default(SQL_UUID).notNull(),
+  userId: text("user_id")
+    .references(() => users.id, { onDelete: "cascade" })
+    .notNull(),
+  questionId: text("question_id")
+    .references(() => questions.id, { onDelete: "cascade" })
+    .notNull(),
+  createdAt: date("created_at").default(SQL_NOW).notNull(),
+  question: text("question").notNull(),
+  answerCriteria: json<string[]>("answer_criteria").notNull(),
+  passed: json<boolean>("passed").default(false).notNull(),
+});

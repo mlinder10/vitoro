@@ -7,13 +7,14 @@ import {
   Home,
   LogOut,
   Menu,
-  Notebook,
+  NotebookText,
   Settings,
   ShieldUserIcon,
+  Target,
   X,
 } from "lucide-react";
 import Link from "next/link";
-import { ComponentType, useState } from "react";
+import { ComponentType, useEffect, useState } from "react";
 import AccountIcon from "./account-icon";
 import { useRouter } from "next/navigation";
 import { unauthenticate } from "@/lib/auth";
@@ -30,6 +31,17 @@ export default function SideNav() {
     router.replace("/login");
     setIsLoading(false);
   }
+
+  useEffect(() => {
+    const sidebarOpen = JSON.parse(
+      localStorage.getItem("vitoro-sidebar-open") || "true"
+    );
+    setIsOpen(sidebarOpen);
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("vitoro-sidebar-open", JSON.stringify(isOpen));
+  }, [isOpen]);
 
   return (
     <nav
@@ -53,8 +65,14 @@ export default function SideNav() {
           <ListLink href="/" icon={Home} label="Home" isOpen={isOpen} />
           <ListLink
             href="/practice"
-            icon={Notebook}
+            icon={Target}
             label="Practice"
+            isOpen={isOpen}
+          />
+          <ListLink
+            href="/review"
+            icon={NotebookText}
+            label="Review"
             isOpen={isOpen}
           />
           {session.isAdmin && (

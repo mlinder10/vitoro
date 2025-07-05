@@ -137,3 +137,16 @@ export async function wait(ms: number) {
     setTimeout(resolve, ms);
   });
 }
+
+export function trimTo(text: string, length: number) {
+  if (text.length > length) {
+    return (
+      text
+        .substring(0, length - 3)
+        .split(" ")
+        .slice(0, -1)
+        .join(" ") + "..."
+    );
+  }
+  return text;
+}

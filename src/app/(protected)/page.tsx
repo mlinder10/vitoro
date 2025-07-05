@@ -6,24 +6,17 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Home } from "lucide-react";
 import Link from "next/link";
 import { ComponentType } from "react";
-
-// const DUMMY_ITEM = {
-//   title: "Lorem ipsum",
-//   description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-//   link: "/",
-//   icon: ArrowRight,
-//   cta: "Lorem",
-// };
+import PageTitle from "./_components/page-title";
 
 export default function HomePage() {
   return (
-    <div className="pt-24 h-full">
-      <p className="ml-8 font-bold text-4xl">Welcome to Vitoro!</p>
-      <section className="py-8">
-        <p className="ml-12 font-semibold">Study Materials</p>
+    <div className="h-full">
+      <PageTitle text="Welcome to Vitoro!" icon={Home} />
+      <section>
+        <h2 className="ml-8 font-semibold">Study Materials</h2>
         <div className="flex gap-4 py-4 pl-8 w-full overflow-x-auto snap-x">
           <RowItem
             title="Question Bank"
@@ -32,16 +25,13 @@ export default function HomePage() {
             icon={ArrowRight}
             cta="Practice"
           />
-          {/* {[...Array(5)].map((_, index) => (
-            <RowItem
-              key={index}
-              title={DUMMY_ITEM.title}
-              description={DUMMY_ITEM.description}
-              link={DUMMY_ITEM.link}
-              icon={DUMMY_ITEM.icon}
-              cta={DUMMY_ITEM.cta}
-            />
-          ))} */}
+          <RowItem
+            title="Review Questions"
+            description="Target your weak areas with your custom review questions."
+            link="/review"
+            icon={ArrowRight}
+            cta="Review"
+          />
         </div>
       </section>
     </div>

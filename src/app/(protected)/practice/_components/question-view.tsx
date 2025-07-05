@@ -33,7 +33,7 @@ export default function QuestionView({ question }: QuestionViewProps) {
       <section className="flex flex-col flex-3 bg-background p-4 border-2 rounded-md overflow-y-auto">
         <p className="mb-2 font-semibold text-lg">Question</p>
         <p>{question.question}</p>
-        <div className="flex flex-col flex-1 justify-end gap-4">
+        <div className="flex flex-col flex-1 justify-end gap-4 mt-8">
           <ul className="flex flex-col gap-2">
             {Object.entries(question.choices).map(([letter]) => (
               <QuestionChoiceView
