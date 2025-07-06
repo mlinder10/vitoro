@@ -42,4 +42,6 @@ next-env.d.ts
 
 # dev
 migrations/
+migrations-prod/
 dev.db
+tmp.sql

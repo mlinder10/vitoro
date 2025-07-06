@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Question, QuestionChoice } from "@/types";
-import { ArrowLeft, ArrowUp, Loader } from "lucide-react";
+import { ArrowLeft, ArrowUp, BotIcon, Loader } from "lucide-react";
 import { RefObject, useEffect, useRef, useState } from "react";
 import { createReviewQuestion, promptChat } from "../actions";
 import ReactMarkdown from "react-markdown";
@@ -24,10 +24,11 @@ export default function ChatBox({ question, answer }: ChatboxProps) {
 
   // Prompting ----------------------------------------------------------------
 
-  async function handlePrompt() {
-    if (!inputRef.current || !answer) return;
-    const newMessages = [...messages, inputRef.current.value];
-    inputRef.current.value = "";
+  async function handlePrompt(prompt?: string) {
+    if (!prompt) prompt = inputRef.current?.value;
+    if (!prompt || !answer) return;
+    const newMessages = [...messages, prompt];
+    if (inputRef.current) inputRef.current.value = "";
     setMessages(newMessages);
     setIsLoading(true);
     const stream = await promptChat(question, answer, newMessages);
@@ -83,8 +84,13 @@ export default function ChatBox({ question, answer }: ChatboxProps) {
         isExpanded && "flex-3"
       )}
     >
-      <MessagesContainer messages={messages} endRef={endRef} />
-      <div className="mx-4 mb-4 border-2 rounded-md">
+      <MessagesContainer
+        messages={messages}
+        answer={question.answer}
+        endRef={endRef}
+        handlePrompt={handlePrompt}
+      />
+      <div className="mx-4 mb-2 border-2 rounded-md">
         <textarea
           placeholder="Ask a question..."
           disabled={isLoading}
@@ -92,22 +98,24 @@ export default function ChatBox({ question, answer }: ChatboxProps) {
           ref={inputRef}
           onKeyDown={(e) => handleInput(e)}
         />
-        <div className="flex justify-between items-center p-2">
-          <div className="flex flex-wrap gap-2">
-            <PromptTemplate
-              label="Create Review Question"
-              onClick={handleCreateReview}
-            />
-          </div>
+        <div className="flex justify-end p-2">
           <Button
             variant="accent-tertiary"
             size="icon"
             className="rounded-full"
-            onClick={handlePrompt}
+            onClick={() => handlePrompt()}
             disabled={isLoading}
           >
             {isLoading ? <Loader className="animate-spin" /> : <ArrowUp />}
           </Button>
+        </div>
+      </div>
+      <div className="mx-4 mb-4 p-2 border-2 rounded-md">
+        <div className="flex flex-wrap gap-2">
+          <ActionButton
+            label="Create Review Question"
+            onClick={handleCreateReview}
+          />
         </div>
       </div>
       <button
@@ -125,10 +133,47 @@ export default function ChatBox({ question, answer }: ChatboxProps) {
 
 type MessagesContainerProps = {
   messages: string[];
+  answer: QuestionChoice;
   endRef: RefObject<HTMLDivElement | null>;
+  handlePrompt: (prompt?: string) => void;
 };
 
-function MessagesContainer({ messages, endRef }: MessagesContainerProps) {
+function MessagesContainer({
+  messages,
+  answer,
+  endRef,
+  handlePrompt,
+}: MessagesContainerProps) {
+  if (messages.length === 0) {
+    return (
+      <div className="flex-1 place-items-center grid">
+        <div className="flex flex-col items-center gap-2 text-sm">
+          <BotIcon size={32} className="font-bold text-muted-foreground" />
+          <p className="text-muted-foreground text-lg">
+            I&apos;m here to help!
+          </p>
+          <div className="gap-2 space-y-2 mt-4 px-4">
+            <p className="text-muted-foreground">Try asking:</p>
+            <ul className="space-y-2">
+              <RecommendedPrompt
+                prompt={`Why is ${answer.toUpperCase()} the correct answer?`}
+                onClick={handlePrompt}
+              />
+              <RecommendedPrompt
+                prompt={`Can you explain the wrong answers?`}
+                onClick={handlePrompt}
+              />
+              <RecommendedPrompt
+                prompt={`How should I approach questions like this?`}
+                onClick={handlePrompt}
+              />
+            </ul>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex-1 p-4 overflow-y-auto">
       {messages.map((message, index) =>
@@ -148,16 +193,43 @@ function MessagesContainer({ messages, endRef }: MessagesContainerProps) {
   );
 }
 
-type PromptTemplateProps = {
-  label: string;
-  onClick: () => void;
+type RecommendedPromptProps = {
+  prompt: string;
+  onClick: (prompt: string) => void;
 };
 
-function PromptTemplate({ label, onClick }: PromptTemplateProps) {
+function RecommendedPrompt({ prompt, onClick }: RecommendedPromptProps) {
+  return (
+    <li
+      className="bg-muted hover:bg-muted/50 px-3 py-2 rounded transition cursor-pointer"
+      onClick={() => onClick(prompt)}
+    >
+      👉 “{prompt}”
+    </li>
+  );
+}
+
+type ActionButtonProps = {
+  label: string;
+  onClick: () => Promise<void>;
+};
+
+function ActionButton({ label, onClick }: ActionButtonProps) {
+  const [isLoading, setIsLoading] = useState(false);
+
+  async function handleClick() {
+    setIsLoading(true);
+    await onClick();
+    setIsLoading(false);
+  }
+
   return (
     <span
-      onClick={onClick}
-      className="px-2 py-1 bg-border rounded-md text-sm cursor-pointer"
+      onClick={handleClick}
+      className={cn(
+        "px-2 py-1 bg-border rounded-md text-sm",
+        isLoading ? "text-muted-foreground" : "cursor-pointer"
+      )}
     >
       {label}
     </span>
