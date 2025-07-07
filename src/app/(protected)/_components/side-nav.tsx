@@ -15,7 +15,7 @@ import {
 import Link from "next/link";
 import { ComponentType, useEffect, useState } from "react";
 import AccountIcon from "./account-icon";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { unauthenticate } from "@/lib/auth";
 import ThemeToggleSwitch from "@/components/theme-toggle-switch";
 import { useTheme } from "@/contexts/theme-provider";
@@ -135,11 +135,17 @@ function ListLink({
   label,
   isOpen,
 }: ListLinkProps) {
+  const path = usePathname();
+
   return (
     <li>
       <Link
         href={href}
-        className="flex justify-start items-center gap-2 hover:bg-secondary focus:bg-secondary px-2 py-2 rounded-md w-full text-muted-foreground text-sm"
+        className={cn(
+          "flex justify-start items-center gap-2 px-2 py-2 rounded-md w-full text-muted-foreground  text-sm",
+          "hover:bg-secondary focus:bg-secondary hover:text-primary",
+          path === href && "font-bold text-primary"
+        )}
       >
         <Icon size={size} />
         {isOpen && <span>{label}</span>}
