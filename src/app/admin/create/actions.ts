@@ -36,19 +36,17 @@ const DEFAULT_CHECKLIST: Checklist = {
 };
 
 const DEFAULT_QUESTION = (
-  topic: string,
-  concept: string,
   system: System,
   category: AnyCategory,
   subcategory: AnySubcategory,
+  topic: string,
   type: QuestionType,
   userId: string
 ): Question => ({
-  topic,
-  concept,
   system,
   category,
   subcategory,
+  topic,
   type,
   sources: [],
   creatorId: userId,
@@ -59,6 +57,7 @@ const DEFAULT_QUESTION = (
   answer: getRandomChoice(),
   explanations: { a: "", b: "", c: "", d: "", e: "" },
   difficulty: "easy",
+  step: "mixed",
 });
 
 const CHOICES = ["a", "b", "c", "d", "e"] as const;
@@ -105,11 +104,10 @@ export async function handleCreateQuestion(
   if (action === "create") {
     const res = await handleCreateBlankQuestion(
       userId,
-      topic,
-      concept,
       system as System,
       category as AnyCategory,
       subcategory as AnySubcategory,
+      topic,
       type
     );
     if (res.error) return { error: res.error };
@@ -163,7 +161,6 @@ async function handleGenerateQuestion(
       .values({
         ...question,
         topic,
-        concept,
         system,
         category,
         subcategory,
@@ -311,20 +308,18 @@ async function generateAudit(llm: LLM, question: GeneratedQuestion) {
 
 async function handleCreateBlankQuestion(
   userId: string,
-  topic: string,
-  concept: string,
   system: System,
   category: AnyCategory,
   subcategory: AnySubcategory,
+  topic: string,
   type: QuestionType
 ) {
   try {
     const question = DEFAULT_QUESTION(
-      topic,
-      concept,
       system,
       category,
       subcategory,
+      topic,
       type,
       userId
     );
