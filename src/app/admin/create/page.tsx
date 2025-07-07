@@ -46,32 +46,12 @@ export default function CreateQuestionPage() {
   );
 
   return (
-    <main className="items-center grid h-page">
+    <main className="items-center grid py-8 h-page">
       <form
         className="flex flex-col gap-4 bg-secondary mx-auto p-4 border-2 rounded-md w-1/3"
         action={action}
       >
         <h1 className="mx-auto font-bold text-2xl">Create Question</h1>
-        <div className="space-y-2">
-          <Label htmlFor="topic">Topic</Label>
-          <Input
-            type="text"
-            name="topic"
-            id="topic"
-            placeholder="Topic"
-            required
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="concept">Concept</Label>
-          <Input
-            type="text"
-            name="concept"
-            id="concept"
-            placeholder="Concept"
-            required
-          />
-        </div>
         <FormSelect
           label="Type"
           options={QUESTION_TYPES}
@@ -100,6 +80,16 @@ export default function CreateQuestionPage() {
           name="subcategory"
           error={error?.subcategory}
         />
+        <div className="space-y-2">
+          <Label htmlFor="topic">Topic</Label>
+          <Input
+            type="text"
+            name="topic"
+            id="topic"
+            placeholder="Topic"
+            required
+          />
+        </div>
         <Button
           className="w-full"
           variant="accent"

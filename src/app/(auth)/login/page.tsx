@@ -12,7 +12,7 @@ export default function LoginPage() {
   const [error, action, isPending] = useActionState(handleLogin, {});
 
   return (
-    <main className="place-items-center grid h-page">
+    <main className="place-items-center grid py-8 h-page">
       <form action={action} className="flex flex-col items-center gap-6 w-1/4">
         <div className="relative">
           <h1 className="font-bold text-4xl">Login</h1>

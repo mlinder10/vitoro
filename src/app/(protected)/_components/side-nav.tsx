@@ -8,7 +8,6 @@ import {
   LogOut,
   Menu,
   NotebookText,
-  Settings,
   ShieldUserIcon,
   Target,
   X,
@@ -18,8 +17,11 @@ import { ComponentType, useEffect, useState } from "react";
 import AccountIcon from "./account-icon";
 import { useRouter } from "next/navigation";
 import { unauthenticate } from "@/lib/auth";
+import ThemeToggleSwitch from "@/components/theme-toggle-switch";
+import { useTheme } from "@/contexts/theme-provider";
 
 export default function SideNav() {
+  const { theme } = useTheme();
   const [isOpen, setIsOpen] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const session = useSession();
@@ -83,21 +85,25 @@ export default function SideNav() {
               isOpen={isOpen}
             />
           )}
-          <ListLink
-            href="/account"
-            icon={AccountIcon}
-            size={24}
-            label="Account"
-            isOpen={isOpen}
-          />
         </ul>
       </div>
       {isOpen && (
         <div className="flex flex-col gap-2">
+          <div className="flex justify-between items-center px-1">
+            <div>
+              <p className="font-semibold text-muted-foreground text-xs">
+                Theme
+              </p>
+              <p className="font-semibold">
+                {theme === "light" ? "Light" : "Dark"}
+              </p>
+            </div>
+            <ThemeToggleSwitch />
+          </div>
           <Button variant="outline" asChild>
-            <Link href="/settings">
-              <Settings />
-              <span>Settings</span>
+            <Link href="/account">
+              <AccountIcon />
+              <span>Account</span>
             </Link>
           </Button>
           <Button

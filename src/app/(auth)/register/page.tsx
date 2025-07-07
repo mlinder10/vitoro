@@ -11,7 +11,7 @@ export default function RegisterPage() {
   const [error, action, isPending] = useActionState(handleRegister, {});
 
   return (
-    <main className="place-items-center grid h-page">
+    <main className="place-items-center grid py-8 h-page">
       <form action={action} className="flex flex-col items-center gap-6 w-1/4">
         <div className="relative">
           <h1 className="font-bold text-4xl">Register</h1>

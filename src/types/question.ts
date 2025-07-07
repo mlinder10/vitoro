@@ -5,6 +5,7 @@ export type Question = InferSelectModel<typeof questions>;
 
 export type QuestionChoice = "a" | "b" | "c" | "d" | "e";
 export type QuestionDifficulty = "easy" | "moderate" | "hard";
+export type NBMEStep = "step-1" | "step-2" | "mixed";
 export type QuestionType = (typeof QUESTION_TYPES)[number];
 
 export const QUESTION_TYPES = [

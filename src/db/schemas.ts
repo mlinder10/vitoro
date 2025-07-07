@@ -4,6 +4,7 @@ import {
   AuditRating,
   Checklist,
   Choices,
+  NBMEStep,
   QuestionChoice,
   QuestionDifficulty,
   QuestionType,
@@ -108,12 +109,12 @@ export const questions = sqliteTable("questions", {
     .references(() => users.id, { onDelete: "cascade" })
     .notNull(),
 
-  topic: text("topic").notNull(),
-  concept: text("concept").notNull(),
   system: json<System>("system").notNull(),
   category: json<AnyCategory>("category").notNull(),
   subcategory: json<AnySubcategory>("subcategory").notNull(),
+  topic: text("topic").notNull(),
   type: json<QuestionType>("type").notNull(),
+  step: json<NBMEStep>("step").default("mixed").notNull(),
 
   question: text("question").notNull(),
   answer: json<QuestionChoice>("answer").notNull(),
@@ -159,4 +160,15 @@ export const reviewQuestions = sqliteTable("review_questions", {
   question: text("question").notNull(),
   answerCriteria: json<string[]>("answer_criteria").notNull(),
   passed: json<boolean>("passed").default(false).notNull(),
+});
+
+export const chatHistory = sqliteTable("chat_history", {
+  id: text("id").primaryKey().default(SQL_UUID).notNull(),
+  userId: text("user_id")
+    .references(() => users.id, { onDelete: "cascade" })
+    .notNull(),
+  questionId: text("question_id")
+    .references(() => questions.id, { onDelete: "cascade" })
+    .notNull(),
+  conversation: json<string[]>("conversation"),
 });
