@@ -1,12 +1,6 @@
 "use server";
 
-import {
-  db,
-  questions,
-  answeredQuestions,
-  audits,
-  reviewQuestions,
-} from "@/db";
+import { db, questions, answeredQuestions, reviewQuestions } from "@/db";
 import { eq, and, isNull, or, sql } from "drizzle-orm";
 import {
   GeneratedReviewQuestion,
@@ -128,7 +122,6 @@ export async function redirectToQuestion(
   const [question] = await db
     .select({ id: questions.id })
     .from(questions)
-    .leftJoin(audits, eq(questions.id, audits.questionId))
     .leftJoin(
       answeredQuestions,
       and(
@@ -138,7 +131,7 @@ export async function redirectToQuestion(
     )
     .where(
       and(
-        eq(audits.rating, "Pass"),
+        eq(questions.rating, "Pass"),
         ...buildWhereClause(filters),
         isNull(answeredQuestions.userId)
       )

@@ -1,7 +1,7 @@
 "use server";
 
 import { and, count, eq } from "drizzle-orm";
-import { questions, audits } from "@/db";
+import { questions } from "@/db";
 import { db } from "@/db";
 import {
   QuestionDifficulty,
@@ -22,7 +22,7 @@ export async function fetchQuestionsWithAudits(
   subcategory?: AnySubcategory,
   type?: QuestionType
 ) {
-  const conditions = buildWhereClause({
+  const clauses = buildWhereClause({
     status,
     difficulty,
     system,
@@ -34,16 +34,12 @@ export async function fetchQuestionsWithAudits(
   const countResult = await db
     .select({ count: count() })
     .from(questions)
-    .where(conditions);
+    .where(clauses);
 
   const rows = await db
-    .select({
-      question: questions,
-      audit: audits,
-    })
+    .select()
     .from(questions)
-    .leftJoin(audits, eq(questions.id, audits.questionId))
-    .where(conditions)
+    .where(clauses)
     .offset(offset)
     .limit(limit);
 
@@ -61,16 +57,18 @@ function buildWhereClause(filters: {
   subcategory?: AnySubcategory;
   type?: QuestionType;
 }) {
-  const clauses = [];
-
-  if (filters.status) clauses.push(eq(audits.rating, filters.status));
-  if (filters.difficulty)
-    clauses.push(eq(questions.difficulty, filters.difficulty));
-  if (filters.system) clauses.push(eq(questions.system, filters.system));
-  if (filters.category) clauses.push(eq(questions.category, filters.category));
-  if (filters.subcategory)
-    clauses.push(eq(questions.subcategory, filters.subcategory));
-  if (filters.type) clauses.push(eq(questions.type, filters.type));
+  const clauses = [
+    filters.status ? eq(questions.rating, filters.status) : undefined,
+    filters.difficulty
+      ? eq(questions.difficulty, filters.difficulty)
+      : undefined,
+    filters.system ? eq(questions.system, filters.system) : undefined,
+    filters.category ? eq(questions.category, filters.category) : undefined,
+    filters.subcategory
+      ? eq(questions.subcategory, filters.subcategory)
+      : undefined,
+    filters.type ? eq(questions.type, filters.type) : undefined,
+  ].filter((c) => c !== undefined);
 
   return clauses.length > 0 ? and(...clauses) : undefined;
 }

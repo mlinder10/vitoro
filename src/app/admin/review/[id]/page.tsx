@@ -13,12 +13,11 @@ export default async function ReviewQuestionPage({
   params,
 }: ReviewQuestionPageProps) {
   const { id } = await params;
-  const result = await fetchQuestionById(id);
-  if (!result) return notFound();
-  const { question, audit } = result;
+  const question = await fetchQuestionById(id);
+  if (!question) return notFound();
 
   return (
-    <AdminReviewProvider question={question} audit={audit}>
+    <AdminReviewProvider question={question}>
       <ReviewPageWrapper />
     </AdminReviewProvider>
   );

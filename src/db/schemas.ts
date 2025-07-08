@@ -2,7 +2,6 @@ import {
   AnyCategory,
   AnySubcategory,
   AuditRating,
-  Checklist,
   Choices,
   NBMEStep,
   QuestionChoice,
@@ -127,6 +126,8 @@ export const questions = sqliteTable(
 
     sources: json<string[]>("sources").notNull(),
     difficulty: json<QuestionDifficulty>("difficulty").notNull(),
+
+    rating: json<AuditRating>("rating").notNull(),
   },
   (table) => [
     index("question_system_idx").on(table.system),
@@ -137,21 +138,6 @@ export const questions = sqliteTable(
     index("question_difficulty_idx").on(table.difficulty),
     index("question_step_idx").on(table.step),
   ]
-);
-
-export const audits = sqliteTable(
-  "audits",
-  {
-    id: text("id").primaryKey().default(SQL_UUID).notNull(),
-    questionId: text("question_id")
-      .references(() => questions.id, { onDelete: "cascade" })
-      .notNull(),
-
-    checklist: json<Checklist>("checklist").notNull(),
-    suggestions: json<string[]>("suggestions").notNull(),
-    rating: json<AuditRating>("rating").notNull(),
-  },
-  (table) => [index("audit_rating_idx").on(table.rating)]
 );
 
 export const answeredQuestions = sqliteTable(

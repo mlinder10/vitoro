@@ -1,15 +1,11 @@
 "use server";
 
-import { audits, db, questions } from "@/db";
+import { db, questions } from "@/db";
 import { Gemini, LLM, stripAndParse } from "@/llm";
 import {
   AnyCategory,
   AnySubcategory,
-  AuditRating,
-  Checklist,
-  GeneratedAudit,
   GeneratedQuestion,
-  isValidGeneratedAudit,
   isValidGeneratedQuestion,
   Question,
   QUESTION_TYPES,
@@ -20,20 +16,6 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 
 // Types and Defaults ---------------------------------------------------------
-
-const DEFAULT_RATING: AuditRating = "Flag for Human Review";
-const DEFAULT_SUGGESTIONS: string[] = [];
-const DEFAULT_CHECKLIST: Checklist = {
-  "1": { pass: true, notes: "" },
-  "2": { pass: true, notes: "" },
-  "3": { pass: true, notes: "" },
-  "4": { pass: true, notes: "" },
-  "5": { pass: true, notes: "" },
-  "6": { pass: true, notes: "" },
-  "7": { pass: true, notes: "" },
-  "8": { pass: true, notes: "" },
-  "9": { pass: true, notes: "" },
-};
 
 const DEFAULT_QUESTION = (
   system: System,
@@ -56,8 +38,9 @@ const DEFAULT_QUESTION = (
   choices: { a: "", b: "", c: "", d: "", e: "" },
   answer: getRandomChoice(),
   explanations: { a: "", b: "", c: "", d: "", e: "" },
-  difficulty: "easy",
-  step: "mixed",
+  difficulty: "Easy",
+  step: "Mixed",
+  rating: "Flag for Human Review",
 });
 
 const CHOICES = ["a", "b", "c", "d", "e"] as const;
@@ -148,9 +131,6 @@ async function handleGenerateQuestion(
     if (!question)
       return { id: undefined, error: "Failed to generate question" };
 
-    const audit = await generateAudit(llm, question);
-    if (!audit) return { id: undefined, error: "Failed to generate audit" };
-
     const [savedQuestion] = await db
       .insert(questions)
       .values({
@@ -161,15 +141,11 @@ async function handleGenerateQuestion(
         subcategory,
         type,
         creatorId: userId,
+        rating: "Flag for Human Review",
       })
       .returning({ id: questions.id });
     if (!savedQuestion)
       return { id: undefined, error: "Failed to save question" };
-
-    await db.insert(audits).values({
-      ...audit,
-      questionId: savedQuestion.id,
-    });
 
     return { id: savedQuestion.id, error: undefined };
   } catch (error) {
@@ -248,53 +224,53 @@ async function generateQuestion(
   return parsed;
 }
 
-async function generateAudit(llm: LLM, question: GeneratedQuestion) {
-  const prompt = `
-  You are an exam-quality control agent trained in board-style question development. You have just generated the following board-style question. You must now review it using the audit checklist below and report whether it passes each item.
+// async function generateAudit(llm: LLM, question: GeneratedQuestion) {
+//   const prompt = `
+//   You are an exam-quality control agent trained in board-style question development. You have just generated the following board-style question. You must now review it using the audit checklist below and report whether it passes each item.
 
-  ---
-  Input:
-  Question: ${JSON.stringify(question)}
-  ---
+//   ---
+//   Input:
+//   Question: ${JSON.stringify(question)}
+//   ---
 
-  Review each of the following checklist items. For each, return:
-  - Pass (Yes/No)
-  - Justification (brief explanation for your score)
+//   Review each of the following checklist items. For each, return:
+//   - Pass (Yes/No)
+//   - Justification (brief explanation for your score)
 
-  Checklist:
-  1. One correct answer with all distractors clearly incorrect  
-  2. Each distractor tests a plausible misunderstanding  
-  3. Answer is consistent with vitals, labs, and imaging in the stem  
-  4. No required data is missing for choosing the correct answer  
-  5. Clinical presentation is realistic and not contradictory  
-  6. Question requires clinical reasoning, not fact recall  
-  7. No direct giveaway or naming of the diagnosis in the stem  
-  8. Every answer choice is anchored to clues in the vignette  
-  9. No duplicate correct answers or overly vague distractors  
+//   Checklist:
+//   1. One correct answer with all distractors clearly incorrect
+//   2. Each distractor tests a plausible misunderstanding
+//   3. Answer is consistent with vitals, labs, and imaging in the stem
+//   4. No required data is missing for choosing the correct answer
+//   5. Clinical presentation is realistic and not contradictory
+//   6. Question requires clinical reasoning, not fact recall
+//   7. No direct giveaway or naming of the diagnosis in the stem
+//   8. Every answer choice is anchored to clues in the vignette
+//   9. No duplicate correct answers or overly vague distractors
 
-  After the checklist, provide:
-  - A suggested revision if any item failed
-  - A final overall rating: Pass / Flag for Human Review / Reject
+//   After the checklist, provide:
+//   - A suggested revision if any item failed
+//   - A final overall rating: Pass / Flag for Human Review / Reject
 
-  Respond in structured JSON format:
-  {
-    "checklist": {
-      "1": {"pass": true, "notes": "Clear single correct answer"},
-      "2": {"pass": false, "notes": "Distractor D is irrelevant to clinical reasoning"},
-      ...etc
-    },
-    "suggestions": ["Remove distractor D or replace with something clinically tempting but incorrect"],
-    "rating": "Flag for Human Review"
-  }
-  `;
+//   Respond in structured JSON format:
+//   {
+//     "checklist": {
+//       "1": {"pass": true, "notes": "Clear single correct answer"},
+//       "2": {"pass": false, "notes": "Distractor D is irrelevant to clinical reasoning"},
+//       ...etc
+//     },
+//     "suggestions": ["Remove distractor D or replace with something clinically tempting but incorrect"],
+//     "rating": "Flag for Human Review"
+//   }
+//   `;
 
-  const result = await llm.prompt([{ type: "text", content: prompt }]);
-  if (!result) throw new Error("Failed to generate audit");
-  const parsed = stripAndParse<GeneratedAudit>(result);
-  if (!parsed || !isValidGeneratedAudit(parsed))
-    throw new Error("Failed to parse audit: " + result);
-  return parsed;
-}
+//   const result = await llm.prompt([{ type: "text", content: prompt }]);
+//   if (!result) throw new Error("Failed to generate audit");
+//   const parsed = stripAndParse<GeneratedAudit>(result);
+//   if (!parsed || !isValidGeneratedAudit(parsed))
+//     throw new Error("Failed to parse audit: " + result);
+//   return parsed;
+// }
 
 // Blank ----------------------------------------------------------------------
 
@@ -321,12 +297,6 @@ async function handleCreateBlankQuestion(
       .returning({ id: questions.id });
     if (!savedQuestion)
       return { id: undefined, error: "Failed to save question" };
-    await db.insert(audits).values({
-      rating: DEFAULT_RATING,
-      suggestions: DEFAULT_SUGGESTIONS,
-      checklist: DEFAULT_CHECKLIST,
-      questionId: savedQuestion.id,
-    });
 
     return { id: savedQuestion.id, error: undefined };
   } catch (error) {

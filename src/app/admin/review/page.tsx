@@ -4,7 +4,6 @@ import useInfiniteScroll, { LoadingFooter } from "@/hooks/useInfiniteScroll";
 import {
   AnyCategory,
   AnySubcategory,
-  Audit,
   AuditRating,
   Question,
   QUESTION_TYPES,
@@ -102,7 +101,7 @@ export default function QuestionReviewListPage() {
         ) : (
           <ul>
             {questions.map((q) => (
-              <QuestionItem key={q.question.id} qa={q} />
+              <QuestionItem key={q.id} question={q} />
             ))}
           </ul>
         )}
@@ -115,18 +114,13 @@ export default function QuestionReviewListPage() {
 // Question Component ---------------------------------------------------------
 
 type QuestionItemProps = {
-  qa: {
-    question: Question;
-    audit: Audit | null;
-  };
+  question: Question;
   isLast?: boolean;
 };
 
-function QuestionItem({ qa, isLast = false }: QuestionItemProps) {
-  const { question, audit } = qa;
-
+function QuestionItem({ question, isLast = false }: QuestionItemProps) {
   function renderAuditStatus() {
-    switch (audit?.rating) {
+    switch (question.rating) {
       case "Pass":
         return (
           <span className="flex items-center bg-green-500 px-4 py-1 border-2 border-green-700 rounded-md text-green-950 text-sm">

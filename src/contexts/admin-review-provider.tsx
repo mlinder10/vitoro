@@ -1,7 +1,7 @@
 "use client";
 
 import { handleSaveQuestionChanges } from "@/app/admin/review/[id]/actions";
-import { Audit, Question } from "@/types";
+import { Question } from "@/types";
 import { useRouter } from "next/navigation";
 import {
   createContext,
@@ -14,7 +14,6 @@ import {
 
 type AdminReviewContextType = {
   question: Question;
-  audit: Audit | null;
   editQuestion: Question;
   hasChanges: boolean;
   updateQuestion: <T extends keyof Question>(
@@ -30,7 +29,6 @@ type AdminReviewContextType = {
 
 const AdminReviewContext = createContext<AdminReviewContextType>({
   question: {} as Question,
-  audit: null,
   editQuestion: {} as Question,
   hasChanges: false,
   updateQuestion: () => {},
@@ -44,7 +42,6 @@ const AdminReviewContext = createContext<AdminReviewContextType>({
 type AdminReviewProviderProps = {
   children: ReactNode;
   question: Question;
-  audit: Audit | null;
 };
 
 export type ReviewPageType = "review" | "edit";
@@ -52,7 +49,6 @@ export type ReviewPageType = "review" | "edit";
 export default function AdminReviewProvider({
   children,
   question,
-  audit,
 }: AdminReviewProviderProps) {
   const [editQuestion, setEditQuestion] = useState(question);
   const [pageType, setPageType] = useState<ReviewPageType>("review");
@@ -83,7 +79,6 @@ export default function AdminReviewProvider({
     <AdminReviewContext.Provider
       value={{
         question,
-        audit,
         editQuestion,
         hasChanges,
         updateQuestion,

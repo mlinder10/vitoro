@@ -2,9 +2,7 @@ import { db, questions } from "@/db";
 
 export async function GET() {
   try {
-    const res = await db
-      .selectDistinct({ type: questions.type })
-      .from(questions);
+    const res = await db.update(questions).set({ rating: "Pass" });
     return new Response(JSON.stringify(res), { status: 200 });
   } catch (err) {
     console.error(err);
