@@ -114,7 +114,9 @@ export const questions = sqliteTable("questions", {
   subcategory: json<AnySubcategory>("subcategory").notNull(),
   topic: text("topic").notNull(),
   type: json<QuestionType>("type").notNull(),
-  step: json<NBMEStep>("step").default("mixed").notNull(),
+  step: json<NBMEStep>("step")
+    .default(JSON.stringify("mixed") as NBMEStep)
+    .notNull(),
 
   question: text("question").notNull(),
   answer: json<QuestionChoice>("answer").notNull(),

@@ -70,7 +70,6 @@ function getRandomChoice() {
 
 const CreateQuestionSchema = z.object({
   topic: z.string(),
-  concept: z.string(),
   system: z.string(),
   category: z.string(),
   subcategory: z.string(),
@@ -98,8 +97,7 @@ export async function handleCreateQuestion(
     console.log(formData, result.error.formErrors.fieldErrors);
     return result.error.formErrors.fieldErrors;
   }
-  const { topic, concept, system, category, subcategory, type, action } =
-    result.data;
+  const { topic, system, category, subcategory, type, action } = result.data;
 
   if (action === "create") {
     const res = await handleCreateBlankQuestion(
@@ -115,11 +113,10 @@ export async function handleCreateQuestion(
   } else if (action === "generate") {
     const res = await handleGenerateQuestion(
       userId,
-      topic,
-      concept,
       system as System,
       category as AnyCategory,
       subcategory as AnySubcategory,
+      topic,
       type
     );
     if (res.error) return { error: res.error };
@@ -132,22 +129,20 @@ export async function handleCreateQuestion(
 
 async function handleGenerateQuestion(
   userId: string,
-  topic: string,
-  concept: string,
   system: System,
   category: AnyCategory,
   subcategory: AnySubcategory,
+  topic: string,
   type: QuestionType
 ) {
   try {
     const llm = new Gemini();
     const question = await generateQuestion(
       llm,
-      topic,
-      concept,
       system,
       category,
       subcategory,
+      topic,
       type
     );
     if (!question)
@@ -185,22 +180,20 @@ async function handleGenerateQuestion(
 
 async function generateQuestion(
   llm: LLM,
-  topic: string,
-  concept: string,
   system: System,
   category: AnyCategory,
   subcategory: AnySubcategory,
+  topic: string,
   type: QuestionType
 ) {
   const prompt = `
   You are an expert item writer trained to create original, board-style multiple-choice questions for medical board exams (USMLE Step 1 or Step 2). Each question must test **clinical reasoning** using real-world logic, based on evidence-based medical sources.
 
   You are given:
-  - A clinical topic
-  - A concept to test
   - A system 
   - A category within the system
   - A subcategory within the category
+  - A clinical topic
   - A question type (e.g., Diagnosis, Complication, Lab finding, Next Step, First line, Risk factor)
 
   Use this information to generate a single, original multiple-choice question with:
@@ -216,7 +209,6 @@ async function generateQuestion(
   ---
   Input:
   Topic: ${topic}
-  Concept: ${concept}
   System: ${system}
   Category: ${category as string}
   Question Type: ${type}
