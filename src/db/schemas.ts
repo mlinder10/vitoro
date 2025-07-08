@@ -11,7 +11,7 @@ import {
   System,
 } from "@/types";
 import { sql } from "drizzle-orm";
-import { customType, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { customType, index, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
 // Extensions ---------------------------------------------------------------
 
@@ -78,7 +78,7 @@ const SQL_NOW = sql`(datetime('now'))`;
 
 export const users = sqliteTable("users", {
   id: text("id").primaryKey().default(SQL_UUID).notNull(),
-  email: text("email").notNull(),
+  email: text("email").unique().notNull(),
   firstName: text("first_name").notNull(),
   lastName: text("last_name").notNull(),
   color: text("color").notNull(),
@@ -102,67 +102,97 @@ export const admins = sqliteTable("admins", {
   createdAt: date("created_at").default(SQL_NOW).notNull(),
 });
 
-export const questions = sqliteTable("questions", {
-  id: text("id").primaryKey().default(SQL_UUID).notNull(),
-  createdAt: date("created_at").default(SQL_NOW).notNull(),
-  creatorId: text("creator_id")
-    .references(() => users.id, { onDelete: "cascade" })
-    .notNull(),
+export const questions = sqliteTable(
+  "questions",
+  {
+    id: text("id").primaryKey().default(SQL_UUID).notNull(),
+    createdAt: date("created_at").default(SQL_NOW).notNull(),
+    creatorId: text("creator_id")
+      .references(() => users.id, { onDelete: "cascade" })
+      .notNull(),
 
-  system: json<System>("system").notNull(),
-  category: json<AnyCategory>("category").notNull(),
-  subcategory: json<AnySubcategory>("subcategory").notNull(),
-  topic: text("topic").notNull(),
-  type: json<QuestionType>("type").notNull(),
-  step: json<NBMEStep>("step")
-    .default(JSON.stringify("mixed") as NBMEStep)
-    .notNull(),
+    system: json<System>("system").notNull(),
+    category: json<AnyCategory>("category").notNull(),
+    subcategory: json<AnySubcategory>("subcategory").notNull(),
+    topic: text("topic").notNull(),
+    type: json<QuestionType>("type").notNull(),
+    step: json<NBMEStep>("step")
+      .default(JSON.stringify("mixed") as NBMEStep)
+      .notNull(),
 
-  question: text("question").notNull(),
-  answer: json<QuestionChoice>("answer").notNull(),
-  choices: json<Choices>("choices").notNull(),
-  explanations: json<Choices>("explanations").notNull(),
+    question: text("question").notNull(),
+    answer: json<QuestionChoice>("answer").notNull(),
+    choices: json<Choices>("choices").notNull(),
+    explanations: json<Choices>("explanations").notNull(),
 
-  sources: json<string[]>("sources").notNull(),
-  difficulty: json<QuestionDifficulty>("difficulty").notNull(),
-});
+    sources: json<string[]>("sources").notNull(),
+    difficulty: json<QuestionDifficulty>("difficulty").notNull(),
+  },
+  (table) => [
+    index("question_system_idx").on(table.system),
+    index("question_category_idx").on(table.category),
+    index("question_subcategory_idx").on(table.subcategory),
+    index("question_topic_idx").on(table.topic),
+    index("question_type_idx").on(table.type),
+    index("question_difficulty_idx").on(table.difficulty),
+    index("question_step_idx").on(table.step),
+  ]
+);
 
-export const audits = sqliteTable("audits", {
-  id: text("id").primaryKey().default(SQL_UUID).notNull(),
-  questionId: text("question_id")
-    .references(() => questions.id, { onDelete: "cascade" })
-    .notNull(),
+export const audits = sqliteTable(
+  "audits",
+  {
+    id: text("id").primaryKey().default(SQL_UUID).notNull(),
+    questionId: text("question_id")
+      .references(() => questions.id, { onDelete: "cascade" })
+      .notNull(),
 
-  checklist: json<Checklist>("checklist").notNull(),
-  suggestions: json<string[]>("suggestions").notNull(),
-  rating: json<AuditRating>("rating").notNull(),
-});
+    checklist: json<Checklist>("checklist").notNull(),
+    suggestions: json<string[]>("suggestions").notNull(),
+    rating: json<AuditRating>("rating").notNull(),
+  },
+  (table) => [index("audit_rating_idx").on(table.rating)]
+);
 
-export const answeredQuestions = sqliteTable("answered_questions", {
-  id: text("id").primaryKey().default(SQL_UUID).notNull(),
-  userId: text("user_id")
-    .references(() => users.id, { onDelete: "cascade" })
-    .notNull(),
-  questionId: text("question_id")
-    .references(() => questions.id, { onDelete: "cascade" })
-    .notNull(),
-  createdAt: date("created_at").default(SQL_NOW).notNull(),
-  answer: json<QuestionChoice>("answer").notNull(),
-});
+export const answeredQuestions = sqliteTable(
+  "answered_questions",
+  {
+    id: text("id").primaryKey().default(SQL_UUID).notNull(),
+    userId: text("user_id")
+      .references(() => users.id, { onDelete: "cascade" })
+      .notNull(),
+    questionId: text("question_id")
+      .references(() => questions.id, { onDelete: "cascade" })
+      .notNull(),
+    createdAt: date("created_at").default(SQL_NOW).notNull(),
+    answer: json<QuestionChoice>("answer").notNull(),
+  },
+  (table) => [
+    index("answer_user_idx").on(table.userId),
+    index("answer_question_idx").on(table.questionId),
+  ]
+);
 
-export const reviewQuestions = sqliteTable("review_questions", {
-  id: text("id").primaryKey().default(SQL_UUID).notNull(),
-  userId: text("user_id")
-    .references(() => users.id, { onDelete: "cascade" })
-    .notNull(),
-  questionId: text("question_id")
-    .references(() => questions.id, { onDelete: "cascade" })
-    .notNull(),
-  createdAt: date("created_at").default(SQL_NOW).notNull(),
-  question: text("question").notNull(),
-  answerCriteria: json<string[]>("answer_criteria").notNull(),
-  passed: json<boolean>("passed").default(false).notNull(),
-});
+export const reviewQuestions = sqliteTable(
+  "review_questions",
+  {
+    id: text("id").primaryKey().default(SQL_UUID).notNull(),
+    userId: text("user_id")
+      .references(() => users.id, { onDelete: "cascade" })
+      .notNull(),
+    questionId: text("question_id")
+      .references(() => questions.id, { onDelete: "cascade" })
+      .notNull(),
+    createdAt: date("created_at").default(SQL_NOW).notNull(),
+    question: text("question").notNull(),
+    answerCriteria: json<string[]>("answer_criteria").notNull(),
+    passed: json<boolean>("passed").default(false).notNull(),
+  },
+  (table) => [
+    index("review_user_idx").on(table.userId),
+    index("review_question_idx").on(table.questionId),
+  ]
+);
 
 export const chatHistory = sqliteTable("chat_history", {
   id: text("id").primaryKey().default(SQL_UUID).notNull(),

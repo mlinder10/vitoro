@@ -4,20 +4,22 @@ import { questions } from "@/db";
 export type Question = InferSelectModel<typeof questions>;
 
 export type QuestionChoice = "a" | "b" | "c" | "d" | "e";
-export type QuestionDifficulty = "easy" | "moderate" | "hard";
-export type NBMEStep = "step-1" | "step-2" | "mixed";
+export type NBMEStep = (typeof NBME_STEPS)[number];
 export type QuestionType = (typeof QUESTION_TYPES)[number];
+export type QuestionDifficulty = (typeof QUESTION_DIFFICULTIES)[number];
+
+export const NBME_STEPS = ["Step 1", "Step 2", "Mixed"] as const;
 
 export const QUESTION_TYPES = [
-  "Next Best Step",
-  "Most Likely Diagnosis",
-  "Most Likely Etiology",
-  "Most Likely Complication",
-  "Best Initial Test",
-  "Most Accurate Test",
-  "Mechanism of Disease / Pathophysiology",
-  "Pharmacologic Mechanism / Adverse Effect",
+  "Diagnosis",
+  "Management",
+  "Mechanism",
+  "Risk factor/epidemiology",
+  "Complications",
+  "Prognosis",
 ] as const;
+
+export const QUESTION_DIFFICULTIES = ["Easy", "Moderate", "Hard"] as const;
 
 export type Choices = {
   a: string;

@@ -4,11 +4,11 @@ import { Button } from "@/components/ui/button";
 import { Question, QuestionChoice } from "@/types";
 import { cn } from "@/lib/utils";
 import { ArrowRight } from "lucide-react";
-import Link from "next/link";
 import { useState } from "react";
 import { useSession } from "@/contexts/session-provider";
 import { answerQuestion } from "../actions";
 import ChatBox from "./chat-box";
+import { useQBankSession } from "@/contexts/qbank-session-provider";
 
 type QuestionViewProps = {
   question: Question;
@@ -16,6 +16,7 @@ type QuestionViewProps = {
 
 export default function QuestionView({ question }: QuestionViewProps) {
   const { id } = useSession();
+  const { fetchQuestion } = useQBankSession();
   const [isLoading, setIsLoading] = useState(false);
   const [selection, setSelection] = useState<QuestionChoice | null>(null);
   const [isChecked, setIsChecked] = useState(false);
@@ -50,11 +51,9 @@ export default function QuestionView({ question }: QuestionViewProps) {
             ))}
           </ul>
           {isChecked ? (
-            <Button variant="accent" asChild>
-              <Link href="/practice" className="flex items-center gap-2">
-                <span>Next</span>
-                <ArrowRight />
-              </Link>
+            <Button variant="accent" onClick={() => fetchQuestion(id)}>
+              <span>Next</span>
+              <ArrowRight />
             </Button>
           ) : (
             <Button

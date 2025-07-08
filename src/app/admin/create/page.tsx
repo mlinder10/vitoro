@@ -6,7 +6,7 @@ import { useActionState, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { NotebookPen, Sparkles } from "lucide-react";
 import { useSession } from "@/contexts/session-provider";
-import { AnyCategory, QUESTION_TYPES, System, SYSTEMS } from "@/types";
+import { getSystems, QUESTION_TYPES, System } from "@/types";
 import {
   Select,
   SelectContent,
@@ -15,22 +15,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-
-function getSystems(
-  system: System | undefined,
-  category: AnyCategory | undefined
-) {
-  return {
-    systems: SYSTEMS.map((s) => s.name),
-    categories:
-      SYSTEMS.find((s) => s.name === system)?.categories.map((c) => c.name) ??
-      [],
-    subcategories:
-      SYSTEMS.find((s) => s.name === system)?.categories.find(
-        (c) => c.name === category
-      )?.subcategories ?? [],
-  };
-}
 
 export default function CreateQuestionPage() {
   const { id } = useSession();

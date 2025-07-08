@@ -2100,3 +2100,19 @@ export type Subcategory<
 > = keyof SystemsMap[S][C];
 export type AnySubcategory =
   (typeof SYSTEMS)[number]["categories"][number]["subcategories"][number];
+
+export function getSystems(
+  system: System | undefined,
+  category: AnyCategory | undefined
+) {
+  return {
+    systems: SYSTEMS.map((s) => s.name),
+    categories:
+      SYSTEMS.find((s) => s.name === system)?.categories.map((c) => c.name) ??
+      [],
+    subcategories:
+      SYSTEMS.find((s) => s.name === system)?.categories.find(
+        (c) => c.name === category
+      )?.subcategories ?? [],
+  };
+}

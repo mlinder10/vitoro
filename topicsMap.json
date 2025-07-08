@@ -1,0 +1,2382 @@
+[
+  {
+    "subcategory": "Infectious disorders",
+    "topic": "bacterial"
+  },
+  {
+    "subcategory": "Infectious disorders",
+    "topic": "hemorrhagic fever (Ebola virus, Marburg virus)"
+  },
+  {
+    "subcategory": "Infectious disorders",
+    "topic": "chikungunya fever"
+  },
+  {
+    "subcategory": "Infectious disorders",
+    "topic": "Chikungunya fever"
+  },
+  {
+    "subcategory": "Infectious disorders",
+    "topic": "dengue fever"
+  },
+  {
+    "subcategory": "Infectious disorders",
+    "topic": "Zika virus disease"
+  },
+  {
+    "subcategory": "Infectious disorders",
+    "topic": "malaria (Plasmodium species)"
+  },
+  {
+    "subcategory": "Infectious disorders",
+    "topic": "babesiosis (Babesia species)"
+  },
+  {
+    "subcategory": "primary infections of lymphoid tissue",
+    "topic": "lymphadenitis (viral, bacterial, fungal, parasitic)"
+  },
+  {
+    "subcategory": "primary infections of lymphoid tissue",
+    "topic": "lymphangitis"
+  },
+  {
+    "subcategory": "primary infections of lymphoid tissue",
+    "topic": "buboes / bubonic plague (Yersinia pestis)"
+  },
+  {
+    "subcategory": "primary infections of lymphoid tissue",
+    "topic": "cat-scratch disease (Bartonella henselae)"
+  },
+  {
+    "subcategory": "Immunologic and Inflammatory Disorders",
+    "topic": "Cryoglobulinemia / Essential Mixed Cryoglobulinemia"
+  },
+  {
+    "subcategory": "Immunologic and Inflammatory Disorders",
+    "topic": "cryoglobulinemia / essential mixed cryoglobulinemia"
+  },
+  {
+    "subcategory": "Immunologic and Inflammatory Disorders",
+    "topic": "autoimmune hemolytic anemia"
+  },
+  {
+    "subcategory": "Immunologic and Inflammatory Disorders",
+    "topic": "paroxysmal nocturnal hemoglobinuria"
+  },
+  {
+    "subcategory": "Immunologic and Inflammatory Disorders",
+    "topic": "thrombotic thrombocytopenic purpura"
+  },
+  {
+    "subcategory": "Immunologic and Inflammatory Disorders",
+    "topic": "hemolytic uremic syndrome"
+  },
+  {
+    "subcategory": "Immunologic and Inflammatory Disorders",
+    "topic": "Hemolytic uremic syndrome"
+  },
+  {
+    "subcategory": "Leukemias",
+    "topic": "leukemia, acute (ALL, AML)"
+  },
+  {
+    "subcategory": "Leukemias",
+    "topic": "leukemia, chronic (CLL, CML)"
+  },
+  {
+    "subcategory": "Lymphomas",
+    "topic": "Hodgkin lymphoma"
+  },
+  {
+    "subcategory": "Lymphomas",
+    "topic": "non-Hodgkin lymphoma"
+  },
+  {
+    "subcategory": "Lymphomas",
+    "topic": "Burkitt lymphoma"
+  },
+  {
+    "subcategory": "Lymphomas",
+    "topic": "T-cell lymphoma"
+  },
+  {
+    "subcategory": "Multiple myeloma and related neoplasms",
+    "topic": "multiple myeloma"
+  },
+  {
+    "subcategory": "Multiple myeloma and related neoplasms",
+    "topic": "dysproteinemias"
+  },
+  {
+    "subcategory": "Multiple myeloma and related neoplasms",
+    "topic": "monoclonal gammopathy of unknown significance (MGUS)"
+  },
+  {
+    "subcategory": "Multiple myeloma and related neoplasms",
+    "topic": "myelofibrosis"
+  },
+  {
+    "subcategory": "Multiple myeloma and related neoplasms",
+    "topic": "myelodysplastic syndrome / myelodysplasias"
+  },
+  {
+    "subcategory": "Multiple myeloma and related neoplasms",
+    "topic": "Myelodysplastic Syndrome (MDS)"
+  },
+  {
+    "subcategory": "Multiple myeloma and related neoplasms",
+    "topic": "myelodysplastic syndrome"
+  },
+  {
+    "subcategory": "Multiple myeloma and related neoplasms",
+    "topic": "Waldenström macroglobulinemia"
+  },
+  {
+    "subcategory": "Decreased production",
+    "topic": "anemia of chronic disease"
+  },
+  {
+    "subcategory": "Hemolysis",
+    "topic": "glucose-6-phosphate dehydrogenase deficiency"
+  },
+  {
+    "subcategory": "Hemolysis",
+    "topic": "pyruvate kinase deficiency"
+  },
+  {
+    "subcategory": "Hemolysis",
+    "topic": "Pyruvate kinase deficiency"
+  },
+  {
+    "subcategory": "Disorders of hemoglobin/heme/membrane",
+    "topic": "disorders of red-cell membranes (general)"
+  },
+  {
+    "subcategory": "Disorders of hemoglobin/heme/membrane",
+    "topic": "hereditary spherocytosis"
+  },
+  {
+    "subcategory": "Disorders of hemoglobin/heme/membrane",
+    "topic": "hereditary elliptocytosis"
+  },
+  {
+    "subcategory": "Disorders of hemoglobin/heme/membrane",
+    "topic": "methemoglobinemia, congenital"
+  },
+  {
+    "subcategory": "Disorders of hemoglobin/heme/membrane",
+    "topic": "sickle cell disease"
+  },
+  {
+    "subcategory": "Disorders of hemoglobin/heme/membrane",
+    "topic": "sideroblastic anemia"
+  },
+  {
+    "subcategory": "Disorders of hemoglobin/heme/membrane",
+    "topic": "thalassemias"
+  },
+  {
+    "subcategory": "Others causes",
+    "topic": "acute and chronic blood loss anemia"
+  },
+  {
+    "subcategory": "Cytopenias",
+    "topic": "aplastic anemia"
+  },
+  {
+    "subcategory": "Cytopenias",
+    "topic": "Aplastic anemia"
+  },
+  {
+    "subcategory": "Cytopenias",
+    "topic": "leukopenia"
+  },
+  {
+    "subcategory": "Cytopenias",
+    "topic": "neutropenia"
+  },
+  {
+    "subcategory": "Cytopenias",
+    "topic": "cyclic neutropenia"
+  },
+  {
+    "subcategory": "Cytopenias",
+    "topic": "agranulocytosis"
+  },
+  {
+    "subcategory": "Cytopenias",
+    "topic": "pancytopenia"
+  },
+  {
+    "subcategory": "Cytopenias",
+    "topic": "Pancytopenia"
+  },
+  {
+    "subcategory": "Cytopenias",
+    "topic": "thrombocytopenia, quantitative"
+  },
+  {
+    "subcategory": "Cytopenias",
+    "topic": "immune thrombocytopenic purpura (ITP)"
+  },
+  {
+    "subcategory": "Polycythemia",
+    "topic": "leukocytosis"
+  },
+  {
+    "subcategory": "Polycythemia",
+    "topic": "polycythemia vera"
+  },
+  {
+    "subcategory": "Polycythemia",
+    "topic": "secondary polycythemia"
+  },
+  {
+    "subcategory": "Hypocoagulable",
+    "topic": "disseminated intravascular coagulation"
+  },
+  {
+    "subcategory": "Hypocoagulable",
+    "topic": "hemophilia, congenital (general)"
+  },
+  {
+    "subcategory": "Hypocoagulable",
+    "topic": "factor VIII deficiency (hemophilia A)"
+  },
+  {
+    "subcategory": "Hypocoagulable",
+    "topic": "factor IX deficiency (hemophilia B)"
+  },
+  {
+    "subcategory": "Hypocoagulable",
+    "topic": "hypofibrinogenemia"
+  },
+  {
+    "subcategory": "Hypocoagulable",
+    "topic": "von Willebrand disease"
+  },
+  {
+    "subcategory": "Hypocoagulable",
+    "topic": "qualitative platelet dysfunction"
+  },
+  {
+    "subcategory": "Hypercoagulable",
+    "topic": "heparin-induced thrombocytopenia"
+  },
+  {
+    "subcategory": "Hypercoagulable",
+    "topic": "homocysteinemia"
+  },
+  {
+    "subcategory": "Hypercoagulable",
+    "topic": "hypoplasminogenemia"
+  },
+  {
+    "subcategory": "Hypercoagulable",
+    "topic": "antithrombin III deficiency"
+  },
+  {
+    "subcategory": "Hypercoagulable",
+    "topic": "protein C deficiency"
+  },
+  {
+    "subcategory": "Hypercoagulable",
+    "topic": "protein S deficiency"
+  },
+  {
+    "subcategory": "Hypercoagulable",
+    "topic": "Factor V Leiden mutation"
+  },
+  {
+    "subcategory": "Hypercoagulable",
+    "topic": "anticardiolipin antibodies"
+  },
+  {
+    "subcategory": "Hypercoagulable",
+    "topic": "lupus anticoagulant"
+  },
+  {
+    "subcategory": "Hypercoagulable",
+    "topic": "prothrombin G20210A mutation"
+  },
+  {
+    "subcategory": "Reactions to blood components",
+    "topic": "ABO incompatibility / anaphylaxis"
+  },
+  {
+    "subcategory": "Reactions to blood components",
+    "topic": "Rh incompatibility / anaphylaxis"
+  },
+  {
+    "subcategory": "Reactions to blood components",
+    "topic": "delayed hemolysis"
+  },
+  {
+    "subcategory": "Reactions to blood components",
+    "topic": "Delayed hemolysis"
+  },
+  {
+    "subcategory": "Reactions to blood components",
+    "topic": "transfusion reaction"
+  },
+  {
+    "subcategory": "Reactions to blood components",
+    "topic": "Transfusion Reaction"
+  },
+  {
+    "subcategory": "Reactions to blood components",
+    "topic": "bacterial contamination of transfusion"
+  },
+  {
+    "subcategory": "Reactions to blood components",
+    "topic": "transfusion-related acute lung injury (TRALI)"
+  },
+  {
+    "subcategory": "Reactions to blood components",
+    "topic": "anaphylactoid reaction in IgA deficiency"
+  },
+  {
+    "subcategory": "Mechanical hemolysis",
+    "topic": "mechanical injury to erythrocytes (cardiac valve hemolysis)"
+  },
+  {
+    "subcategory": "Splenic disorders",
+    "topic": "splenic rupture/laceration"
+  },
+  {
+    "subcategory": "Splenic disorders",
+    "topic": "Splenic rupture/laceration"
+  },
+  {
+    "subcategory": "Splenic disorders",
+    "topic": "splenic infarct"
+  },
+  {
+    "subcategory": "Splenic disorders",
+    "topic": "splenic abscess"
+  },
+  {
+    "subcategory": "Splenic disorders",
+    "topic": "complications of splenectomy"
+  },
+  {
+    "subcategory": "Splenic disorders",
+    "topic": "complications of splenectomy (eg, post-splenectomy sepsis)"
+  },
+  {
+    "subcategory": "Splenic disorders",
+    "topic": "hypersplenism"
+  },
+  {
+    "subcategory": "Anticoagulants",
+    "topic": "antiplatelet drugs (bleeding, cytopenia)"
+  },
+  {
+    "subcategory": "Anticoagulants",
+    "topic": "antithrombin drugs (eg, dabigatran)"
+  },
+  {
+    "subcategory": "Anticoagulants",
+    "topic": "antithrombin drugs (e.g., dabigatran)"
+  },
+  {
+    "subcategory": "Chemotherapeutics",
+    "topic": "chemotherapeutic agents (myelosuppression, cytopenias)"
+  },
+  {
+    "subcategory": "Anticoagulants",
+    "topic": "coagulation-factor inhibitors"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "methemoglobinemia, acquired (eg, dapsone, nitrates)"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "propylthiouracil-induced agranulocytosis"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "tumor lysis syndrome"
+  },
+  {
+    "subcategory": "Anticoagulants",
+    "topic": "warfarin toxicity / hemorrhage"
+  },
+  {
+    "subcategory": "Hypocoagulable",
+    "topic": "Bernard-Soulier syndrome"
+  },
+  {
+    "subcategory": "Hypocoagulable",
+    "topic": "Glanzmann thrombasthenia"
+  },
+  {
+    "subcategory": "Disorders of hemoglobin/heme/membrane",
+    "topic": "Sickle-cell trait (renal papillary necrosis, splenic infarct)"
+  },
+  {
+    "subcategory": "Disorders of hemoglobin/heme/membrane",
+    "topic": "Sickle-cell trait"
+  },
+  {
+    "subcategory": "Disorders of hemoglobin/heme/membrane",
+    "topic": "Hemoglobin C disease"
+  },
+  {
+    "subcategory": "Decreased production",
+    "topic": "Fanconi anemia"
+  },
+  {
+    "subcategory": "Other causes",
+    "topic": "Diamond-Blackfan anemia"
+  },
+  {
+    "subcategory": "Other causes",
+    "topic": "Parvovirus B19 aplastic crisis"
+  },
+  {
+    "subcategory": "Immunologic/inflammatory disorders",
+    "topic": "Cold agglutinin (IgM) disease"
+  },
+  {
+    "subcategory": "Eclampsia/HELLP",
+    "topic": "HELLP syndrome (hemolysis, elevated LFTs, low platelets)"
+  },
+  {
+    "subcategory": "Eclampsia/HELLP",
+    "topic": "HELLP syndrome (Hemolysis, Elevated Liver enzymes, Low Platelets)"
+  },
+  {
+    "subcategory": "Leukemias",
+    "topic": "Hairy-cell leukemia"
+  },
+  {
+    "subcategory": "Leukemias",
+    "topic": "Acute promyelocytic leukemia (M3, APL)"
+  },
+  {
+    "subcategory": "Leukemias",
+    "topic": "Acute promyelocytic leukemia (APL)"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "Adult T-cell leukemia/lymphoma (HTLV-1)"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "Smoldering multiple myeloma"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "Solitary plasmacytoma"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "Hyperviscosity syndrome (Waldenström)"
+  },
+  {
+    "subcategory": "Immunologic/inflammatory disorders",
+    "topic": "Cryoglobulinemia-induced digital ischemia (Raynaud phenomenon)"
+  },
+  {
+    "subcategory": "Immunologic/inflammatory disorders",
+    "topic": "Cryoglobulinemia-induced digital ischemia (Raynaud)"
+  },
+  {
+    "subcategory": "Hypocoagulable",
+    "topic": "Factor XI deficiency (Hemophilia C)"
+  },
+  {
+    "subcategory": "Hypocoagulable",
+    "topic": "Factor XI Deficiency (Hemophilia C)"
+  },
+  {
+    "subcategory": "Hypocoagulable",
+    "topic": "Factor XIII deficiency (delayed bleeding)"
+  },
+  {
+    "subcategory": "Reactions to blood components",
+    "topic": "Transfusion-associated circulatory overload (TACO)"
+  },
+  {
+    "subcategory": "Polycythemia",
+    "topic": "Leukostasis (blast crisis hyperviscosity)"
+  },
+  {
+    "subcategory": "Immunolgical and Inflammatory Disorders",
+    "topic": "Kawasaki disease"
+  },
+  {
+    "subcategory": "Immunolgical and Inflammatory Disorders",
+    "topic": "Takayasu arteritis"
+  },
+  {
+    "subcategory": "Hemolysis",
+    "topic": "G6PD-deficiency neonatal hyperbilirubinemia"
+  },
+  {
+    "subcategory": "Disorders of hemoglobin/heme/membrane",
+    "topic": "Hb SC disease"
+  },
+  {
+    "subcategory": "Endocarditis",
+    "topic": "bacterial endocarditis"
+  },
+  {
+    "subcategory": "Myocarditis",
+    "topic": "myocarditis (infectious)"
+  },
+  {
+    "subcategory": "Atherosclerosis",
+    "topic": "atherosclerosis"
+  },
+  {
+    "subcategory": "Atherosclerosis",
+    "topic": "Atherosclerosis (Aortic Disease)"
+  },
+  {
+    "subcategory": "Atherosclerosis",
+    "topic": "atherosclerosis (eg, atherosclerosis of the aorta)"
+  },
+  {
+    "subcategory": "Atherosclerosis",
+    "topic": "Atherosclerosis"
+  },
+  {
+    "subcategory": "Myxoma",
+    "topic": "myxoma"
+  },
+  {
+    "subcategory": "Myxoma",
+    "topic": "Myxoma"
+  },
+  {
+    "subcategory": "Metastases",
+    "topic": "cardiac metastases"
+  },
+  {
+    "subcategory": "MI",
+    "topic": "acute coronary syndrome / acute myocardial infarction"
+  },
+  {
+    "subcategory": "Angina",
+    "topic": "angina pectoris (stable, unstable)"
+  },
+  {
+    "subcategory": "Premature beats",
+    "topic": "premature beats (PACs, PVCs)"
+  },
+  {
+    "subcategory": "Tachyarrhythemias",
+    "topic": "atrial flutter"
+  },
+  {
+    "subcategory": "Tachyarrhythemias",
+    "topic": "atrial fibrillation"
+  },
+  {
+    "subcategory": "Tachyarrhythemias",
+    "topic": "multifocal atrial tachycardia"
+  },
+  {
+    "subcategory": "Tachyarrhythemias",
+    "topic": "paroxysmal supraventricular tachycardias"
+  },
+  {
+    "subcategory": "Tachyarrhythemias",
+    "topic": "ventricular tachycardia"
+  },
+  {
+    "subcategory": "Tachyarrhythemias",
+    "topic": "ventricular fibrillation"
+  },
+  {
+    "subcategory": "Tachyarrhythemias",
+    "topic": "wide-complex tachycardia"
+  },
+  {
+    "subcategory": "Tachyarrhythemias",
+    "topic": "torsades de pointes"
+  },
+  {
+    "subcategory": "Tachyarrhythemias",
+    "topic": "Wolff-Parkinson-White syndrome"
+  },
+  {
+    "subcategory": "Heart block",
+    "topic": "atrioventricular block (first-, second-, third-degree)"
+  },
+  {
+    "subcategory": "Heart block",
+    "topic": "bundle-branch & fascicular block"
+  },
+  {
+    "subcategory": "CHF",
+    "topic": "congestive heart failure"
+  },
+  {
+    "subcategory": "High-output",
+    "topic": "high-output heart failure (thyrotoxicosis-, anemia-induced)"
+  },
+  {
+    "subcategory": "High-output",
+    "topic": "High-output heart failure (thyrotoxicosis-, anemia-induced)"
+  },
+  {
+    "subcategory": "High-output",
+    "topic": "High-output heart failure"
+  },
+  {
+    "subcategory": "Other causes",
+    "topic": "post-MI heart failure"
+  },
+  {
+    "subcategory": "Other causes",
+    "topic": "tachycardia-induced heart failure"
+  },
+  {
+    "subcategory": "Cor pulmonale",
+    "topic": "cor pulmonale"
+  },
+  {
+    "subcategory": "Other causes",
+    "topic": "chordae-tendineae rupture"
+  },
+  {
+    "subcategory": "Other causes",
+    "topic": "mitral-valve dysfunction (functional, ischemic)"
+  },
+  {
+    "subcategory": "Other causes",
+    "topic": "mitral-valve dysfunction"
+  },
+  {
+    "subcategory": "Stenosis",
+    "topic": "mitral valve stenosis"
+  },
+  {
+    "subcategory": "Regurgitation",
+    "topic": "mitral valve regurgitation"
+  },
+  {
+    "subcategory": "Regurgitation",
+    "topic": "aortic valve regurgitation"
+  },
+  {
+    "subcategory": "Stenosis",
+    "topic": "aortic valve stenosis"
+  },
+  {
+    "subcategory": "Regurgitation",
+    "topic": "tricuspid & pulmonic valve disorders"
+  },
+  {
+    "subcategory": "Regurgitation",
+    "topic": "Tricuspid & pulmonic valve disorders"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "functional murmurs"
+  },
+  {
+    "subcategory": "Rheumatic disease",
+    "topic": "rheumatic heart disease"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "complications of prosthetic / artificial valves"
+  },
+  {
+    "subcategory": "Cardiomyopathies",
+    "topic": "dilated cardiomyopathy"
+  },
+  {
+    "subcategory": "Cardiomyopathies",
+    "topic": "hypertrophic obstructive cardiomyopathy"
+  },
+  {
+    "subcategory": "Cardiomyopathies",
+    "topic": "familial dilated cardiomyopathy"
+  },
+  {
+    "subcategory": "Cardiomyopathies",
+    "topic": "restrictive cardiomyopathy"
+  },
+  {
+    "subcategory": "Cardiomyopathies",
+    "topic": "hypertensive heart disease"
+  },
+  {
+    "subcategory": "Post-MI complications",
+    "topic": "complications of myocardial infarction"
+  },
+  {
+    "subcategory": "Post-MI complications",
+    "topic": "post-MI non-traumatic tamponade"
+  },
+  {
+    "subcategory": "Post-MI complications",
+    "topic": "papillary-muscle rupture or dysfunction"
+  },
+  {
+    "subcategory": "Post-MI complications",
+    "topic": "Papillary muscle rupture"
+  },
+  {
+    "subcategory": "Post-MI complications",
+    "topic": "ventricular free-wall rupture"
+  },
+  {
+    "subcategory": "Myocarditis",
+    "topic": "non-infectious myocarditis"
+  },
+  {
+    "subcategory": "Constrictive pericarditis",
+    "topic": "acute pericarditis"
+  },
+  {
+    "subcategory": "Constrictive pericarditis",
+    "topic": "chronic constrictive pericarditis"
+  },
+  {
+    "subcategory": "Pericardial effusion",
+    "topic": "pericardial effusion"
+  },
+  {
+    "subcategory": "Pericardial effusion",
+    "topic": "Pericardial effusion"
+  },
+  {
+    "subcategory": "Pericardial effusion",
+    "topic": "Pericardial Effusion"
+  },
+  {
+    "subcategory": "Tamponade",
+    "topic": "pericardial tamponade"
+  },
+  {
+    "subcategory": "Tamponade",
+    "topic": "Pericardial Tamponade"
+  },
+  {
+    "subcategory": "Constrictive pericarditis",
+    "topic": "post-MI pericarditis"
+  },
+  {
+    "subcategory": "Constrictive pericarditis",
+    "topic": "Post-MI pericarditis"
+  },
+  {
+    "subcategory": "Constrictive pericarditis",
+    "topic": "post-MI, post-surgical, or post-traumatic pericarditis"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "Post-cardiac injury pericarditis (i.e. Dressler syndrome, post-surgical, or post-traumatic pericarditis)"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "Post-MI pericarditis"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "Post-infarction Pericarditis (Dressler syndrome)"
+  },
+  {
+    "subcategory": "ASD",
+    "topic": "atrial septal defect"
+  },
+  {
+    "subcategory": "ASD",
+    "topic": "Atrial septal defect"
+  },
+  {
+    "subcategory": "ASD",
+    "topic": "Atrial Septal Defect"
+  },
+  {
+    "subcategory": "VSD",
+    "topic": "ventricular septal defect"
+  },
+  {
+    "subcategory": "VSD",
+    "topic": "atrioventricular septal defect"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "persistent truncus arteriosus"
+  },
+  {
+    "subcategory": "Tetraolgy of Fallot",
+    "topic": "Tetralogy of Fallot"
+  },
+  {
+    "subcategory": "Transposition",
+    "topic": "transposition of the great arteries"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "patent ductus arteriosus"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "anomalous left coronary artery"
+  },
+  {
+    "subcategory": "Coarctation",
+    "topic": "coarctation of the aorta"
+  },
+  {
+    "subcategory": "Orthostatic hypotension",
+    "topic": "orthostatic hypotension"
+  },
+  {
+    "subcategory": "Essential",
+    "topic": "essential hypertension"
+  },
+  {
+    "subcategory": "Secondary",
+    "topic": "secondary hypertension"
+  },
+  {
+    "subcategory": "Secondary",
+    "topic": "Secondary Hypertension"
+  },
+  {
+    "subcategory": "Hypertensive emergency",
+    "topic": "hypertensive emergency"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "single elevated BP without diagnosis"
+  },
+  {
+    "subcategory": "Hypercholesterolemia",
+    "topic": "hypercholesterolemia"
+  },
+  {
+    "subcategory": "Hypertriglyceridemia",
+    "topic": "hypertriglyceridemia"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "mixed hyperlipidemia"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "lipoprotein lipase deficiency"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "Lipoprotein lipase deficiency"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "aortic dissection"
+  },
+  {
+    "subcategory": "Aneurysm",
+    "topic": "aortic aneurysm"
+  },
+  {
+    "subcategory": "Aneurysm",
+    "topic": "iliac or other peripheral aneurysm"
+  },
+  {
+    "subcategory": "DVT/PE",
+    "topic": "arterial embolus or thrombosis"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "arteriovenous fistula"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "atheroembolic disease"
+  },
+  {
+    "subcategory": "Peripheral arterial disease",
+    "topic": "claudication (peripheral arterial disease)"
+  },
+  {
+    "subcategory": "Peripheral arterial disease",
+    "topic": "cholesterol emboli; hypertensive vascular disease; thromboangiitis obliterans"
+  },
+  {
+    "subcategory": "Peripheral arterial disease",
+    "topic": "peripheral arterial disease; thromboangiitis obliterans"
+  },
+  {
+    "subcategory": "DVT/PE",
+    "topic": "deep venous thrombosis / venous thromboembolism"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "phlebitis / thrombophlebitis"
+  },
+  {
+    "subcategory": "Varicose veins",
+    "topic": "varicose veins"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "venous insufficiency, stasis ulcers, stasis dermatitis"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "Venous insufficiency, stasis ulcers, stasis dermatitis"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "ventricular puncture"
+  },
+  {
+    "subcategory": "Cardiac contusion",
+    "topic": "myocardial contusion"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "myocardial rupture"
+  },
+  {
+    "subcategory": "Aortic dissection",
+    "topic": "traumatic aortic dissection"
+  },
+  {
+    "subcategory": "Tamponade",
+    "topic": "traumatic cardiac tamponade"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "ACE-inhibitor / calcium-channel-blocker / alpha-blocker adverse effects"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "doxorubicin (adriamycin) cardiotoxicity"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "minoxidil adverse effects"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "minoxidil adverse effects (pericardial effusion, reflex tachycardia)"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "Minoxidil adverse effects"
+  },
+  {
+    "subcategory": "Long QT",
+    "topic": "Long QT syndrome (congenital/drug-induced)"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "Brugada syndrome"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "Sick-sinus syndrome"
+  },
+  {
+    "subcategory": "Tacharrhythmias",
+    "topic": "AV-nodal re-entry tachycardia (AVNRT)"
+  },
+  {
+    "subcategory": "Angina",
+    "topic": "Prinzmetal (variant) angina"
+  },
+  {
+    "subcategory": "Cardiomyopathies",
+    "topic": "Arrhythmogenic right-ventricular cardiomyopathy"
+  },
+  {
+    "subcategory": "Cardiomyopathies",
+    "topic": "Peripartum cardiomyopathy"
+  },
+  {
+    "subcategory": "Myocarditis",
+    "topic": "Viral myocarditis (Coxsackie B, etc.)"
+  },
+  {
+    "subcategory": "Myocarditis",
+    "topic": "Lyme carditis (AV block, myocarditis)"
+  },
+  {
+    "subcategory": "Constrictive pericarditis",
+    "topic": "Dressler syndrome (post-MI autoimmune pericarditis)"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "Bicuspid aortic valve"
+  },
+  {
+    "subcategory": "Endocarditis",
+    "topic": "Fungal infective endocarditis"
+  },
+  {
+    "subcategory": "Endocarditis",
+    "topic": "HACEK infective endocarditis"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "Ebstein anomaly"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "Patent foramen ovale (paradoxical embolus)"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "Pulmonary or tricuspid atresia"
+  },
+  {
+    "subcategory": "Cardiac tumors",
+    "topic": "Cardiac rhabdomyoma (tuberous sclerosis)"
+  },
+  {
+    "subcategory": "Cardiac tumors",
+    "topic": "Papillary fibro-elastoma"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "Kawasaki disease"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "Takayasu arteritis"
+  },
+  {
+    "subcategory": "Tamponade",
+    "topic": "Penetrating-trauma cardiac tamponade"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "Amiodarone adverse effects (pulmonary, thyroid)"
+  },
+  {
+    "subcategory": "Cor pulmonale",
+    "topic": "Flash pulmonary edema (hypertensive emergency)"
+  },
+  {
+    "subcategory": "Upper airway infections/inflammation",
+    "topic": "acute upper respiratory infection"
+  },
+  {
+    "subcategory": "Upper airway infections/inflammation",
+    "topic": "viral infections (adenovirus, coronaviruses, coxsackievirus, influenza virus, parainfluenza virus, rhinoviruses)"
+  },
+  {
+    "subcategory": "Upper airway infections/inflammation",
+    "topic": "sinusitis"
+  },
+  {
+    "subcategory": "Upper airway infections/inflammation",
+    "topic": "nasopharyngitis"
+  },
+  {
+    "subcategory": "Upper airway infections/inflammation",
+    "topic": "epiglottitis"
+  },
+  {
+    "subcategory": "Upper airway infections/inflammation",
+    "topic": "Bordetella pertussis pneumonia"
+  },
+  {
+    "subcategory": "Upper airway infections/inflammation",
+    "topic": "croup"
+  },
+  {
+    "subcategory": "Upper airway infections/inflammation",
+    "topic": "acute laryngitis"
+  },
+  {
+    "subcategory": "Upper airway infections/inflammation",
+    "topic": "acute laryngotracheitis"
+  },
+  {
+    "subcategory": "Upper airway infections/inflammation",
+    "topic": "tracheitis"
+  },
+  {
+    "subcategory": "Upper airway infections/inflammation",
+    "topic": "pharyngitis"
+  },
+  {
+    "subcategory": "Upper airway infections/inflammation",
+    "topic": "streptococcal throat infections"
+  },
+  {
+    "subcategory": "Upper airway infections/inflammation",
+    "topic": "tonsillitis"
+  },
+  {
+    "subcategory": "Upper airway infections/inflammation",
+    "topic": "peritonsillar abscess"
+  },
+  {
+    "subcategory": "Upper airway infections/inflammation",
+    "topic": "rhinitis, allergic, chronic"
+  },
+  {
+    "subcategory": "Upper airway infections/inflammation",
+    "topic": "Ulcers of nasal cavity/sinuses"
+  },
+  {
+    "subcategory": "Upper airway infections/inflammation",
+    "topic": "ulcers of nasal cavity/sinuses"
+  },
+  {
+    "subcategory": "Lower airway infections/inflammation",
+    "topic": "hospital-acquired pneumonia"
+  },
+  {
+    "subcategory": "Lower airway infections/inflammation",
+    "topic": "ventilator-associated pneumonia"
+  },
+  {
+    "subcategory": "Lower airway infections/inflammation",
+    "topic": "community-acquired pneumonia"
+  },
+  {
+    "subcategory": "Lower airway infections/inflammation",
+    "topic": "acute bronchiolitis"
+  },
+  {
+    "subcategory": "Lower airway infections/inflammation",
+    "topic": "bronchiolitis obliterans with organizing pneumonia (BOOP)"
+  },
+  {
+    "subcategory": "Lower airway infections/inflammation",
+    "topic": "anthrax, pulmonary (Bacillus anthracis)"
+  },
+  {
+    "subcategory": "Lower airway infections/inflammation",
+    "topic": "aspiration pneumonia"
+  },
+  {
+    "subcategory": "Lower airway infections/inflammation",
+    "topic": "pneumonitis"
+  },
+  {
+    "subcategory": "Lower airway infections/inflammation",
+    "topic": "bronchitis, acute"
+  },
+  {
+    "subcategory": "Lower airway infections/inflammation",
+    "topic": "bronchopneumonia"
+  },
+  {
+    "subcategory": "Lower airway infections/inflammation",
+    "topic": "pneumonia (Burkholderia pseudomallei)"
+  },
+  {
+    "subcategory": "Lower airway infections/inflammation",
+    "topic": "pneumonia (Chlamydophila pneumoniae)"
+  },
+  {
+    "subcategory": "Lower airway infections/inflammation",
+    "topic": "pneumonia (Coxiella burnetii)"
+  },
+  {
+    "subcategory": "Lower airway infections/inflammation",
+    "topic": "pneumonia (Francisella tularensis)"
+  },
+  {
+    "subcategory": "Lower airway infections/inflammation",
+    "topic": "pneumonia (Haemophilus influenzae)"
+  },
+  {
+    "subcategory": "Lower airway infections/inflammation",
+    "topic": "pneumonia (Klebsiella pneumoniae)"
+  },
+  {
+    "subcategory": "Lower airway infections/inflammation",
+    "topic": "pneumonia (Legionella)"
+  },
+  {
+    "subcategory": "Lower airway infections/inflammation",
+    "topic": "pneumonia (Moraxella catarrhalis)"
+  },
+  {
+    "subcategory": "Lower airway infections/inflammation",
+    "topic": "pneumonia (Mycoplasma pneumoniae)"
+  },
+  {
+    "subcategory": "Lower airway infections/inflammation",
+    "topic": "pneumonia (Pseudomonas aeruginosa)"
+  },
+  {
+    "subcategory": "Lower airway infections/inflammation",
+    "topic": "pneumonia (Streptococcus species)"
+  },
+  {
+    "subcategory": "Lower airway infections/inflammation",
+    "topic": "pneumonia (MSSA)"
+  },
+  {
+    "subcategory": "Lower airway infections/inflammation",
+    "topic": "pneumonia (MRSA)"
+  },
+  {
+    "subcategory": "Lower airway infections/inflammation",
+    "topic": "pneumonia (other gram-negative bacteria)"
+  },
+  {
+    "subcategory": "Lower airway infections/inflammation",
+    "topic": "viral infection (influenza A, B, adenovirus, H1N1, respiratory syncytial virus, parainfluenza virus)"
+  },
+  {
+    "subcategory": "Lower airway infections/inflammation",
+    "topic": "viral infection (RSV, influenza, parainfluenza, adenovirus, H1N1)"
+  },
+  {
+    "subcategory": "Lower airway infections/inflammation",
+    "topic": "fungal infection (aspergillosis, including allergic bronchopulmonary aspergillosis and aspergilloma)"
+  },
+  {
+    "subcategory": "Lower airway infections/inflammation",
+    "topic": "histoplasmosis"
+  },
+  {
+    "subcategory": "Lower airway infections/inflammation",
+    "topic": "coccidioidomycosis"
+  },
+  {
+    "subcategory": "Lower airway infections/inflammation",
+    "topic": "Pneumocystis jirovecii pneumonia"
+  },
+  {
+    "subcategory": "Tuberculosis",
+    "topic": "pulmonary tuberculosis"
+  },
+  {
+    "subcategory": "Lower airway infections/inflammation",
+    "topic": "lung abscess"
+  },
+  {
+    "subcategory": "Head and neck cancer",
+    "topic": "vocal cord polyps"
+  },
+  {
+    "subcategory": "Head and neck cancer",
+    "topic": "nasal polyps"
+  },
+  {
+    "subcategory": "Head and neck cancer",
+    "topic": "juvenile papillomatosis"
+  },
+  {
+    "subcategory": "Lung cancer",
+    "topic": "solitary pulmonary nodule"
+  },
+  {
+    "subcategory": "Head and neck cancer",
+    "topic": "lip cancer"
+  },
+  {
+    "subcategory": "Head and neck cancer",
+    "topic": "oral cavity cancer"
+  },
+  {
+    "subcategory": "Head and neck cancer",
+    "topic": "pharyngeal cancer"
+  },
+  {
+    "subcategory": "Head and neck cancer",
+    "topic": "head and neck cancer"
+  },
+  {
+    "subcategory": "Head and neck cancer",
+    "topic": "laryngeal cancer"
+  },
+  {
+    "subcategory": "Head and neck cancer",
+    "topic": "tracheal cancer"
+  },
+  {
+    "subcategory": "Lung cancer",
+    "topic": "bronchogenic carcinoma squamous cell"
+  },
+  {
+    "subcategory": "Lung cancer",
+    "topic": "bronchogenic carcinoma adenocarcinoma"
+  },
+  {
+    "subcategory": "Lung cancer",
+    "topic": "bronchogenic carcinoma large cell"
+  },
+  {
+    "subcategory": "Lung cancer",
+    "topic": "bronchogenic carcinoma small cell"
+  },
+  {
+    "subcategory": "Lung cancer",
+    "topic": "bronchial carcinoid tumors"
+  },
+  {
+    "subcategory": "Mesothelioma",
+    "topic": "pleural mesothelioma"
+  },
+  {
+    "subcategory": "Lung Cancer",
+    "topic": "secondary malignant Neoplasms of lung"
+  },
+  {
+    "subcategory": "Lung Cancer",
+    "topic": "secondary malignant Neoplasms of pleura"
+  },
+  {
+    "subcategory": "Lung Cancer",
+    "topic": "metastatic Neoplasms to pleura/lung"
+  },
+  {
+    "subcategory": "Asthma",
+    "topic": "asthma"
+  },
+  {
+    "subcategory": "Asthma",
+    "topic": "reactive airway disease"
+  },
+  {
+    "subcategory": "Bronchiestasis",
+    "topic": "bronchiectasis"
+  },
+  {
+    "subcategory": "COPD",
+    "topic": "chronic airway obstruction"
+  },
+  {
+    "subcategory": "COPD",
+    "topic": "chronic obstructive pulmonary disease (COPD)"
+  },
+  {
+    "subcategory": "COPD",
+    "topic": "chronic bronchitis"
+  },
+  {
+    "subcategory": "COPD",
+    "topic": "emphysema"
+  },
+  {
+    "subcategory": "Pneumoconiosis",
+    "topic": "pneumoconiosis"
+  },
+  {
+    "subcategory": "Pneumoconiosis",
+    "topic": "asbestosis"
+  },
+  {
+    "subcategory": "Pneumoconiosis",
+    "topic": "silicosis"
+  },
+  {
+    "subcategory": "Pneumoconiosis",
+    "topic": "silo-filler's lung"
+  },
+  {
+    "subcategory": "Pneumoconiosis",
+    "topic": "Silo-filler's lung"
+  },
+  {
+    "subcategory": "Pneumoconiosis",
+    "topic": "byssinosis"
+  },
+  {
+    "subcategory": "Pneumoconiosis",
+    "topic": "bagassosis"
+  },
+  {
+    "subcategory": "Pneumoconiosis",
+    "topic": "Bagassosis"
+  },
+  {
+    "subcategory": "Pneumoconiosis",
+    "topic": "berylliosis"
+  },
+  {
+    "subcategory": "Hypersensitivity pneumonitis",
+    "topic": "hypersensitivity pneumonitis"
+  },
+  {
+    "subcategory": "Hypersensitivity pneumonitis",
+    "topic": "hypereosinophilic syndromes"
+  },
+  {
+    "subcategory": "Hypersensitivity pneumonitis",
+    "topic": "Hypereosinophilic syndromes"
+  },
+  {
+    "subcategory": "Hypersensitivity pneumonitis",
+    "topic": "Loeffler syndrome"
+  },
+  {
+    "subcategory": "ILD",
+    "topic": "interstitial pneumonia, usual (UIP)"
+  },
+  {
+    "subcategory": "ILD",
+    "topic": "desquamative interstitial pneumonia (DIP)"
+  },
+  {
+    "subcategory": "ILD",
+    "topic": "nonspecific interstitial pneumonia (NSIP)"
+  },
+  {
+    "subcategory": "ARDS",
+    "topic": "acute respiratory distress syndrome (ARDS)"
+  },
+  {
+    "subcategory": "Pulmonary hypertension",
+    "topic": "pulmonary hypertension"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "pulmonary arteriovenous fistula"
+  },
+  {
+    "subcategory": "Edema",
+    "topic": "pulmonary edema"
+  },
+  {
+    "subcategory": "PE",
+    "topic": "pulmonary embolism"
+  },
+  {
+    "subcategory": "PE",
+    "topic": "air embolism"
+  },
+  {
+    "subcategory": "PE",
+    "topic": "Air Embolism"
+  },
+  {
+    "subcategory": "PE",
+    "topic": "fat embolism"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "respiratory arrest/failure due to enteral feeding"
+  },
+  {
+    "subcategory": "Gas exchange disorders",
+    "topic": "disorders of gas exchange"
+  },
+  {
+    "subcategory": "Hypoventilation",
+    "topic": "hypoventilation"
+  },
+  {
+    "subcategory": "Hypoventilation",
+    "topic": "Hypoventilation"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "hypoxia"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "ventilation-perfusion imbalance"
+  },
+  {
+    "subcategory": "Chylothorax",
+    "topic": "chylothorax"
+  },
+  {
+    "subcategory": "Chylothorax",
+    "topic": "Chylothorax"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "costochondritis"
+  },
+  {
+    "subcategory": "Empyema",
+    "topic": "empyema"
+  },
+  {
+    "subcategory": "Empyema",
+    "topic": "Empyema"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "hemothorax"
+  },
+  {
+    "subcategory": "Mediastinitis",
+    "topic": "mediastinitis"
+  },
+  {
+    "subcategory": "Mediastinitis",
+    "topic": "Mediastinitis"
+  },
+  {
+    "subcategory": "Pleual effusion",
+    "topic": "pleural effusion"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "pleuritis"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "pneumomediastinum"
+  },
+  {
+    "subcategory": "Pneumothorax",
+    "topic": "pneumothorax"
+  },
+  {
+    "subcategory": "Epistaxis",
+    "topic": "epistaxis"
+  },
+  {
+    "subcategory": "Epistaxis",
+    "topic": "Epistaxis"
+  },
+  {
+    "subcategory": "Barotrauma",
+    "topic": "Sinus Barotrauma"
+  },
+  {
+    "subcategory": "Barotrauma",
+    "topic": "sinus barotrauma"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "laryngeal/pharyngeal obstruction"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "Laryngeal/pharyngeal obstruction"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "tracheoesophageal fistula"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "tracheal stenosis"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "Tracheal stenosis"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "tracheomalacia"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "tracheal injury"
+  },
+  {
+    "subcategory": "Foreign body",
+    "topic": "foreign body (nose, pharynx, larynx, trachea)"
+  },
+  {
+    "subcategory": "Trauma",
+    "topic": "septal perforation"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "atelectasis"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "Atelectasis"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "diaphragm/chest wall injury"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "drowning"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "near drowning"
+  },
+  {
+    "subcategory": "Foreign body",
+    "topic": "foreign body (upper and lower respiratory tract)"
+  },
+  {
+    "subcategory": "Trauma",
+    "topic": "penetrating chest wounds"
+  },
+  {
+    "subcategory": "Trauma",
+    "topic": "pulmonary contusion"
+  },
+  {
+    "subcategory": "Sleep apnea",
+    "topic": "sleep apnea, obstructive"
+  },
+  {
+    "subcategory": "Sleep apnea",
+    "topic": "Sleep apnea, obstructive"
+  },
+  {
+    "subcategory": "Sleep apnea",
+    "topic": "sleep apnea, central"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "hypoventilation syndrome"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "Hypoventilation syndrome"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "Hypoventilation Syndrome"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "obesity-hypoventilation syndrome"
+  },
+  {
+    "subcategory": "Bronchogenic cyst",
+    "topic": "bronchogenic cysts"
+  },
+  {
+    "subcategory": "Bronchogenic cyst",
+    "topic": "congenital cysts"
+  },
+  {
+    "subcategory": "CDH",
+    "topic": "congenital diaphragmatic hernia"
+  },
+  {
+    "subcategory": "Pulmonary sequestration",
+    "topic": "pulmonary sequestration"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "immotile cilia syndrome"
+  },
+  {
+    "subcategory": "Bleomycin toxicity",
+    "topic": "bleomycin toxicity"
+  },
+  {
+    "subcategory": "Amiodarone lung",
+    "topic": "amiodarone pulmonary toxicity"
+  },
+  {
+    "subcategory": "Oxygen toxicity",
+    "topic": "adverse effects of 100% oxygen"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "acute effects of tobacco/nicotine"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "acute inhalant effects"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "acute cocaine inhalation effects"
+  },
+  {
+    "subcategory": "Upper airway infections/inflammation",
+    "topic": "Retropharyngeal abscess"
+  },
+  {
+    "subcategory": "Upper airway infections/inflammation",
+    "topic": "Ludwig angina"
+  },
+  {
+    "subcategory": "Lower airway infections/inflammation",
+    "topic": "Mycobacterium avium complex (MAC) lung disease"
+  },
+  {
+    "subcategory": "COPD",
+    "topic": "Alpha-1 antitrypsin-deficiency emphysema"
+  },
+  {
+    "subcategory": "ILD",
+    "topic": "Sarcoidosis (pulmonary involvement)"
+  },
+  {
+    "subcategory": "ILD",
+    "topic": "Pulmonary Langerhans-cell histiocytosis"
+  },
+  {
+    "subcategory": "ILD",
+    "topic": "Lymphangioleiomyomatosis (LAM)"
+  },
+  {
+    "subcategory": "ILD",
+    "topic": "Acute interstitial pneumonia (Hamman-Rich)"
+  },
+  {
+    "subcategory": "ILD",
+    "topic": "Acute interstitial pneumonia (Hamman-Rich syndrome)"
+  },
+  {
+    "subcategory": "ILD",
+    "topic": "Pulmonary alveolar proteinosis"
+  },
+  {
+    "subcategory": "Pulmonary hypertension",
+    "topic": "Chronic thromboembolic pulmonary hypertension"
+  },
+  {
+    "subcategory": "Pneumothorax",
+    "topic": "Tension pneumothorax"
+  },
+  {
+    "subcategory": "Barotrauma",
+    "topic": "Ventilator-associated barotrauma"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "Neonatal respiratory distress syndrome (NRDS)"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "Bronchopulmonary dysplasia"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "Cystic fibrosis (pulmonary manifestations)"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "Nitrofurantoin lung toxicity"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "Methotrexate pneumonitis"
+  },
+  {
+    "subcategory": "Lung cancer",
+    "topic": "Pancoast (superior sulcus) tumor"
+  },
+  {
+    "subcategory": "Bacterial",
+    "topic": "pseudomembranous colitis (Clostridium difficile)"
+  },
+  {
+    "subcategory": "Bacterial",
+    "topic": "enteritis/enteric infections (includes gastroenteritis) - Staphylococcus aureus"
+  },
+  {
+    "subcategory": "Bacterial",
+    "topic": "enteritis/enteric infections - Staphylococcus aureus"
+  },
+  {
+    "subcategory": "Bacterial",
+    "topic": "enteritis/enteric infections - Escherichia coli"
+  },
+  {
+    "subcategory": "Bacterial",
+    "topic": "enteritis/enteric infections - Listeria monocytogenes"
+  },
+  {
+    "subcategory": "Bacterial",
+    "topic": "enteritis/enteric infections - Yersinia enterocolitica"
+  },
+  {
+    "subcategory": "Bacterial",
+    "topic": "enteritis/enteric infections - Campylobacter species"
+  },
+  {
+    "subcategory": "Bacterial",
+    "topic": "enteritis/enteric infections - Vibrio cholerae"
+  },
+  {
+    "subcategory": "Bacterial",
+    "topic": "enteritis/enteric infections - Salmonella species"
+  },
+  {
+    "subcategory": "Bacterial",
+    "topic": "Enteritis/Enteric Infections - Salmonella Species"
+  },
+  {
+    "subcategory": "Bacterial",
+    "topic": "enteritis/enteric infections - Shigella species"
+  },
+  {
+    "subcategory": "Bacterial",
+    "topic": "traveler's/infectious diarrhea"
+  },
+  {
+    "subcategory": "Other",
+    "topic": "hepatic abscess"
+  },
+  {
+    "subcategory": "Other",
+    "topic": "subhepatic abscess"
+  },
+  {
+    "subcategory": "Other",
+    "topic": "subphrenic abscess"
+  },
+  {
+    "subcategory": "Other",
+    "topic": "Subphrenic abscess"
+  },
+  {
+    "subcategory": "Bacterial",
+    "topic": "peritonitis, primary and secondary"
+  },
+  {
+    "subcategory": "Viral",
+    "topic": "infectious esophagitis (CMV, herpes)"
+  },
+  {
+    "subcategory": "Viral",
+    "topic": "hepatitis A"
+  },
+  {
+    "subcategory": "Viral",
+    "topic": "hepatitis B"
+  },
+  {
+    "subcategory": "Viral",
+    "topic": "hepatitis C"
+  },
+  {
+    "subcategory": "Viral",
+    "topic": "hepatitis D"
+  },
+  {
+    "subcategory": "Viral",
+    "topic": "hepatitis E"
+  },
+  {
+    "subcategory": "Viral",
+    "topic": "coxsackievirus enteritis/colitis"
+  },
+  {
+    "subcategory": "Viral",
+    "topic": "Echovirus enteritis/colitis"
+  },
+  {
+    "subcategory": "Viral",
+    "topic": "rotavirus enteritis"
+  },
+  {
+    "subcategory": "Viral",
+    "topic": "mumps"
+  },
+  {
+    "subcategory": "Viral",
+    "topic": "gingivostomatitis, herpetic"
+  },
+  {
+    "subcategory": "Fungal",
+    "topic": "thrush"
+  },
+  {
+    "subcategory": "Parasitic",
+    "topic": "Cryptosporidium infection"
+  },
+  {
+    "subcategory": "Parasitic",
+    "topic": "Cyclospora infection"
+  },
+  {
+    "subcategory": "Parasitic",
+    "topic": "Entamoeba histolytica infection"
+  },
+  {
+    "subcategory": "Parasitic",
+    "topic": "Giardia infection"
+  },
+  {
+    "subcategory": "Parasitic",
+    "topic": "Isospora belli infection"
+  },
+  {
+    "subcategory": "Parasitic",
+    "topic": "Strongyloides stercoralis infection"
+  },
+  {
+    "subcategory": "Autoimmune hepatitis",
+    "topic": "autoimmune hepatitis"
+  },
+  {
+    "subcategory": "Celiac",
+    "topic": "celiac disease"
+  },
+  {
+    "subcategory": "Other",
+    "topic": "eosinophilic esophagitis"
+  },
+  {
+    "subcategory": "IBD",
+    "topic": "granulomatous enteritis"
+  },
+  {
+    "subcategory": "IBD",
+    "topic": "Crohn disease"
+  },
+  {
+    "subcategory": "IBD",
+    "topic": "regional enteritis"
+  },
+  {
+    "subcategory": "IBD",
+    "topic": "regional enteritis (Crohn disease)"
+  },
+  {
+    "subcategory": "Other",
+    "topic": "microscopic colitis - collagenous"
+  },
+  {
+    "subcategory": "Other",
+    "topic": "microscopic colitis - lymphocytic"
+  },
+  {
+    "subcategory": "IBD",
+    "topic": "ulcerative colitis"
+  },
+  {
+    "subcategory": "Other",
+    "topic": "toxic megacolon"
+  },
+  {
+    "subcategory": "Gastric Tumors",
+    "topic": "benign Neoplasms of stomach"
+  },
+  {
+    "subcategory": "Small Intestine Tumors",
+    "topic": "benign Neoplasms of small intestine"
+  },
+  {
+    "subcategory": "Large Intestine Tumors",
+    "topic": "benign Neoplasms of colon/rectum/anus (polyps)"
+  },
+  {
+    "subcategory": "Oral Tumors",
+    "topic": "oral cancer (lips, mouth, tongue, salivary glands)"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "esophageal carcinoma (squamous, adenocarcinoma)"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "Esophageal carcinoma (squamous, adenocarcinoma)"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "Barrett esophagus"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "gastrinoma / Zollinger-Ellison syndrome"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "Gastrinoma / Zollinger-Ellison syndrome"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "gastrointestinal carcinoid tumors"
+  },
+  {
+    "subcategory": "Gastric Tumors",
+    "topic": "gastrointestinal stromal tumors (GIST)"
+  },
+  {
+    "subcategory": "Small Intestine Tumors",
+    "topic": "small-intestine malignancy"
+  },
+  {
+    "subcategory": "Gastric Tumors",
+    "topic": "stomach adenocarcinoma"
+  },
+  {
+    "subcategory": "Gastric Tumors",
+    "topic": "gastric lymphoma / MALT lymphoma"
+  },
+  {
+    "subcategory": "Large Intestine Tumors",
+    "topic": "colon, rectum, and anus carcinoma"
+  },
+  {
+    "subcategory": "Large Intestine Tumors",
+    "topic": "hereditary colon-cancer syndromes"
+  },
+  {
+    "subcategory": "Large Intestine Tumors",
+    "topic": "Familial adenomatous polyposis (Peutz-Jeghers, Gardner, Turcot)"
+  },
+  {
+    "subcategory": "Large Intestine Tumors",
+    "topic": "Familial Adenomatous Polyposis Syndromes"
+  },
+  {
+    "subcategory": "Large Intestine Tumors",
+    "topic": "Familial Adenomatous Polyposis (FAP)"
+  },
+  {
+    "subcategory": "Large Intestine Tumors",
+    "topic": "familial adenomatous polyposis (Peutz-Jeghers, Gardner, Turcot)"
+  },
+  {
+    "subcategory": "Large Intestine Tumors",
+    "topic": "familial adenomatous polyposis and related syndromes"
+  },
+  {
+    "subcategory": "Large Intestine Tumors",
+    "topic": "MUTYH-associated polyposis"
+  },
+  {
+    "subcategory": "Liver/Gallbladder Tumors",
+    "topic": "gallbladder carcinoma"
+  },
+  {
+    "subcategory": "Liver/Gallbladder Tumors",
+    "topic": "Gallbladder carcinoma"
+  },
+  {
+    "subcategory": "Liver/Gallbladder Tumors",
+    "topic": "cholangiocarcinoma"
+  },
+  {
+    "subcategory": "Liver/Gallbladder Tumors",
+    "topic": "adenocarcinoma of ampulla of Vater"
+  },
+  {
+    "subcategory": "Liver/Gallbladder Tumors",
+    "topic": "hepatoma / hepatocellular carcinoma"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "Peritoneal cancer / metastatic peritoneal studding"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "peritoneal cancer / metastatic peritoneal studding"
+  },
+  {
+    "subcategory": "Pancreatic Tumors",
+    "topic": "pancreatic carcinoma"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "metastatic Neoplasms (GI)"
+  },
+  {
+    "subcategory": "Bleeding",
+    "topic": "upper gastrointestinal bleeding"
+  },
+  {
+    "subcategory": "Bleeding",
+    "topic": "lower gastrointestinal bleeding"
+  },
+  {
+    "subcategory": "Constipation",
+    "topic": "constipation"
+  },
+  {
+    "subcategory": "Diarrhea",
+    "topic": "diarrhea"
+  },
+  {
+    "subcategory": "Bleeding",
+    "topic": "hematochezia"
+  },
+  {
+    "subcategory": "Bleeding",
+    "topic": "bright-red rectal bleeding"
+  },
+  {
+    "subcategory": "Bleeding",
+    "topic": "melena"
+  },
+  {
+    "subcategory": "Nausea/vomiting",
+    "topic": "nausea"
+  },
+  {
+    "subcategory": "Nausea/vomiting",
+    "topic": "vomiting"
+  },
+  {
+    "subcategory": "Nausea/vomiting",
+    "topic": "rumination"
+  },
+  {
+    "subcategory": "Nausea/vomiting",
+    "topic": "Rumination Syndrome"
+  },
+  {
+    "subcategory": "Nausea/vomiting",
+    "topic": "Rumination disorder"
+  },
+  {
+    "subcategory": "Peptic ulcer",
+    "topic": "peptic ulcer"
+  },
+  {
+    "subcategory": "Peptic ulcer",
+    "topic": "peptic ulcer disease"
+  },
+  {
+    "subcategory": "Peptic ulcer",
+    "topic": "peptic-ulcer perforation"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "gastroparesis"
+  },
+  {
+    "subcategory": "Appendicitis",
+    "topic": "appendicitis"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "angiodysplasia"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "Angiodysplasia"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "diverticula / diverticulitis / diverticulosis"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "duodenitis"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "Duodenitis"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "duodenal ulcer"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "noninfectious gastroenteritis and colitis"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "granulomatous enterocolitis"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "Hirschsprung disease"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "impaction of intestine"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "Impaction of intestine"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "Impaction of Intestine"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "intestinal obstruction / stricture"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "Intestinal Obstruction / Stricture"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "intussusception"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "Intussusception"
+  },
+  {
+    "subcategory": "IBS",
+    "topic": "irritable colon / irritable bowel syndrome"
+  },
+  {
+    "subcategory": "IBS",
+    "topic": "Irritable Bowel Syndrome"
+  },
+  {
+    "subcategory": "IBS",
+    "topic": "Irritable bowel syndrome (IBS)"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "mesenteric ischemia / ischemic bowel / ischemic colitis"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "necrotizing enterocolitis"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "paralytic ileus"
+  },
+  {
+    "subcategory": "Volvulus",
+    "topic": "volvulus"
+  },
+  {
+    "subcategory": "Malabsorption",
+    "topic": "malnutrition & malabsorption (lactose intolerance, short-bowel syndrome)"
+  },
+  {
+    "subcategory": "Abscess",
+    "topic": "abscess of anal and rectal regions"
+  },
+  {
+    "subcategory": "Abscess",
+    "topic": "Abscess of anal and rectal regions"
+  },
+  {
+    "subcategory": "Fissure",
+    "topic": "anal fissure"
+  },
+  {
+    "subcategory": "Fistula",
+    "topic": "anal fistula"
+  },
+  {
+    "subcategory": "Ulcer",
+    "topic": "rectal/anal ulcer"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "Rectal/anal ulcer"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "fecal incontinence"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "Fecal incontinence"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "rectal & anal hemorrhage"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "proctitis"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "Proctitis"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "hemorrhoids"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "rectal prolapse"
+  },
+  {
+    "subcategory": "Cirrhosis",
+    "topic": "cirrhosis"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "Dubin-Johnson syndrome"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "Rotor syndrome"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "end-stage liver disease (transplant indication)"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "Gilbert syndrome"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "Budd-Chiari syndrome"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "Caroli disease"
+  },
+  {
+    "subcategory": "Pancreatitis",
+    "topic": "Autoimmune pancreatitis"
+  },
+  {
+    "subcategory": "Pancreatic Tumors",
+    "topic": "Pancreatic neuroendocrine tumors (VIPoma, etc.)"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "Pancreas divisum"
+  },
+  {
+    "subcategory": "Peritonitis",
+    "topic": "Spontaneous bacterial peritonitis"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "Omphalocele"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "Gastroschisis"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "Duodenal atresia"
+  },
+  {
+    "subcategory": "Hernias",
+    "topic": "Strangulated hernia"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "Rifampin-induced hepatitis"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "OCP-related hepatic adenoma"
+  },
+  {
+    "subcategory": "Large Intestine Tumors",
+    "topic": "Lynch syndrome (HNPCC)"
+  },
+  {
+    "subcategory": "Pancreatic Tumors",
+    "topic": "Pancreatic mucinous cystic neoplasm / IPMN"
+  },
+  {
+    "subcategory": "Brief psychotic disorder",
+    "topic": "Brief psychotic disorder"
+  },
+  {
+    "subcategory": "Brief psychotic disorder",
+    "topic": "brief psychotic disorder"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "delusional disorder"
+  },
+  {
+    "subcategory": "Others",
+    "topic": "psychotic disorder due to another medical condition"
+  },
+  {
+    "subcategory": "Schizophrenia",
+    "topic": "schizophrenia"
+  }
+]

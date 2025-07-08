@@ -19,3 +19,7 @@ Content-Type: application/json
 {
   "userId": "ccd457b9-5332-49f1-a897-cb8e6a36a8b0"
 }
+
+###
+
+GET http://localhost:3000/api/dev

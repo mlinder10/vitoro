@@ -7,7 +7,7 @@ import {
   audits,
   reviewQuestions,
 } from "@/db";
-import { eq, exists, not, and } from "drizzle-orm";
+import { eq, and, isNull, or, sql } from "drizzle-orm";
 import {
   GeneratedReviewQuestion,
   isValidGeneratedReviewQuestion,
@@ -15,33 +15,8 @@ import {
   QuestionChoice,
 } from "@/types";
 import { Gemini, stripAndParse, TextPrompt } from "@/llm";
-
-export async function fetchUnansweredQuestion(userId: string) {
-  const [question] = await db
-    .select({ question: questions })
-    .from(questions)
-    .leftJoin(audits, eq(questions.id, audits.questionId))
-    .where(
-      and(
-        eq(audits.rating, "Pass"),
-        not(
-          exists(
-            db
-              .select()
-              .from(answeredQuestions)
-              .where(
-                and(
-                  eq(answeredQuestions.userId, userId),
-                  eq(answeredQuestions.questionId, questions.id)
-                )
-              )
-          )
-        )
-      )
-    )
-    .limit(1);
-  return question ? question.question : null;
-}
+import { QuestionFilters } from "@/contexts/qbank-session-provider";
+import { redirect } from "next/navigation";
 
 export async function resetProgress(userId: string) {
   await db
@@ -142,4 +117,58 @@ export async function createReviewQuestion(
     questionId: question.id,
     userId,
   });
+}
+
+// Filtered questions ---------------------------------------------------------
+
+export async function redirectToQuestion(
+  userId: string,
+  filters: QuestionFilters
+) {
+  const [question] = await db
+    .select({ id: questions.id })
+    .from(questions)
+    .leftJoin(audits, eq(questions.id, audits.questionId))
+    .leftJoin(
+      answeredQuestions,
+      and(
+        eq(answeredQuestions.questionId, questions.id),
+        eq(answeredQuestions.userId, userId)
+      )
+    )
+    .where(
+      and(
+        eq(audits.rating, "Pass"),
+        ...buildWhereClause(filters),
+        isNull(answeredQuestions.userId)
+      )
+    )
+    .orderBy(sql`RANDOM()`)
+    .limit(1);
+
+  if (!question) redirect("/practice/complete");
+
+  redirect(`/practice/q/${question.id}`);
+}
+
+function buildWhereClause({
+  step,
+  type,
+  system,
+  category,
+  subcategory,
+  topic,
+  difficulty,
+}: QuestionFilters) {
+  return [
+    step && step !== "Mixed"
+      ? or(eq(questions.step, step), eq(questions.step, "Mixed"))
+      : undefined,
+    type ? eq(questions.type, type) : undefined,
+    system ? eq(questions.system, system) : undefined,
+    category ? eq(questions.category, category) : undefined,
+    subcategory ? eq(questions.subcategory, subcategory) : undefined,
+    topic ? eq(questions.topic, topic) : undefined,
+    difficulty ? eq(questions.difficulty, difficulty) : undefined,
+  ].filter((c) => c !== undefined);
 }
