@@ -24,6 +24,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { CircleSlash, FocusIcon, Shuffle } from "lucide-react";
 import { useSession } from "@/contexts/session-provider";
+import { useState } from "react";
 
 export default function CustomSessionForm() {
   const { id } = useSession();
@@ -45,6 +46,13 @@ export default function CustomSessionForm() {
     fetchQuestion,
   } = useQBankSession();
   const { systems, categories, subcategories } = getSystems(system, category);
+  const [isLoading, setIsLoading] = useState(false);
+
+  async function handleFetchQuestion(filter = true) {
+    setIsLoading(true);
+    await fetchQuestion(id, filter);
+    setIsLoading(false);
+  }
 
   return (
     <div className="gap-8 grid grid-cols-2 px-6 pb-8">
@@ -55,7 +63,11 @@ export default function CustomSessionForm() {
             Practice with a random selection of questions.
           </p>
         </div>
-        <Button variant="accent" onClick={() => fetchQuestion(id, false)}>
+        <Button
+          variant="accent"
+          onClick={() => handleFetchQuestion(false)}
+          disabled={isLoading}
+        >
           <span>Random Session</span>
           <Shuffle />
         </Button>
@@ -118,7 +130,11 @@ export default function CustomSessionForm() {
               onChange={(e) => setTopic(e.target.value)}
             />
           </div> */}
-          <Button variant="accent" onClick={() => fetchQuestion(id)}>
+          <Button
+            variant="accent"
+            onClick={() => handleFetchQuestion(true)}
+            disabled={isLoading}
+          >
             <span>Custom Session</span>
             <FocusIcon />
           </Button>
