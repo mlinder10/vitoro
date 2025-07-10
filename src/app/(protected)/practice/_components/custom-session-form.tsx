@@ -8,9 +8,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
-  AnyCategory,
-  AnySubcategory,
-  getSystems,
   NBME_STEPS,
   NBMEStep,
   QUESTION_DIFFICULTIES,
@@ -18,6 +15,7 @@ import {
   QuestionDifficulty,
   QuestionType,
   System,
+  SYSTEMS,
 } from "@/types";
 import { useQBankSession } from "@/contexts/qbank-session-provider";
 import { Label } from "@/components/ui/label";
@@ -35,17 +33,10 @@ export default function CustomSessionForm() {
     setType,
     system,
     setSystem,
-    category,
-    setCategory,
-    subcategory,
-    setSubcategory,
-    // topic,
-    // setTopic,
     difficulty,
     setDifficulty,
     fetchQuestion,
   } = useQBankSession();
-  const { systems, categories, subcategories } = getSystems(system, category);
   const [isLoading, setIsLoading] = useState(false);
 
   async function handleFetchQuestion(filter = true) {
@@ -105,31 +96,9 @@ export default function CustomSessionForm() {
             label="System"
             value={system}
             updateValue={(s) => setSystem(s as System)}
-            options={systems}
+            options={SYSTEMS.map((s) => s.name)}
             placeholder="System"
           />
-          <FormSelect
-            label="Category"
-            value={category}
-            updateValue={(c) => setCategory(c as AnyCategory)}
-            options={categories}
-            placeholder="Categories"
-          />
-          <FormSelect
-            label="Subcategory"
-            value={subcategory}
-            updateValue={(s) => setSubcategory(s as AnySubcategory)}
-            options={subcategories}
-            placeholder="Subcategories"
-          />
-          {/* <div className="space-y-2">
-            <Label>Topic</Label>
-            <Input
-              placeholder="Topic"
-              value={topic}
-              onChange={(e) => setTopic(e.target.value)}
-            />
-          </div> */}
           <Button
             variant="accent"
             onClick={() => handleFetchQuestion(true)}
