@@ -1,7 +1,7 @@
 "use server";
 
 import { db, questions } from "@/db";
-import { Gemini, LLM, stripAndParse } from "@/llm";
+import { Gemini, LLM, stripAndParse } from "@/ai";
 import {
   AnyCategory,
   AnySubcategory,
