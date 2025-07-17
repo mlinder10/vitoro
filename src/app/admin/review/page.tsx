@@ -11,6 +11,8 @@ import {
   QuestionType,
   System,
   SYSTEMS,
+  YIELD_TYPES,
+  YieldType,
 } from "@/types";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
@@ -22,8 +24,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { CircleHelp } from "lucide-react";
-import { fetchQuestionsWithAudits } from "./actions";
+import { CircleHelp, Loader } from "lucide-react";
+import { fetchQuestionsWithAudits, updateYieldStatus } from "./actions";
+import { toast } from "sonner";
 
 const MAX_ITEMS_PER_PAGE = 30;
 
@@ -123,19 +126,19 @@ function QuestionItem({ question, isLast = false }: QuestionItemProps) {
     switch (question.rating) {
       case "Pass":
         return (
-          <span className="flex items-center bg-green-500 px-4 py-1 border-2 border-green-700 rounded-md text-green-950 text-sm">
+          <span className="flex items-center bg-green-500 px-4 border-2 border-green-700 rounded-md h-9 text-green-950 text-sm">
             Passed
           </span>
         );
       case "Flag for Human Review":
         return (
-          <span className="flex items-center bg-yellow-300 px-4 py-1 border-2 border-yellow-500 rounded-md text-yellow-800 text-sm">
+          <span className="flex items-center bg-yellow-300 px-4 border-2 border-yellow-500 rounded-md h-9 text-yellow-800 text-sm">
             Flagged
           </span>
         );
       case "Reject":
         return (
-          <span className="flex items-center bg-red-500 px-4 py-1 border-2 border-red-700 rounded-md text-red-950 text-sm">
+          <span className="flex items-center bg-red-500 px-4 border-2 border-red-700 rounded-md h-9 text-red-950 text-sm">
             Rejected
           </span>
         );
@@ -144,8 +147,8 @@ function QuestionItem({ question, isLast = false }: QuestionItemProps) {
 
   return (
     <li className={cn("py-2", !isLast && "border-b-2")}>
-      <Link href={`/admin/review/${question.id}`}>
-        <div className="flex justify-between">
+      <div className="flex justify-between">
+        <Link href={`/admin/review/${question.id}`}>
           <div>
             <div className="flex items-center gap-2">
               <span>{question.system}</span>
@@ -160,10 +163,57 @@ function QuestionItem({ question, isLast = false }: QuestionItemProps) {
               {question.createdAt.toLocaleString()}
             </p>
           </div>
+        </Link>
+        <div className="flex gap-4">
+          <YieldSelect question={question} />
           {renderAuditStatus()}
         </div>
-      </Link>
+      </div>
     </li>
+  );
+}
+
+// Yield Select ---------------------------------------------------------------
+
+type YieldSelectProps = {
+  question: Question;
+};
+
+function YieldSelect({ question }: YieldSelectProps) {
+  const [value, setValue] = useState<YieldType>(question.yield);
+  const [isLoading, setIsLoading] = useState(false);
+
+  async function handleUpdateYield(yt: YieldType) {
+    setIsLoading(true);
+    try {
+      await updateYieldStatus(question.id, yt);
+      setValue(yt);
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to update yield status", { richColors: true });
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  return isLoading ? (
+    <div className="flex items-center gap-2 px-2 border rounded-md text-muted-foreground text-sm">
+      <span>Updating...</span>
+      <Loader className="animate-spin" size={12} />
+    </div>
+  ) : (
+    <Select value={value} onValueChange={handleUpdateYield}>
+      <SelectTrigger>
+        <SelectValue placeholder="Yield" />
+      </SelectTrigger>
+      <SelectContent>
+        {YIELD_TYPES.map((yt) => (
+          <SelectItem key={yt} value={yt}>
+            {yt}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
   );
 }
 

@@ -8,6 +8,7 @@ export type NBMEStep = (typeof NBME_STEPS)[number];
 export type QuestionType = (typeof QUESTION_TYPES)[number];
 export type QuestionDifficulty = (typeof QUESTION_DIFFICULTIES)[number];
 export type AuditRating = (typeof QUESTION_RATINGS)[number];
+export type YieldType = (typeof YIELD_TYPES)[number];
 
 export const NBME_STEPS = ["Step 1", "Step 2", "Mixed"] as const;
 
@@ -27,6 +28,8 @@ export const QUESTION_RATINGS = [
   "Flag for Human Review",
   "Reject",
 ] as const;
+
+export const YIELD_TYPES = ["Low", "Medium", "High"] as const;
 
 export type Choices = {
   a: string;

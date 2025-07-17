@@ -10,6 +10,7 @@ import {
   System,
   AnyCategory,
   AnySubcategory,
+  YieldType,
 } from "@/types";
 
 export async function fetchQuestionsWithAudits(
@@ -71,4 +72,16 @@ function buildWhereClause(filters: {
   ].filter((c) => c !== undefined);
 
   return clauses.length > 0 ? and(...clauses) : undefined;
+}
+
+// Update Yield ------------------------------------------------------------
+
+export async function updateYieldStatus(
+  questionId: string,
+  yieldType: YieldType
+) {
+  await db
+    .update(questions)
+    .set({ yield: yieldType })
+    .where(eq(questions.id, questionId));
 }
