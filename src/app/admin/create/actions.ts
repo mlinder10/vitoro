@@ -40,6 +40,7 @@ const DEFAULT_QUESTION = (
   explanations: { a: "", b: "", c: "", d: "", e: "" },
   difficulty: "Easy",
   step: "Mixed",
+  yield: "Medium",
   rating: "Flag for Human Review",
 });
 
