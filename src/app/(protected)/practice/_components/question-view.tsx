@@ -9,6 +9,7 @@ import { useSession } from "@/contexts/session-provider";
 import { answerQuestion } from "../actions";
 import ChatBox from "./chat-box";
 import { useQBankSession } from "@/contexts/qbank-session-provider";
+import { useRouter } from "next/navigation";
 
 type QuestionViewProps = {
   question: Question;
@@ -16,10 +17,11 @@ type QuestionViewProps = {
 
 export default function QuestionView({ question }: QuestionViewProps) {
   const { id } = useSession();
-  const { fetchQuestion } = useQBankSession();
+  const { nextQuestion, previousQuestion } = useQBankSession();
   const [isLoading, setIsLoading] = useState(false);
   const [selection, setSelection] = useState<QuestionChoice | null>(null);
   const [isChecked, setIsChecked] = useState(false);
+  const router = useRouter();
 
   async function handleSubmit() {
     if (!selection) return;
@@ -27,6 +29,19 @@ export default function QuestionView({ question }: QuestionViewProps) {
     await answerQuestion(id, question.id, selection);
     setIsLoading(false);
     setIsChecked(true);
+  }
+
+  function handleNextQuestion() {
+    const id = nextQuestion();
+    if (!id) return;
+    router.replace(`/practice/q/${id}`);
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  function handlePreviousQuestion() {
+    const id = previousQuestion();
+    if (!id) return;
+    router.replace(`/practice/q/${id}`);
   }
 
   return (
@@ -51,7 +66,7 @@ export default function QuestionView({ question }: QuestionViewProps) {
             ))}
           </ul>
           {isChecked ? (
-            <Button variant="accent" onClick={() => fetchQuestion(id)}>
+            <Button variant="accent" onClick={handleNextQuestion}>
               <span>Next</span>
               <ArrowRight />
             </Button>
@@ -100,7 +115,7 @@ function QuestionChoiceView({
     <li
       onClick={handleSelect}
       className={cn(
-        "flex items-center gap-2 bg-background p-2 border-2 rounded-md group",
+        "group flex items-center gap-2 bg-background p-2 border-2 rounded-md",
         // not checked and not selected
         !isChecked &&
           !isLoading &&
@@ -117,7 +132,7 @@ function QuestionChoiceView({
     >
       <div
         className={cn(
-          "font-bold text-lg border-2 rounded-full aspect-square px-2 mx-1 flex items-center justify-center",
+          "flex justify-center items-center mx-1 px-2 border-2 rounded-full aspect-square font-bold text-lg",
           // not checked and not selected
           !isChecked && !isLoading && "group-hover:border-custom-accent-light",
           // selected and not checked

@@ -23,8 +23,10 @@ import { Button } from "@/components/ui/button";
 import { CircleSlash, FocusIcon, Shuffle } from "lucide-react";
 import { useSession } from "@/contexts/session-provider";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function CustomSessionForm() {
+  const router = useRouter();
   const { id } = useSession();
   const {
     step,
@@ -35,14 +37,15 @@ export default function CustomSessionForm() {
     setSystem,
     difficulty,
     setDifficulty,
-    fetchQuestion,
+    handleFetchQuestions,
   } = useQBankSession();
   const [isLoading, setIsLoading] = useState(false);
 
-  async function handleFetchQuestion(filter = true) {
+  async function handleStartSession(filter = true) {
     setIsLoading(true);
-    await fetchQuestion(id, filter);
+    const questionId = await handleFetchQuestions(id, filter);
     setIsLoading(false);
+    router.replace(`/practice/q/${questionId}`);
   }
 
   return (
@@ -56,7 +59,7 @@ export default function CustomSessionForm() {
         </div>
         <Button
           variant="accent"
-          onClick={() => handleFetchQuestion(false)}
+          onClick={() => handleStartSession(false)}
           disabled={isLoading}
         >
           <span>Random Session</span>
@@ -101,7 +104,7 @@ export default function CustomSessionForm() {
           />
           <Button
             variant="accent"
-            onClick={() => handleFetchQuestion(true)}
+            onClick={() => handleStartSession(true)}
             disabled={isLoading}
           >
             <span>Custom Session</span>

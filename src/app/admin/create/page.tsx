@@ -7,14 +7,8 @@ import { Button } from "@/components/ui/button";
 import { NotebookPen, Sparkles } from "lucide-react";
 import { useSession } from "@/contexts/session-provider";
 import { getSystems, QUESTION_TYPES, System } from "@/types";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
+import FormSelect from "@/components/form-select";
 
 export default function CreateQuestionPage() {
   const { id } = useSession();
@@ -101,64 +95,5 @@ export default function CreateQuestionPage() {
         )}
       </form>
     </main>
-  );
-}
-
-type SelectItemProps = {
-  label: string;
-  name: string;
-  value?: string;
-  updateValue?: (value: string) => void;
-  options: Readonly<string[]>;
-  error: string[] | undefined;
-};
-
-function FormSelect({
-  label,
-  name,
-  value,
-  updateValue,
-  options,
-  error,
-}: SelectItemProps) {
-  if (value && updateValue) {
-    return (
-      <div className="space-y-2">
-        <input type="hidden" name={name} value={value} />
-        <Label>{label}</Label>
-        <Select required onValueChange={updateValue}>
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder="Select a subcategory" />
-          </SelectTrigger>
-          <SelectContent>
-            {options.map((option) => (
-              <SelectItem key={option} value={option}>
-                {option}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        {error && <p className="text-destructive text-sm">{error}</p>}
-      </div>
-    );
-  }
-
-  return (
-    <div className="space-y-2">
-      <Label>{label}</Label>
-      <Select required name={name} onValueChange={updateValue}>
-        <SelectTrigger className="w-full">
-          <SelectValue placeholder="Select a subcategory" />
-        </SelectTrigger>
-        <SelectContent>
-          {options.map((option) => (
-            <SelectItem key={option} value={option}>
-              {option}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-      {error && <p className="text-destructive text-sm">{error}</p>}
-    </div>
   );
 }

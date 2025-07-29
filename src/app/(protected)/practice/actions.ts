@@ -1,7 +1,7 @@
 "use server";
 
 import { db, questions, answeredQuestions, reviewQuestions } from "@/db";
-import { eq, and, isNull, or, sql } from "drizzle-orm";
+import { eq, and, isNull, or, sql, notInArray } from "drizzle-orm";
 import {
   GeneratedReviewQuestion,
   isValidGeneratedReviewQuestion,
@@ -114,6 +114,35 @@ export async function createReviewQuestion(
 }
 
 // Filtered questions ---------------------------------------------------------
+
+export async function fetchQuestions(
+  userId: string,
+  filters: QuestionFilters,
+  count: number
+) {
+  if (count > 50) throw new Error("Too many questions requested");
+
+  const answered = await db
+    .select({ id: answeredQuestions.questionId })
+    .from(answeredQuestions)
+    .where(eq(answeredQuestions.userId, userId));
+
+  return await db
+    .select({ id: questions.id })
+    .from(questions)
+    .where(
+      and(
+        eq(questions.rating, "Pass"),
+        ...buildWhereClause(filters),
+        notInArray(
+          questions.id,
+          answered.map((q) => q.id)
+        )
+      )
+    )
+    .orderBy(sql`RANDOM()`)
+    .limit(count);
+}
 
 export async function redirectToQuestion(
   userId: string,

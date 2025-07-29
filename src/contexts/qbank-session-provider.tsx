@@ -1,6 +1,6 @@
 "use client";
 
-import { redirectToQuestion } from "@/app/(protected)/practice/actions";
+import { fetchQuestions } from "@/app/(protected)/practice/actions";
 import {
   AnyCategory,
   AnySubcategory,
@@ -18,7 +18,14 @@ import {
   useState,
 } from "react";
 
+// Context Typing --------------------------------------------------------------
+
+const DEFAULT_QUESTION_COUNT = 30;
+
 type QBankSessionType = {
+  // State
+  isTimed: boolean;
+  setIsTimed: Dispatch<SetStateAction<boolean>>;
   step: NBMEStep | undefined;
   setStep: Dispatch<SetStateAction<NBMEStep | undefined>>;
   type: QuestionType | undefined;
@@ -33,10 +40,17 @@ type QBankSessionType = {
   setTopic: Dispatch<SetStateAction<string>>;
   difficulty: QuestionDifficulty | undefined;
   setDifficulty: Dispatch<SetStateAction<QuestionDifficulty | undefined>>;
-  fetchQuestion: (userId: string, filter?: boolean) => Promise<void>;
+  questionCount: number;
+  setQuestionCount: Dispatch<SetStateAction<number>>;
+  // Methods
+  nextQuestion: () => string | null;
+  previousQuestion: () => string | null;
+  handleFetchQuestions: (userId: string, filter?: boolean) => Promise<string>;
 };
 
 const QBankSessionContext = createContext<QBankSessionType>({
+  isTimed: false,
+  setIsTimed: () => {},
   step: undefined,
   setStep: () => {},
   type: undefined,
@@ -51,16 +65,23 @@ const QBankSessionContext = createContext<QBankSessionType>({
   setTopic: () => {},
   difficulty: undefined,
   setDifficulty: () => {},
-  fetchQuestion: async () => {},
+  questionCount: DEFAULT_QUESTION_COUNT,
+  setQuestionCount: () => {},
+  nextQuestion: () => null,
+  previousQuestion: () => null,
+  handleFetchQuestions: async () => "",
 });
 
 type QBankSessionProviderProps = {
   children: ReactNode;
 };
 
+// Context Provider ------------------------------------------------------------
+
 export default function QBankSessionProvider({
   children,
 }: QBankSessionProviderProps) {
+  const [isTimed, setIsTimed] = useState(false);
   const [step, setStep] = useState<NBMEStep>();
   const [type, setType] = useState<QuestionType>();
   const [system, setSystem] = useState<System>();
@@ -68,41 +89,55 @@ export default function QBankSessionProvider({
   const [subcategory, setSubcategory] = useState<AnySubcategory>();
   const [topic, setTopic] = useState<string>("");
   const [difficulty, setDifficulty] = useState<QuestionDifficulty>();
+  const [questionCount, setQuestionCount] = useState(DEFAULT_QUESTION_COUNT);
+  const [node, setNode] = useState<QuestionNode | null>(null);
 
-  async function fetchQuestion(userId: string, filter = true) {
-    if (!filter) {
-      setStep(undefined);
-      setType(undefined);
-      setSystem(undefined);
-      setCategory(undefined);
-      setSubcategory(undefined);
-      setTopic("");
-      setDifficulty(undefined);
-      await redirectToQuestion(userId, {
-        step: undefined,
-        type: undefined,
-        system: undefined,
-        category: undefined,
-        subcategory: undefined,
-        topic: undefined,
-        difficulty: undefined,
-      });
-    } else {
-      await redirectToQuestion(userId, {
-        step,
-        type,
-        system,
-        category,
-        subcategory,
-        topic,
-        difficulty,
-      });
+  async function handleFetchQuestions(userId: string, filter = true) {
+    const questions = await fetchQuestions(
+      userId,
+      {
+        step: filter ? step : undefined,
+        type: filter ? type : undefined,
+        system: filter ? system : undefined,
+        category: filter ? category : undefined,
+        subcategory: filter ? subcategory : undefined,
+        topic: filter ? topic : undefined,
+        difficulty: filter ? difficulty : undefined,
+      },
+      questionCount
+    );
+
+    let rootNode: QuestionNode | null = null;
+    let currNode: QuestionNode | null = null;
+
+    for (const question of questions) {
+      if (rootNode === null) {
+        rootNode = { questionId: question.id, next: null, previous: null };
+        currNode = rootNode;
+        continue;
+      }
+      if (currNode === null) throw new Error("Current node is null");
+
+      const newNode: QuestionNode = {
+        questionId: question.id,
+        next: null,
+        previous: currNode,
+      };
+      currNode.next = newNode;
+      currNode = newNode;
     }
+
+    if (rootNode === null) throw new Error("Root node is null");
+
+    setNode(rootNode);
+    return rootNode.questionId;
   }
 
   return (
     <QBankSessionContext.Provider
       value={{
+        isTimed,
+        setIsTimed,
         step,
         setStep,
         type,
@@ -117,7 +152,11 @@ export default function QBankSessionProvider({
         setTopic,
         difficulty,
         setDifficulty,
-        fetchQuestion,
+        questionCount,
+        setQuestionCount,
+        nextQuestion: () => node?.next?.questionId ?? null,
+        previousQuestion: () => node?.previous?.questionId ?? null,
+        handleFetchQuestions,
       }}
     >
       {children}
@@ -135,6 +174,16 @@ export type QuestionFilters = {
   difficulty: QuestionDifficulty | undefined;
 };
 
+// Hook --------------------------------------------------------------------
+
 export function useQBankSession() {
   return useContext(QBankSessionContext);
 }
+
+// Question Linked List -----------------------------------------------------
+
+type QuestionNode = {
+  questionId: string;
+  next: QuestionNode | null;
+  previous: QuestionNode | null;
+};
