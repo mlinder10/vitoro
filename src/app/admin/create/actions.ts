@@ -77,7 +77,6 @@ export async function handleCreateQuestion(
     Object.fromEntries(formData.entries())
   );
   if (!result.success) {
-    console.log(formData, result.error.formErrors.fieldErrors);
     return result.error.formErrors.fieldErrors;
   }
   const { topic, system, category, subcategory, type, action } = result.data;
