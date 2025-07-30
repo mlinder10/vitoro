@@ -196,3 +196,23 @@ export const chatHistory = sqliteTable("chat_history", {
     .notNull(),
   conversation: json<string[]>("conversation"),
 });
+
+export const foundationalQuestions = sqliteTable("foundational_questions", {
+  id: text("id").primaryKey().default(SQL_UUID).notNull(),
+  shelf: text("shelf").notNull(),
+  topic: text("topic").notNull(),
+  question: text("question").notNull(),
+  expectedAnswer: text("expected_answer").notNull(),
+});
+
+export const foundationalFollowUps = sqliteTable("foundational_followups", {
+  id: text("id").primaryKey().default(SQL_UUID).notNull(),
+  foundationalQuestionId: text("foundational_question_id")
+    .references(() => foundationalQuestions.id, { onDelete: "cascade" })
+    .notNull(),
+  question: text("question").notNull(),
+  choices: json<Choices>("choices").notNull(),
+  explanations: json<Choices>("explanations").notNull(),
+  answer: json<QuestionChoice>("answer").notNull(),
+  type: json<QuestionType>("type").notNull(),
+});

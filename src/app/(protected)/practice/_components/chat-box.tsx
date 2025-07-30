@@ -86,30 +86,34 @@ export default function ChatBox({ question, answer }: ChatboxProps) {
     >
       <MessagesContainer
         messages={messages}
-        answer={question.answer}
+        isCorrect={answer === question.answer}
         endRef={endRef}
         handlePrompt={handlePrompt}
       />
-      <div className="mx-4 mb-2 border-2 rounded-md">
-        <textarea
-          placeholder="Ask a question..."
-          disabled={isLoading}
-          className="p-2 border-none outline-none w-full font-sans resize-none"
-          ref={inputRef}
-          onKeyDown={(e) => handleInput(e)}
-        />
-        <div className="flex justify-end p-2">
-          <Button
-            variant="accent-tertiary"
-            size="icon"
-            className="rounded-full"
-            onClick={() => handlePrompt()}
+      {messages.length > 0 ? (
+        <div className="mx-4 mb-2 border-2 rounded-md">
+          <textarea
+            placeholder="Ask a question..."
             disabled={isLoading}
-          >
-            {isLoading ? <Loader className="animate-spin" /> : <ArrowUp />}
-          </Button>
+            className="p-2 border-none outline-none w-full font-sans resize-none"
+            ref={inputRef}
+            onKeyDown={(e) => handleInput(e)}
+          />
+          <div className="flex justify-end p-2">
+            <Button
+              variant="accent-tertiary"
+              size="icon"
+              className="rounded-full"
+              onClick={() => handlePrompt()}
+              disabled={isLoading}
+            >
+              {isLoading ? <Loader className="animate-spin" /> : <ArrowUp />}
+            </Button>
+          </div>
         </div>
-      </div>
+      ) : (
+        <></>
+      )}
       <div className="mx-4 mb-4 p-2 border-2 rounded-md">
         <div className="flex flex-wrap gap-2">
           <ActionButton
@@ -133,14 +137,14 @@ export default function ChatBox({ question, answer }: ChatboxProps) {
 
 type MessagesContainerProps = {
   messages: string[];
-  answer: QuestionChoice;
+  isCorrect: boolean;
   endRef: RefObject<HTMLDivElement | null>;
   handlePrompt: (prompt?: string) => void;
 };
 
 function MessagesContainer({
   messages,
-  answer,
+  isCorrect,
   endRef,
   handlePrompt,
 }: MessagesContainerProps) {
@@ -154,20 +158,17 @@ function MessagesContainer({
           </p>
           <div className="gap-2 space-y-2 mt-4 px-4">
             <p className="text-muted-foreground">Try asking:</p>
-            <ul className="space-y-2">
+            {isCorrect ? (
               <RecommendedPrompt
-                prompt={`Why is ${answer.toUpperCase()} the correct answer?`}
+                prompt={`I'm still unsure. Can you help me understand the concept better?`}
                 onClick={handlePrompt}
               />
+            ) : (
               <RecommendedPrompt
-                prompt={`Can you explain the wrong answers?`}
+                prompt={`Can you help me understand where I went wrong?`}
                 onClick={handlePrompt}
               />
-              <RecommendedPrompt
-                prompt={`How should I approach questions like this?`}
-                onClick={handlePrompt}
-              />
-            </ul>
+            )}
           </div>
         </div>
       </div>
@@ -200,12 +201,12 @@ type RecommendedPromptProps = {
 
 function RecommendedPrompt({ prompt, onClick }: RecommendedPromptProps) {
   return (
-    <li
+    <div
       className="bg-muted hover:bg-muted/50 px-3 py-2 rounded transition cursor-pointer"
       onClick={() => onClick(prompt)}
     >
       👉 “{prompt}”
-    </li>
+    </div>
   );
 }
 
