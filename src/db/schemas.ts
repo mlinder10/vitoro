@@ -81,9 +81,15 @@ export const users = sqliteTable("users", {
   email: text("email").unique().notNull(),
   firstName: text("first_name").notNull(),
   lastName: text("last_name").notNull(),
+  gradYear: text("grad_year").notNull(),
+  exam: json<NBMEStep>("exam").notNull(),
   color: text("color").notNull(),
   password: text("password").notNull(),
   createdAt: date("created_at").default(SQL_NOW),
+  // optional
+  school: text("school"),
+  studyTools: text("study_tools"),
+  referral: text("referral"),
 });
 
 export const passwordResets = sqliteTable("password_resets", {

@@ -1,7 +1,7 @@
 "use server";
 
 import { db, questions } from "@/db";
-import { Gemini, LLM, stripAndParse } from "@/llm";
+import { Gemini, LLM, stripAndParse } from "@/ai";
 import {
   AnyCategory,
   AnySubcategory,
@@ -78,7 +78,6 @@ export async function handleCreateQuestion(
     Object.fromEntries(formData.entries())
   );
   if (!result.success) {
-    console.log(formData, result.error.formErrors.fieldErrors);
     return result.error.formErrors.fieldErrors;
   }
   const { topic, system, category, subcategory, type, action } = result.data;

@@ -4,6 +4,7 @@ import { admins, db, passwordResets, users } from "@/db";
 import { sendResetPasswordEmail } from "@/email/reset-password";
 import { authenticate, hashPassword, verifyPassword } from "@/lib/auth";
 import { generateColor } from "@/lib/utils";
+import { NBMEStep } from "@/types";
 import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { z } from "zod";
@@ -72,14 +73,21 @@ const RegisterSchema = z.object({
   email: z.string().email(),
   firstName: z.string(),
   lastName: z.string(),
+  gradYear: z.string(),
+  exam: z.string(),
   password: z.string().min(8),
   confirmPassword: z.string().min(8),
+  school: z.string().optional(),
+  studyTools: z.string().optional(),
+  referral: z.string().optional(),
 });
 
 type RegisterResult = {
   email?: string[];
   firstName?: string[];
   lastName?: string[];
+  gradYear?: string[];
+  exam?: string[];
   password?: string[];
   confirmPassword?: string[];
   error?: string[];
@@ -91,7 +99,18 @@ export async function handleRegister(
 ): Promise<RegisterResult> {
   const result = RegisterSchema.safeParse(Object.fromEntries(data.entries()));
   if (!result.success) return result.error.formErrors.fieldErrors;
-  const { email, firstName, lastName, password, confirmPassword } = result.data;
+  const {
+    email,
+    firstName,
+    lastName,
+    password,
+    confirmPassword,
+    gradYear,
+    exam,
+    school,
+    studyTools,
+    referral,
+  } = result.data;
 
   if (password !== confirmPassword)
     return { confirmPassword: ["Passwords do not match"] };
@@ -108,8 +127,15 @@ export async function handleRegister(
       email,
       firstName,
       lastName,
+      gradYear,
+      exam: exam as NBMEStep,
       color,
       password: hashedPassword,
+      school: (school?.trim().length ?? 0) > 0 ? school?.trim() : undefined,
+      studyTools:
+        (studyTools?.trim().length ?? 0) > 0 ? studyTools?.trim() : undefined,
+      referral:
+        (referral?.trim().length ?? 0) > 0 ? referral?.trim() : undefined,
     })
     .returning({
       id: users.id,

@@ -1,14 +1,14 @@
 "use server";
 
 import { db, questions, answeredQuestions, reviewQuestions } from "@/db";
-import { eq, and, isNull, or, sql } from "drizzle-orm";
+import { eq, and, isNull, or, sql, notInArray } from "drizzle-orm";
 import {
   GeneratedReviewQuestion,
   isValidGeneratedReviewQuestion,
   Question,
   QuestionChoice,
 } from "@/types";
-import { Gemini, stripAndParse, TextPrompt } from "@/llm";
+import { Gemini, stripAndParse } from "@/ai";
 import { QuestionFilters } from "@/contexts/qbank-session-provider";
 import { redirect } from "next/navigation";
 
@@ -30,46 +30,7 @@ export async function answerQuestion(
   });
 }
 
-export async function promptChat(
-  question: Question,
-  choice: QuestionChoice,
-  messages: string[]
-) {
-  const basePrompt = `
-    You are a NBME exam tutor.
-
-    A student was just presented this question:
-    Stem: ${question.question}
-    Choices: ${JSON.stringify(question.choices)}
-    Explanations: ${JSON.stringify(question.explanations)}
-    Answer: ${question.answer}
-
-    The student selected: ${choice}
-
-    Your task is to help the student understand why they selected the wrong answer.
-
-    This is the conversation you've had so far:
-  `;
-
-  const input: TextPrompt[] = [
-    {
-      type: "text",
-      content: JSON.stringify({ role: "base", content: basePrompt }),
-    },
-  ];
-  for (let i = 0; i < messages.length; ++i) {
-    input.push({
-      type: "text",
-      content: JSON.stringify({
-        role: i % 2 === 0 ? "user" : "ai-tutor",
-        content: messages[i],
-      }),
-    });
-  }
-
-  const llm = new Gemini();
-  return llm.promptStreamed(input);
-}
+// Review Questions -----------------------------------------------------------
 
 export async function createReviewQuestion(
   question: Question,
@@ -113,7 +74,36 @@ export async function createReviewQuestion(
   });
 }
 
-// Filtered questions ---------------------------------------------------------
+// Filtered Questions ---------------------------------------------------------
+
+export async function fetchQuestions(
+  userId: string,
+  filters: QuestionFilters,
+  count: number
+) {
+  if (count > 50) throw new Error("Too many questions requested");
+
+  const answered = await db
+    .select({ id: answeredQuestions.questionId })
+    .from(answeredQuestions)
+    .where(eq(answeredQuestions.userId, userId));
+
+  return await db
+    .select({ id: questions.id })
+    .from(questions)
+    .where(
+      and(
+        eq(questions.rating, "Pass"),
+        ...buildWhereClause(filters),
+        notInArray(
+          questions.id,
+          answered.map((q) => q.id)
+        )
+      )
+    )
+    .orderBy(sql`RANDOM()`)
+    .limit(count);
+}
 
 export async function redirectToQuestion(
   userId: string,

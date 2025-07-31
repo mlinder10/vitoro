@@ -3,11 +3,12 @@ import { cn } from "@/lib/utils";
 import { Question, QuestionChoice } from "@/types";
 import { ArrowLeft, ArrowUp, BotIcon, Loader } from "lucide-react";
 import { RefObject, useEffect, useRef, useState } from "react";
-import { createReviewQuestion, promptChat } from "../actions";
+import { createReviewQuestion } from "../actions";
 import ReactMarkdown from "react-markdown";
 import { KeyboardEvent } from "react";
 import { useSession } from "@/contexts/session-provider";
 import { toast } from "sonner";
+import { ChatStep, Message, MessageTag, promptChat } from "../chat";
 
 type ChatboxProps = {
   question: Question;
@@ -17,7 +18,11 @@ type ChatboxProps = {
 export default function ChatBox({ question, answer }: ChatboxProps) {
   const { id } = useSession();
   const [isExpanded, setIsExpanded] = useState(false);
-  const [messages, setMessages] = useState<string[]>([]);
+  const [nextTags, setNextTags] = useState<MessageTag[]>([]);
+  const [step, setStep] = useState<ChatStep>(
+    question.answer === answer ? "correct-1" : "incorrect-1"
+  );
+  const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const endRef = useRef<HTMLDivElement>(null);
@@ -27,24 +32,32 @@ export default function ChatBox({ question, answer }: ChatboxProps) {
   async function handlePrompt(prompt?: string) {
     if (!prompt) prompt = inputRef.current?.value;
     if (!prompt || !answer) return;
-    const newMessages = [...messages, prompt];
+    const newMessages: Message[] = [
+      ...messages,
+      { role: "user", content: prompt, tags: nextTags },
+    ];
+    setNextTags([]);
     if (inputRef.current) inputRef.current.value = "";
     setMessages(newMessages);
     setIsLoading(true);
-    const stream = await promptChat(question, answer, newMessages);
+    // this must be awaited, I'm not sure why the editor says that await has no effect
+    const res = await promptChat(question, answer, newMessages, step);
+    setNextTags(res.prompt.nextTags);
     while (true) {
-      const { value, done } = await stream.next();
+      const { value, done } = await res.stream.next();
       if (done) break;
-      streamCompletionHandler(value);
+      streamCompletionHandler(value, res.prompt.tags);
     }
+    setStep(res.prompt.next);
     setIsLoading(false);
   }
 
-  function streamCompletionHandler(token: string) {
+  function streamCompletionHandler(token: string, tags: MessageTag[]) {
     setMessages((prev) => {
-      if (prev.length % 2 === 1) return [...prev, token];
+      if (prev.length % 2 === 1)
+        return [...prev, { role: "assistant", content: token, tags }];
       const last = prev[prev.length - 1];
-      return [...prev.slice(0, -1), last + token];
+      return [...prev.slice(0, -1), { ...last, content: last.content + token }];
     });
   }
 
@@ -75,41 +88,46 @@ export default function ChatBox({ question, answer }: ChatboxProps) {
 
   // Rendering ----------------------------------------------------------------
 
-  if (!answer) return null;
+  if (!answer || step === "incorrect-complete" || step === "correct-complete")
+    return null;
 
   return (
     <section
       className={cn(
-        "flex flex-col flex-1 bg-background border-2 rounded-md relative transition-all",
+        "relative flex flex-col flex-1 bg-background border-2 rounded-md transition-all",
         isExpanded && "flex-3"
       )}
     >
       <MessagesContainer
-        messages={messages}
-        answer={question.answer}
+        messages={messages.map((m) => m.content)}
+        isCorrect={answer === question.answer}
         endRef={endRef}
         handlePrompt={handlePrompt}
       />
-      <div className="mx-4 mb-2 border-2 rounded-md">
-        <textarea
-          placeholder="Ask a question..."
-          disabled={isLoading}
-          className="p-2 border-none outline-none w-full font-sans resize-none"
-          ref={inputRef}
-          onKeyDown={(e) => handleInput(e)}
-        />
-        <div className="flex justify-end p-2">
-          <Button
-            variant="accent-tertiary"
-            size="icon"
-            className="rounded-full"
-            onClick={() => handlePrompt()}
+      {messages.length > 0 ? (
+        <div className="mx-4 mb-2 border-2 rounded-md">
+          <textarea
+            placeholder="Ask a question..."
             disabled={isLoading}
-          >
-            {isLoading ? <Loader className="animate-spin" /> : <ArrowUp />}
-          </Button>
+            className="p-2 border-none outline-none w-full font-sans resize-none"
+            ref={inputRef}
+            onKeyDown={(e) => handleInput(e)}
+          />
+          <div className="flex justify-end p-2">
+            <Button
+              variant="accent-tertiary"
+              size="icon"
+              className="rounded-full"
+              onClick={() => handlePrompt()}
+              disabled={isLoading}
+            >
+              {isLoading ? <Loader className="animate-spin" /> : <ArrowUp />}
+            </Button>
+          </div>
         </div>
-      </div>
+      ) : (
+        <></>
+      )}
       <div className="mx-4 mb-4 p-2 border-2 rounded-md">
         <div className="flex flex-wrap gap-2">
           <ActionButton
@@ -133,14 +151,14 @@ export default function ChatBox({ question, answer }: ChatboxProps) {
 
 type MessagesContainerProps = {
   messages: string[];
-  answer: QuestionChoice;
+  isCorrect: boolean;
   endRef: RefObject<HTMLDivElement | null>;
   handlePrompt: (prompt?: string) => void;
 };
 
 function MessagesContainer({
   messages,
-  answer,
+  isCorrect,
   endRef,
   handlePrompt,
 }: MessagesContainerProps) {
@@ -154,20 +172,17 @@ function MessagesContainer({
           </p>
           <div className="gap-2 space-y-2 mt-4 px-4">
             <p className="text-muted-foreground">Try asking:</p>
-            <ul className="space-y-2">
+            {isCorrect ? (
               <RecommendedPrompt
-                prompt={`Why is ${answer.toUpperCase()} the correct answer?`}
+                prompt={`I'm still unsure. Can you help me understand the concept better?`}
                 onClick={handlePrompt}
               />
+            ) : (
               <RecommendedPrompt
-                prompt={`Can you explain the wrong answers?`}
+                prompt={`Can you help me understand where I went wrong?`}
                 onClick={handlePrompt}
               />
-              <RecommendedPrompt
-                prompt={`How should I approach questions like this?`}
-                onClick={handlePrompt}
-              />
-            </ul>
+            )}
           </div>
         </div>
       </div>
@@ -200,12 +215,12 @@ type RecommendedPromptProps = {
 
 function RecommendedPrompt({ prompt, onClick }: RecommendedPromptProps) {
   return (
-    <li
+    <div
       className="bg-muted hover:bg-muted/50 px-3 py-2 rounded transition cursor-pointer"
       onClick={() => onClick(prompt)}
     >
       👉 “{prompt}”
-    </li>
+    </div>
   );
 }
 

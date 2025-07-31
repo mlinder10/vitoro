@@ -1,11 +1,11 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { ArrowRight, Loader } from "lucide-react";
 import { useActionState } from "react";
 import { handleRegister } from "../actions";
+import FormTextInput from "@/components/form-text-input";
+import FormSelect from "@/components/form-select";
 
 export default function RegisterPage() {
   const [error, action, isPending] = useActionState(handleRegister, {});
@@ -18,61 +18,75 @@ export default function RegisterPage() {
           <div className="top-[110%] absolute bg-gradient-to-r from-custom-accent w-full h-[2px] to-custom-accent-secondary" />
         </div>
         <p className="text-muted-foreground">Welcome to Vitoro!</p>
-        <div className="space-y-2 w-full">
-          <Label htmlFor="email">Email</Label>
-          <Input
-            id="email"
-            name="email"
-            type="email"
-            placeholder="name@email.com"
+        <FormTextInput
+          label="Email"
+          name="email"
+          placeholder="yourname@email.com"
+          type="email"
+          error={error?.email}
+        />
+        <FormTextInput
+          label="First Name"
+          name="firstName"
+          placeholder="First Name"
+          error={error?.firstName}
+        />
+        <FormTextInput
+          label="Last Name"
+          name="lastName"
+          placeholder="Last Name"
+          error={error?.lastName}
+        />
+        <FormTextInput
+          label="Anticipated Graduation Year"
+          name="gradYear"
+          placeholder="2026"
+          error={error?.gradYear}
+        />
+        <FormSelect
+          label="Exam"
+          name="exam"
+          placeholder="Step 1"
+          options={["Step 1", "Step 2"]}
+          error={error?.exam}
+        />
+        <FormTextInput
+          label="Password"
+          name="password"
+          placeholder="••••••••"
+          type="password"
+          error={error?.password}
+        />
+        <FormTextInput
+          label="Confirm Password"
+          name="confirmPassword"
+          placeholder="••••••••"
+          type="password"
+          error={error?.confirmPassword}
+        />
+
+        {/* Create container for optional information */}
+        {/* <div>
+          <FormTextInput
+            label="What school do you attend?"
+            name="school"
+            placeholder="UofSC"
+            error={undefined}
           />
-          {error?.email && (
-            <p className="text-destructive text-sm">{error.email}</p>
-          )}
-        </div>
-        <div className="space-y-2 w-full">
-          <Label htmlFor="firstname">First Name</Label>
-          <Input
-            id="firstname"
-            name="firstName"
-            type="text"
-            placeholder="First"
+          <FormTextInput
+            label="What are your favorite study tools?"
+            name="studyTools"
+            placeholder="Anki, UWorld, etc."
+            error={undefined}
           />
-          {error?.firstName && (
-            <p className="text-destructive text-sm">{error.firstName}</p>
-          )}
-        </div>
-        <div className="space-y-2 w-full">
-          <Label htmlFor="lastname">Last Name</Label>
-          <Input id="lastname" name="lastName" type="text" placeholder="Name" />
-          {error?.lastName && (
-            <p className="text-destructive text-sm">{error.lastName}</p>
-          )}
-        </div>
-        <div className="space-y-2 w-full">
-          <Label htmlFor="password">Password</Label>
-          <Input
-            id="password"
-            name="password"
-            type="password"
-            placeholder="••••••••"
+          <FormTextInput
+            label="How did you hear about us?"
+            name="referral"
+            placeholder="Social media, word of mouth, etc."
+            error={undefined}
           />
-          {error?.password && (
-            <p className="text-destructive text-sm">{error.password}</p>
-          )}
-        </div>
-        <div className="space-y-2 w-full">
-          <Label htmlFor="confirmpassword">Confirm Password</Label>
-          <Input
-            id="confirmpassword"
-            name="confirmPassword"
-            type="password"
-            placeholder="••••••••"
-          />
-          {error?.confirmPassword && (
-            <p className="text-destructive text-sm">{error.confirmPassword}</p>
-          )}
-        </div>
+        </div> */}
+
         <div className="space-y-2 w-full">
           <Button
             type="submit"

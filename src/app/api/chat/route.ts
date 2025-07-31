@@ -1,4 +1,4 @@
-import { Gemini } from "@/llm";
+import { Gemini } from "@/ai";
 
 export async function POST(req: Request) {
   const { prompt } = await req.json();
