@@ -161,3 +161,14 @@
 button {
   cursor: pointer;
 }
+
+.highlight {
+  background-color: #fef9c3;
+  border-bottom: 1px dashed #eab308;
+  cursor: pointer;
+}
+
+.dark .highlight {
+  background-color: #facc1533;
+  border-bottom: 1px dashed #facc15;
+}

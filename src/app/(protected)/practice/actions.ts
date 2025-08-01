@@ -1,6 +1,12 @@
 "use server";
 
-import { db, questions, answeredQuestions, reviewQuestions } from "@/db";
+import {
+  db,
+  questions,
+  answeredQuestions,
+  reviewQuestions,
+  qbankSessions,
+} from "@/db";
 import { eq, and, isNull, or, sql, notInArray } from "drizzle-orm";
 import {
   GeneratedReviewQuestion,
@@ -18,7 +24,9 @@ export async function resetProgress(userId: string) {
     .where(eq(answeredQuestions.userId, userId));
 }
 
-export async function answerQuestion(
+// Records
+
+export async function createAnswerRecord(
   userId: string,
   questionId: string,
   answer: QuestionChoice
@@ -28,6 +36,23 @@ export async function answerQuestion(
     questionId,
     answer,
   });
+}
+
+export async function createQbankSession(
+  userId: string,
+  questionIds: string[],
+  flaggedIds: string[],
+  answers: QuestionChoice[]
+) {
+  return await db
+    .insert(qbankSessions)
+    .values({
+      userId,
+      questionIds,
+      flaggedQuestionIds: flaggedIds,
+      answers,
+    })
+    .returning({ id: qbankSessions.id });
 }
 
 // Review Questions -----------------------------------------------------------
@@ -89,7 +114,7 @@ export async function fetchQuestions(
     .where(eq(answeredQuestions.userId, userId));
 
   return await db
-    .select({ id: questions.id })
+    .select()
     .from(questions)
     .where(
       and(
@@ -129,7 +154,7 @@ export async function redirectToQuestion(
     .orderBy(sql`RANDOM()`)
     .limit(1);
 
-  if (!question) redirect("/practice/complete");
+  if (!question) redirect("/practice/no-questions");
 
   redirect(`/practice/q/${question.id}`);
 }

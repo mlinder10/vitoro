@@ -81,8 +81,8 @@ export const users = sqliteTable("users", {
   email: text("email").unique().notNull(),
   firstName: text("first_name").notNull(),
   lastName: text("last_name").notNull(),
-  gradYear: text("grad_year").notNull(),
-  exam: json<NBMEStep>("exam").notNull(),
+  gradYear: text("grad_year").default("2026").notNull(),
+  exam: json<NBMEStep>("exam").default("Step 1").notNull(),
   color: text("color").notNull(),
   password: text("password").notNull(),
   createdAt: date("created_at").default(SQL_NOW),
@@ -168,6 +168,17 @@ export const answeredQuestions = sqliteTable(
     index("answer_question_idx").on(table.questionId),
   ]
 );
+
+export const qbankSessions = sqliteTable("qbank_sessions", {
+  id: text("id").primaryKey().default(SQL_UUID).notNull(),
+  userId: text("user_id")
+    .references(() => users.id, { onDelete: "cascade" })
+    .notNull(),
+  questionIds: json<string[]>("question_ids").notNull(),
+  answers: json<QuestionChoice[]>("answers").notNull(),
+  flaggedQuestionIds: json<string[]>("flagged_questions").notNull(),
+  createdAt: date("created_at").default(SQL_NOW).notNull(),
+});
 
 export const reviewQuestions = sqliteTable(
   "review_questions",

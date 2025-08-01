@@ -28,7 +28,7 @@ export default function FormSelect({
 }: FormSelectProps) {
   if (value && updateValue) {
     return (
-      <div className="space-y-2">
+      <div className="space-y-2 w-full">
         <input type="hidden" name={name} value={value} />
         <Label>{label}</Label>
         <Select required onValueChange={updateValue}>
@@ -49,7 +49,7 @@ export default function FormSelect({
   }
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-2 w-full">
       <Label>{label}</Label>
       <Select required name={name} onValueChange={updateValue}>
         <SelectTrigger className="w-full">

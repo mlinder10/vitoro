@@ -1,3 +1,5 @@
 - 2. Foundational Questions
 - 3. Spaced Repetition
 - 5. Dark Mode Scrollbar
+
+- Update descriptions of options in practice form

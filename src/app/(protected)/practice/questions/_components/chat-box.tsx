@@ -3,12 +3,12 @@ import { cn } from "@/lib/utils";
 import { Question, QuestionChoice } from "@/types";
 import { ArrowLeft, ArrowUp, BotIcon, Loader } from "lucide-react";
 import { RefObject, useEffect, useRef, useState } from "react";
-import { createReviewQuestion } from "../actions";
+import { createReviewQuestion } from "../../actions";
 import ReactMarkdown from "react-markdown";
 import { KeyboardEvent } from "react";
 import { useSession } from "@/contexts/session-provider";
 import { toast } from "sonner";
-import { ChatStep, Message, MessageTag, promptChat } from "../chat";
+import { ChatStep, Message, MessageTag, promptChat } from "../../chat";
 
 type ChatboxProps = {
   question: Question;

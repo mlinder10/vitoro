@@ -1,31 +1,38 @@
 "use client";
 
-import { fetchQuestions } from "@/app/(protected)/practice/actions";
+import {
+  createQbankSession,
+  fetchQuestions,
+} from "@/app/(protected)/practice/actions";
 import {
   AnyCategory,
   AnySubcategory,
   NBMEStep,
+  Question,
+  QuestionChoice,
   QuestionDifficulty,
   QuestionType,
   System,
 } from "@/types";
+import { useRouter } from "next/navigation";
 import {
   createContext,
   Dispatch,
   ReactNode,
   SetStateAction,
   useContext,
+  useEffect,
   useState,
 } from "react";
 
 // Context Typing --------------------------------------------------------------
 
-const DEFAULT_QUESTION_COUNT = 30;
+export const DEFAULT_QUESTION_COUNT = 30;
 
 type QBankSessionType = {
   // State
-  isTimed: boolean;
-  setIsTimed: Dispatch<SetStateAction<boolean>>;
+  mode: QBankMode;
+  setMode: Dispatch<SetStateAction<QBankMode>>;
   step: NBMEStep | undefined;
   setStep: Dispatch<SetStateAction<NBMEStep | undefined>>;
   type: QuestionType | undefined;
@@ -42,15 +49,23 @@ type QBankSessionType = {
   setDifficulty: Dispatch<SetStateAction<QuestionDifficulty | undefined>>;
   questionCount: number;
   setQuestionCount: Dispatch<SetStateAction<number>>;
+  time: number | null;
+  // question data
+  index: number;
+  setIndex: Dispatch<SetStateAction<number>>;
+  questions: Question[];
+  answers: (QuestionChoice | null)[];
+  setAnswers: Dispatch<SetStateAction<(QuestionChoice | null)[]>>;
+  flagged: string[];
+  setFlagged: Dispatch<SetStateAction<string[]>>;
   // Methods
-  nextQuestion: () => string | null;
-  previousQuestion: () => string | null;
-  handleFetchQuestions: (userId: string, filter?: boolean) => Promise<string>;
+  startSession: (userId: string, filter?: boolean) => Promise<void>;
+  endSession: (userId: string) => Promise<void>;
 };
 
 const QBankSessionContext = createContext<QBankSessionType>({
-  isTimed: false,
-  setIsTimed: () => {},
+  mode: "tutor",
+  setMode: () => {},
   step: undefined,
   setStep: () => {},
   type: undefined,
@@ -67,9 +82,18 @@ const QBankSessionContext = createContext<QBankSessionType>({
   setDifficulty: () => {},
   questionCount: DEFAULT_QUESTION_COUNT,
   setQuestionCount: () => {},
-  nextQuestion: () => null,
-  previousQuestion: () => null,
-  handleFetchQuestions: async () => "",
+  time: null,
+  // question data
+  index: 0,
+  setIndex: () => {},
+  questions: [],
+  answers: [],
+  setAnswers: () => {},
+  flagged: [],
+  setFlagged: () => {},
+  // Methods
+  startSession: async () => {},
+  endSession: async () => {},
 });
 
 type QBankSessionProviderProps = {
@@ -78,10 +102,14 @@ type QBankSessionProviderProps = {
 
 // Context Provider ------------------------------------------------------------
 
+const TIME_PER_QUESTION = 90; // 1.5 min
+
+export type QBankMode = "timed" | "tutor";
+
 export default function QBankSessionProvider({
   children,
 }: QBankSessionProviderProps) {
-  const [isTimed, setIsTimed] = useState(false);
+  const [mode, setMode] = useState<QBankMode>("tutor");
   const [step, setStep] = useState<NBMEStep>();
   const [type, setType] = useState<QuestionType>();
   const [system, setSystem] = useState<System>();
@@ -90,9 +118,16 @@ export default function QBankSessionProvider({
   const [topic, setTopic] = useState<string>("");
   const [difficulty, setDifficulty] = useState<QuestionDifficulty>();
   const [questionCount, setQuestionCount] = useState(DEFAULT_QUESTION_COUNT);
-  const [node, setNode] = useState<QuestionNode | null>(null);
 
-  async function handleFetchQuestions(userId: string, filter = true) {
+  const [questions, setQuestions] = useState<Question[]>([]);
+  const [index, setIndex] = useState(0);
+  const [answers, setAnswers] = useState<(QuestionChoice | null)[]>([]);
+  const [flagged, setFlagged] = useState<string[]>([]);
+  const [time, setTime] = useState<number | null>(null);
+
+  const router = useRouter();
+
+  async function startSession(userId: string, filter = true) {
     const questions = await fetchQuestions(
       userId,
       {
@@ -106,38 +141,47 @@ export default function QBankSessionProvider({
       },
       questionCount
     );
+    // TODO: make sure questions are valid
+    setQuestions(questions);
+    setAnswers(Array(questions.length).fill(null));
 
-    let rootNode: QuestionNode | null = null;
-    let currNode: QuestionNode | null = null;
-
-    for (const question of questions) {
-      if (rootNode === null) {
-        rootNode = { questionId: question.id, next: null, previous: null };
-        currNode = rootNode;
-        continue;
-      }
-      if (currNode === null) throw new Error("Current node is null");
-
-      const newNode: QuestionNode = {
-        questionId: question.id,
-        next: null,
-        previous: currNode,
-      };
-      currNode.next = newNode;
-      currNode = newNode;
+    if (mode === "timed") {
+      setTime(questions.length * TIME_PER_QUESTION);
     }
+  }
 
-    if (rootNode === null) throw new Error("Root node is null");
+  useEffect(() => {
+    if (time !== null) {
+      if (time === 0) {
+        router.replace("/practice/summary");
+      }
 
-    setNode(rootNode);
-    return rootNode.questionId;
+      const timer = setInterval(() => {
+        setTime(time - 1);
+      }, 1000);
+
+      return () => clearInterval(timer);
+    }
+  }, [time, router]);
+
+  async function endSession(userId: string) {
+    if (answers.some((a) => a === null)) {
+      throw new Error("All questions must be answered");
+    }
+    const [{ id }] = await createQbankSession(
+      userId,
+      questions.map((q) => q.id),
+      flagged,
+      answers as QuestionChoice[]
+    );
+    router.replace(`/practice/summary/${id}`);
   }
 
   return (
     <QBankSessionContext.Provider
       value={{
-        isTimed,
-        setIsTimed,
+        mode,
+        setMode,
         step,
         setStep,
         type,
@@ -154,9 +198,18 @@ export default function QBankSessionProvider({
         setDifficulty,
         questionCount,
         setQuestionCount,
-        nextQuestion: () => node?.next?.questionId ?? null,
-        previousQuestion: () => node?.previous?.questionId ?? null,
-        handleFetchQuestions,
+        time,
+        // question data
+        index,
+        setIndex,
+        questions,
+        answers,
+        setAnswers,
+        flagged,
+        setFlagged,
+        // Methods
+        startSession,
+        endSession,
       }}
     >
       {children}
@@ -179,11 +232,3 @@ export type QuestionFilters = {
 export function useQBankSession() {
   return useContext(QBankSessionContext);
 }
-
-// Question Linked List -----------------------------------------------------
-
-type QuestionNode = {
-  questionId: string;
-  next: QuestionNode | null;
-  previous: QuestionNode | null;
-};

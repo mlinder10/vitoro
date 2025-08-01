@@ -1,6 +1,7 @@
 import { InferSelectModel } from "drizzle-orm";
-import { questions } from "@/db";
+import { qbankSessions, questions } from "@/db";
 
+export type QBankSession = InferSelectModel<typeof qbankSessions>;
 export type Question = InferSelectModel<typeof questions>;
 
 export type QuestionChoice = "a" | "b" | "c" | "d" | "e";
