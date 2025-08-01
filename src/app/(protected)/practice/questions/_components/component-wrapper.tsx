@@ -9,6 +9,9 @@ import { toast } from "sonner";
 import { createAnswerRecord } from "../../actions";
 import QuestionsList from "./questions-list";
 import QuestionView from "./question-view";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { DialogDescription, DialogTitle } from "@radix-ui/react-dialog";
+import { Button } from "@/components/ui/button";
 
 export default function QuestionViewWrapper() {
   const { id } = useSession();
@@ -34,6 +37,7 @@ export default function QuestionViewWrapper() {
     if (!selection)
       return toast.info("Please select an choice", { richColors: true });
     if (mode === "timed") {
+      if (time === 0) return;
       await updateAnswers(selection);
       handleNextQuestion();
     } else {
@@ -93,6 +97,13 @@ export default function QuestionViewWrapper() {
         handleNextQuestion={handleNextQuestion}
         handleSubmit={handleSubmit}
       />
+      <Dialog open={time === 0}>
+        <DialogContent>
+          <DialogTitle>Time&apos;s up!</DialogTitle>
+          <DialogDescription></DialogDescription>
+          <Button onClick={() => endSession(id)}>End Session</Button>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

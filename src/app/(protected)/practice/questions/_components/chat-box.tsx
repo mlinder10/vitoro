@@ -8,7 +8,7 @@ import ReactMarkdown from "react-markdown";
 import { KeyboardEvent } from "react";
 import { useSession } from "@/contexts/session-provider";
 import { toast } from "sonner";
-import { ChatStep, Message, MessageTag, promptChat } from "../../chat";
+import { ChatStep, Message, MessageTag, promptChat } from "../../chat-kaleb";
 
 type ChatboxProps = {
   question: Question;

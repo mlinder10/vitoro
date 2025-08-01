@@ -152,9 +152,7 @@ export default function QBankSessionProvider({
 
   useEffect(() => {
     if (time !== null) {
-      if (time === 0) {
-        router.replace("/practice/summary");
-      }
+      if (time === 0) return;
 
       const timer = setInterval(() => {
         setTime(time - 1);

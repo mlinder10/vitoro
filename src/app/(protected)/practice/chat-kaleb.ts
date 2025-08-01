@@ -60,7 +60,9 @@ type ChatPromptResponse = {
 class ValidationService {
   private llm = new Gemini();
 
-  async validateResponse(prompt: string, userResponse: string): Promise<{ valid: boolean; error?: string }> {
+  async validateResponse(
+    prompt: string
+  ): Promise<{ valid: boolean; error?: string }> {
     try {
       const res = await this.llm.prompt([
         {
@@ -68,7 +70,7 @@ class ValidationService {
           content: prompt,
         },
       ]);
-      
+
       const cleanResponse = res.trim().toLowerCase();
       return {
         valid: cleanResponse === "yes" || cleanResponse.startsWith("yes"),
@@ -82,42 +84,53 @@ class ValidationService {
     }
   }
 
-  async validateExplanation(question: Question, userResponse: string): Promise<{ valid: boolean; error?: string }> {
+  async validateExplanation(
+    question: Question,
+    userResponse: string
+  ): Promise<{ valid: boolean; error?: string }> {
     const prompt = `
 Only respond with "yes" or "no".
 Is this a valid response to the question: "What clinical finding made you go with that choice?": ${userResponse}
 In relation to the question: ${JSON.stringify(question)}
 The response does not need to be correct or particularly sophisticated, but it should be related to the question.`;
-    
-    return this.validateResponse(prompt, userResponse);
+
+    return this.validateResponse(prompt);
   }
 
-  async validateSatisfaction(userResponse: string): Promise<{ valid: boolean; error?: string }> {
+  async validateSatisfaction(
+    userResponse: string
+  ): Promise<{ valid: boolean; error?: string }> {
     const prompt = `
 Only respond with "yes" or "no".
 Does this text seem to be any of the following: satisfied, affirmative, accepting, or understandable?
 TEXT: ${userResponse}`;
-    
-    return this.validateResponse(prompt, userResponse);
+
+    return this.validateResponse(prompt);
   }
 
-  async validateIntegrationAnswer(integrationQuestion: string, userResponse: string): Promise<{ valid: boolean; error?: string }> {
+  async validateIntegrationAnswer(
+    integrationQuestion: string,
+    userResponse: string
+  ): Promise<{ valid: boolean; error?: string }> {
     const prompt = `
 Only respond with "yes" or "no".
 Is this a valid answer to the question: "${integrationQuestion}"?
 ANSWER: ${userResponse}`;
-    
-    return this.validateResponse(prompt, userResponse);
+
+    return this.validateResponse(prompt);
   }
 
-  async validateNextStepAnswer(question: Question, userResponse: string): Promise<{ valid: boolean; error?: string }> {
+  async validateNextStepAnswer(
+    question: Question,
+    userResponse: string
+  ): Promise<{ valid: boolean; error?: string }> {
     const prompt = `
 Only respond with "yes" or "no".
 Is this a valid answer to the question: "What would you do NEXT in a real patient?"
 In reference to the question: "${JSON.stringify(question)}"
 RESPONSE: ${userResponse}`;
-    
-    return this.validateResponse(prompt, userResponse);
+
+    return this.validateResponse(prompt);
   }
 }
 
@@ -127,12 +140,17 @@ class StepDefinitions {
 
   // Helper to get student explanation from messages
   private getStudentExplanation(messages: Message[]): string {
-    return messages.findLast((m) => m.tags.includes("student-explanation"))?.content || "None provided";
+    return (
+      messages.findLast((m) => m.tags.includes("student-explanation"))
+        ?.content || "None provided"
+    );
   }
 
   // Helper to get integration question from messages
   private getIntegrationQuestion(messages: Message[]): string {
-    const question = messages.find((message) => message.tags.includes("integration-question"))?.content;
+    const question = messages.find((message) =>
+      message.tags.includes("integration-question")
+    )?.content;
     if (!question) {
       throw new Error("Integration question not found");
     }
@@ -168,8 +186,11 @@ class StepDefinitions {
 
         case "incorrect-1-check": {
           const userResponse = this.getLastUserMessage(messages);
-          const validation = await this.validator.validateExplanation(question, userResponse);
-          
+          const validation = await this.validator.validateExplanation(
+            question,
+            userResponse
+          );
+
           if (validation.error) {
             return {
               prompt: false,
@@ -194,7 +215,11 @@ class StepDefinitions {
           // Valid response - move to combined teaching + prompt step
           return {
             prompt: true,
-            message: this.getIncorrectTeachingWithPrompt(question, choice, this.getStudentExplanation(messages)),
+            message: this.getIncorrectTeachingWithPrompt(
+              question,
+              choice,
+              this.getStudentExplanation(messages)
+            ),
             tags: [],
             nextTags: [],
             next: "incorrect-3-check",
@@ -203,12 +228,18 @@ class StepDefinitions {
 
         case "incorrect-2-check": {
           const userResponse = this.getLastUserMessage(messages);
-          const validation = await this.validator.validateSatisfaction(userResponse);
-          
+          const validation =
+            await this.validator.validateSatisfaction(userResponse);
+
           if (validation.error) {
             return {
               prompt: true,
-              message: this.getIncorrectTeachingWithPrompt(question, choice, this.getStudentExplanation(messages), userResponse),
+              message: this.getIncorrectTeachingWithPrompt(
+                question,
+                choice,
+                this.getStudentExplanation(messages),
+                userResponse
+              ),
               tags: [],
               nextTags: [],
               next: "incorrect-3-check",
@@ -219,7 +250,12 @@ class StepDefinitions {
           if (!validation.valid) {
             return {
               prompt: true,
-              message: this.getIncorrectTeachingWithPrompt(question, choice, this.getStudentExplanation(messages), userResponse),
+              message: this.getIncorrectTeachingWithPrompt(
+                question,
+                choice,
+                this.getStudentExplanation(messages),
+                userResponse
+              ),
               tags: [],
               nextTags: [],
               next: "incorrect-3-check",
@@ -227,7 +263,9 @@ class StepDefinitions {
           }
 
           // This case should not be reached since we skip incorrect-2-check
-          throw new Error("incorrect-2-check should not be reached with new flow");
+          throw new Error(
+            "incorrect-2-check should not be reached with new flow"
+          );
         }
 
         case "incorrect-3-check": {
@@ -237,9 +275,9 @@ Only respond with "yes" or "no".
 Is this an adequate answer to the question:
 "Now explain back to me: What's the key finding that makes [correct answer] the right choice, and why does that rule out [their wrong answer]?"
 in reference to: QUESTION: ${JSON.stringify(question)}, STUDENT'S ANSWER: ${userResponse}`;
-          
-          const validation = await this.validator.validateResponse(prompt, userResponse);
-          
+
+          const validation = await this.validator.validateResponse(prompt);
+
           if (validation.error) {
             return {
               prompt: false,
@@ -263,7 +301,8 @@ in reference to: QUESTION: ${JSON.stringify(question)}, STUDENT'S ANSWER: ${user
 
           return {
             prompt: false,
-            message: "Good work! You're on the right track. Feel free to continue on to the next question.",
+            message:
+              "Good work! You're on the right track. Feel free to continue on to the next question.",
             tags: [],
             nextTags: [],
             next: "follow-up-menu",
@@ -282,8 +321,11 @@ in reference to: QUESTION: ${JSON.stringify(question)}, STUDENT'S ANSWER: ${user
 
         case "correct-1-check": {
           const userResponse = this.getLastUserMessage(messages);
-          const validation = await this.validator.validateExplanation(question, userResponse);
-          
+          const validation = await this.validator.validateExplanation(
+            question,
+            userResponse
+          );
+
           if (validation.error) {
             return {
               prompt: false,
@@ -308,7 +350,11 @@ in reference to: QUESTION: ${JSON.stringify(question)}, STUDENT'S ANSWER: ${user
           // Valid response - move to combined technique praise + integration challenge
           return {
             prompt: true,
-            message: this.getCorrectTechniqueWithChallenge(question, choice, this.getStudentExplanation(messages)),
+            message: this.getCorrectTechniqueWithChallenge(
+              question,
+              choice,
+              this.getStudentExplanation(messages)
+            ),
             tags: ["integration-question"],
             nextTags: [],
             next: "correct-3-check",
@@ -317,12 +363,18 @@ in reference to: QUESTION: ${JSON.stringify(question)}, STUDENT'S ANSWER: ${user
 
         case "correct-2-check": {
           const userResponse = this.getLastUserMessage(messages);
-          const validation = await this.validator.validateSatisfaction(userResponse);
-          
+          const validation =
+            await this.validator.validateSatisfaction(userResponse);
+
           if (validation.error) {
             return {
               prompt: true,
-              message: this.getCorrectTechniqueWithChallenge(question, choice, this.getStudentExplanation(messages), userResponse),
+              message: this.getCorrectTechniqueWithChallenge(
+                question,
+                choice,
+                this.getStudentExplanation(messages),
+                userResponse
+              ),
               tags: ["integration-question"],
               nextTags: [],
               next: "correct-3-check",
@@ -333,7 +385,12 @@ in reference to: QUESTION: ${JSON.stringify(question)}, STUDENT'S ANSWER: ${user
           if (!validation.valid) {
             return {
               prompt: true,
-              message: this.getCorrectTechniqueWithChallenge(question, choice, this.getStudentExplanation(messages), userResponse),
+              message: this.getCorrectTechniqueWithChallenge(
+                question,
+                choice,
+                this.getStudentExplanation(messages),
+                userResponse
+              ),
               tags: ["integration-question"],
               nextTags: [],
               next: "correct-3-check",
@@ -341,14 +398,19 @@ in reference to: QUESTION: ${JSON.stringify(question)}, STUDENT'S ANSWER: ${user
           }
 
           // This case should not be reached since we skip correct-2-check
-          throw new Error("correct-2-check should not be reached with new flow");
+          throw new Error(
+            "correct-2-check should not be reached with new flow"
+          );
         }
 
         case "correct-3-check": {
           const userResponse = this.getLastUserMessage(messages);
           const integrationQuestion = this.getIntegrationQuestion(messages);
-          const validation = await this.validator.validateIntegrationAnswer(integrationQuestion, userResponse);
-          
+          const validation = await this.validator.validateIntegrationAnswer(
+            integrationQuestion,
+            userResponse
+          );
+
           if (validation.error) {
             return {
               prompt: false,
@@ -372,7 +434,11 @@ in reference to: QUESTION: ${JSON.stringify(question)}, STUDENT'S ANSWER: ${user
 
           return {
             prompt: true,
-            message: this.getExpertModelPrompt(question, choice, this.getStudentExplanation(messages)),
+            message: this.getExpertModelPrompt(
+              question,
+              choice,
+              this.getStudentExplanation(messages)
+            ),
             tags: [],
             nextTags: [],
             next: "correct-4-check",
@@ -381,12 +447,18 @@ in reference to: QUESTION: ${JSON.stringify(question)}, STUDENT'S ANSWER: ${user
 
         case "correct-4-check": {
           const userResponse = this.getLastUserMessage(messages);
-          const validation = await this.validator.validateSatisfaction(userResponse);
-          
+          const validation =
+            await this.validator.validateSatisfaction(userResponse);
+
           if (validation.error) {
             return {
               prompt: true,
-              message: this.getExpertModelPrompt(question, choice, this.getStudentExplanation(messages), userResponse),
+              message: this.getExpertModelPrompt(
+                question,
+                choice,
+                this.getStudentExplanation(messages),
+                userResponse
+              ),
               tags: [],
               nextTags: [],
               next: "correct-4-check",
@@ -397,7 +469,12 @@ in reference to: QUESTION: ${JSON.stringify(question)}, STUDENT'S ANSWER: ${user
           if (!validation.valid) {
             return {
               prompt: true,
-              message: this.getExpertModelPrompt(question, choice, this.getStudentExplanation(messages), userResponse),
+              message: this.getExpertModelPrompt(
+                question,
+                choice,
+                this.getStudentExplanation(messages),
+                userResponse
+              ),
               tags: [],
               nextTags: [],
               next: "correct-4-check",
@@ -415,8 +492,11 @@ in reference to: QUESTION: ${JSON.stringify(question)}, STUDENT'S ANSWER: ${user
 
         case "correct-5-check": {
           const userResponse = this.getLastUserMessage(messages);
-          const validation = await this.validator.validateNextStepAnswer(question, userResponse);
-          
+          const validation = await this.validator.validateNextStepAnswer(
+            question,
+            userResponse
+          );
+
           if (validation.error) {
             return {
               prompt: false,
@@ -440,7 +520,8 @@ in reference to: QUESTION: ${JSON.stringify(question)}, STUDENT'S ANSWER: ${user
 
           return {
             prompt: false,
-            message: "Good work! You're on the right track. Feel free to continue on to the next question.",
+            message:
+              "Good work! You're on the right track. Feel free to continue on to the next question.",
             tags: [],
             nextTags: [],
             next: "follow-up-menu",
@@ -502,7 +583,8 @@ in reference to: QUESTION: ${JSON.stringify(question)}, STUDENT'S ANSWER: ${user
         case "correct-complete":
           return {
             prompt: false,
-            message: "Good work! You're on the right track. Feel free to continue on to the next question.",
+            message:
+              "Good work! You're on the right track. Feel free to continue on to the next question.",
             tags: [],
             nextTags: [],
             next: step,
@@ -524,7 +606,12 @@ in reference to: QUESTION: ${JSON.stringify(question)}, STUDENT'S ANSWER: ${user
     }
   }
 
-  private getIncorrectTeachingWithPrompt(question: Question, choice: QuestionChoice, studentExplanation: string, previousResponse?: string): string {
+  private getIncorrectTeachingWithPrompt(
+    question: Question,
+    choice: QuestionChoice,
+    studentExplanation: string,
+    previousResponse?: string
+  ): string {
     const basePrompt = `
 QUESTION: ${JSON.stringify(question)}
 STUDENT'S ANSWER: ${choice}
@@ -558,13 +645,19 @@ Now explain back to me: What's the key finding that makes ${question.answer} the
 If this was not helpful and you need a better explanation, let me know and we can discuss further."`;
 
     if (previousResponse) {
-      return basePrompt + `\n\nAdditional Context: You have already explained this error to the student and they replied: "${previousResponse}".`;
+      return (
+        basePrompt +
+        `\n\nAdditional Context: You have already explained this error to the student and they replied: "${previousResponse}".`
+      );
     }
 
     return basePrompt;
   }
 
-  private getFollowUpChallengePrompt(question: Question, choice: QuestionChoice): string {
+  private getFollowUpChallengePrompt(
+    question: Question,
+    choice: QuestionChoice
+  ): string {
     return `
 ORIGINAL QUESTION: ${JSON.stringify(question)}
 CORRECT ANSWER: ${choice}
@@ -581,7 +674,10 @@ REQUIREMENTS:
 FORMAT: Present as a complete clinical vignette with multiple choice answers.`;
   }
 
-  private getFollowUpSchemaPrompt(question: Question, choice: QuestionChoice): string {
+  private getFollowUpSchemaPrompt(
+    question: Question,
+    choice: QuestionChoice
+  ): string {
     return `
 ORIGINAL QUESTION: ${JSON.stringify(question)}
 CORRECT ANSWER: ${choice}
@@ -598,7 +694,10 @@ REQUIREMENTS:
 FORMAT: Ask 3-4 focused questions that build the complete diagnostic framework.`;
   }
 
-  private getFollowUpSystemsPrompt(question: Question, choice: QuestionChoice): string {
+  private getFollowUpSystemsPrompt(
+    question: Question,
+    choice: QuestionChoice
+  ): string {
     return `
 ORIGINAL QUESTION: ${JSON.stringify(question)}
 CORRECT ANSWER: ${choice}
@@ -615,7 +714,10 @@ REQUIREMENTS:
 FORMAT: Present a related case that tests their ability to differentiate between systems.`;
   }
 
-  private getFollowUpIntegrationPrompt(question: Question, choice: QuestionChoice): string {
+  private getFollowUpIntegrationPrompt(
+    question: Question,
+    choice: QuestionChoice
+  ): string {
     return `
 ORIGINAL QUESTION: ${JSON.stringify(question)}
 CORRECT ANSWER: ${choice}
@@ -632,7 +734,12 @@ REQUIREMENTS:
 FORMAT: Present the modified scenario and ask how their approach would change.`;
   }
 
-  private getCorrectTechniqueWithChallenge(question: Question, choice: QuestionChoice, studentExplanation: string, previousResponse?: string): string {
+  private getCorrectTechniqueWithChallenge(
+    question: Question,
+    choice: QuestionChoice,
+    studentExplanation: string,
+    previousResponse?: string
+  ): string {
     const basePrompt = `
 QUESTION: ${JSON.stringify(question)}
 STUDENT'S ANSWER: ${choice}
@@ -650,13 +757,21 @@ YOUR RESPONSE FORMAT:
    - If Prognosis question: "What single factor would most dramatically change this patient's prognosis?"`;
 
     if (previousResponse) {
-      return basePrompt + `\n\nADDITIONAL CONTEXT: You already responded to the student in this format and their response was: ${previousResponse}`;
+      return (
+        basePrompt +
+        `\n\nADDITIONAL CONTEXT: You already responded to the student in this format and their response was: ${previousResponse}`
+      );
     }
 
     return basePrompt;
   }
 
-  private getExpertModelPrompt(question: Question, choice: QuestionChoice, studentExplanation: string, previousResponse?: string): string {
+  private getExpertModelPrompt(
+    question: Question,
+    choice: QuestionChoice,
+    studentExplanation: string,
+    previousResponse?: string
+  ): string {
     const basePrompt = `
 QUESTION: ${JSON.stringify(question)}
 STUDENT'S ANSWER: ${choice}
@@ -666,7 +781,10 @@ YOUR RESPONSE FORMAT:
 "Here's how an attending would think through this in real life: [1-2 sentence clinical pearl]"`;
 
     if (previousResponse) {
-      return basePrompt + `\n\nADDITIONAL CONTEXT: You already responded to the student in this format and their response was: ${previousResponse}`;
+      return (
+        basePrompt +
+        `\n\nADDITIONAL CONTEXT: You already responded to the student in this format and their response was: ${previousResponse}`
+      );
     }
 
     return basePrompt;
@@ -718,7 +836,7 @@ export async function promptChat(
   step: ChatStep
 ) {
   const prompt = await getChatPrompt(question, choice, step, messages);
-  
+
   if (prompt.error) {
     // Handle errors gracefully
     return {
@@ -726,7 +844,7 @@ export async function promptChat(
       prompt,
     };
   }
-  
+
   if (!prompt.prompt) {
     return {
       stream: stringToAsyncGenerator(prompt.message),
@@ -738,23 +856,25 @@ export async function promptChat(
       return {
         stream: llm.promptStreamed([
           {
-            type: "text", 
+            type: "text",
             content: VITO_SYSTEM_PROMPT + "\n\n" + prompt.message,
           },
         ]),
         prompt,
       };
     } catch (error) {
-    console.error("LLM streaming failed:", error);
-    return {
-      stream: stringToAsyncGenerator("I'm having trouble connecting to the AI service. Please try again."),
-      prompt: {
-        ...prompt,
-        error: "LLM service unavailable",
-      },
-    };
+      console.error("LLM streaming failed:", error);
+      return {
+        stream: stringToAsyncGenerator(
+          "I'm having trouble connecting to the AI service. Please try again."
+        ),
+        prompt: {
+          ...prompt,
+          error: "LLM service unavailable",
+        },
+      };
+    }
   }
-}
 }
 
 // IMPLEMENTATION NOTES:
