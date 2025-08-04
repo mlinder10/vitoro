@@ -1,6 +1,6 @@
 "use client";
 
-import useInfiniteScroll, { LoadingFooter } from "@/hooks/useInfiniteScroll";
+import useInfiniteScroll, { LoadingFooter } from "@/hooks/use-infinite-scroll";
 import {
   AnyCategory,
   AnySubcategory,

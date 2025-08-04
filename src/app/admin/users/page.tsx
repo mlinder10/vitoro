@@ -5,7 +5,7 @@ import { handleFetchUsers, handleUpdateAdminStatus } from "./actions";
 import { Button } from "@/components/ui/button";
 import { Loader, Minus, Plus } from "lucide-react";
 import Searchbar from "@/components/searchbar";
-import useInfiniteScroll, { LoadingFooter } from "@/hooks/useInfiniteScroll";
+import useInfiniteScroll, { LoadingFooter } from "@/hooks/use-infinite-scroll";
 
 type User = Awaited<ReturnType<typeof handleFetchUsers>>[number];
 

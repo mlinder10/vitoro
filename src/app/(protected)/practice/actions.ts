@@ -24,6 +24,17 @@ export async function resetProgress(userId: string) {
     .where(eq(answeredQuestions.userId, userId));
 }
 
+export async function checkForActiveSession(userId: string) {
+  const [session] = await db
+    .select()
+    .from(qbankSessions)
+    .where(
+      and(eq(qbankSessions.userId, userId), eq(qbankSessions.inProgress, true))
+    )
+    .limit(1);
+  return session ?? null;
+}
+
 // Records
 
 export async function createAnswerRecord(
@@ -40,19 +51,38 @@ export async function createAnswerRecord(
 
 export async function createQbankSession(
   userId: string,
-  questionIds: string[],
-  flaggedIds: string[],
-  answers: QuestionChoice[]
+  questionIds: string[]
 ) {
-  return await db
+  const [{ id }] = await db
     .insert(qbankSessions)
     .values({
       userId,
       questionIds,
-      flaggedQuestionIds: flaggedIds,
-      answers,
+      flaggedQuestionIds: [],
+      answers: [],
     })
     .returning({ id: qbankSessions.id });
+  return id;
+}
+
+type UpdateQbankSessionArgs = {
+  id: string;
+  flaggedIds?: string[];
+  answers?: (QuestionChoice | null)[];
+  inProgress?: boolean;
+};
+
+export async function updateQbankSession({
+  id,
+  flaggedIds,
+  answers,
+  inProgress,
+}: UpdateQbankSessionArgs) {
+  const setClause: Record<string, unknown> = {};
+  if (flaggedIds !== undefined) setClause["flaggedQuestionIds"] = flaggedIds;
+  if (answers !== undefined) setClause["answers"] = answers;
+  if (inProgress !== undefined) setClause["inProgress"] = inProgress;
+  await db.update(qbankSessions).set(setClause).where(eq(qbankSessions.id, id));
 }
 
 // Review Questions -----------------------------------------------------------

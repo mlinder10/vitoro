@@ -1,16 +1,15 @@
-"use client";
-
 import { QBankSession, Question } from "@/types";
 import { useState } from "react";
 import QuestionView from "../../../questions/_components/question-view";
 import QuestionsList from "../../../questions/_components/questions-list";
+import { SUMMARY_BTN_HEIGHT } from "./summary-wrapper";
 
 type QuestionsSummaryWrapperProps = {
   session: QBankSession;
   questions: Question[];
 };
 
-export default function QuestionsSummaryWrapper({
+export default function QuestionsSummary({
   session,
   questions,
 }: QuestionsSummaryWrapperProps) {
@@ -18,6 +17,7 @@ export default function QuestionsSummaryWrapper({
   const question = questions[index];
 
   // TODO: handle flagging
+  // TODO: handle chat history (is readonly okay?)
 
   async function handleNextQuestion() {
     if (index === questions.length - 1) return setIndex(0);
@@ -25,7 +25,10 @@ export default function QuestionsSummaryWrapper({
   }
 
   return (
-    <div className="flex h-full">
+    <div
+      className="flex"
+      style={{ height: `calc(100% - ${SUMMARY_BTN_HEIGHT}px)` }}
+    >
       <QuestionsList
         questions={questions}
         answers={session.answers}

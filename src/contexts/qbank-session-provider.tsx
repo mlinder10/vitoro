@@ -3,6 +3,7 @@
 import {
   createQbankSession,
   fetchQuestions,
+  updateQbankSession,
 } from "@/app/(protected)/practice/actions";
 import {
   AnyCategory,
@@ -109,6 +110,7 @@ export type QBankMode = "timed" | "tutor";
 export default function QBankSessionProvider({
   children,
 }: QBankSessionProviderProps) {
+  const [sessionId, setSessionId] = useState<string | null>(null);
   const [mode, setMode] = useState<QBankMode>("tutor");
   const [step, setStep] = useState<NBMEStep>();
   const [type, setType] = useState<QuestionType>();
@@ -127,6 +129,30 @@ export default function QBankSessionProvider({
 
   const router = useRouter();
 
+  useEffect(() => {
+    if (time !== null) {
+      if (time === 0) return;
+
+      const timer = setInterval(() => {
+        setTime(time - 1);
+      }, 1000);
+
+      return () => clearInterval(timer);
+    }
+  }, [time, router]);
+
+  useEffect(() => {
+    async function updateSession() {
+      if (!sessionId) return;
+      await updateQbankSession({
+        id: sessionId,
+        flaggedIds: flagged,
+        answers,
+      });
+    }
+    updateSession();
+  }, [answers, flagged, sessionId]);
+
   async function startSession(userId: string, filter = true) {
     const questions = await fetchQuestions(
       userId,
@@ -144,35 +170,32 @@ export default function QBankSessionProvider({
     // TODO: make sure questions are valid
     setQuestions(questions);
     setAnswers(Array(questions.length).fill(null));
+    const id = await createQbankSession(
+      userId,
+      questions.map((q) => q.id)
+    );
+    setSessionId(id);
 
     if (mode === "timed") {
       setTime(questions.length * TIME_PER_QUESTION);
     }
   }
 
-  useEffect(() => {
-    if (time !== null) {
-      if (time === 0) return;
+  async function endSession() {
+    if (!sessionId) throw new Error("No session started");
 
-      const timer = setInterval(() => {
-        setTime(time - 1);
-      }, 1000);
-
-      return () => clearInterval(timer);
-    }
-  }, [time, router]);
-
-  async function endSession(userId: string) {
     if (answers.some((a) => a === null)) {
       throw new Error("All questions must be answered");
     }
-    const [{ id }] = await createQbankSession(
-      userId,
-      questions.map((q) => q.id),
-      flagged,
-      answers as QuestionChoice[]
-    );
-    router.replace(`/practice/summary/${id}`);
+
+    await updateQbankSession({
+      id: sessionId,
+      flaggedIds: flagged,
+      answers,
+      inProgress: false,
+    });
+
+    router.replace(`/practice/summary/${sessionId}`);
   }
 
   return (

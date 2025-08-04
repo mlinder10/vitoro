@@ -1,7 +1,7 @@
 import { db, qbankSessions, questions } from "@/db";
 import { eq, inArray } from "drizzle-orm";
 import { notFound } from "next/navigation";
-import QuestionsSummaryWrapper from "./_components/component-wrapper";
+import SummaryWrapper from "./_components/summary-wrapper";
 
 type QBankSummaryPageParams = {
   params: Promise<{
@@ -23,5 +23,5 @@ export default async function QBankSummaryPage({
     .from(questions)
     .where(inArray(questions.id, session.questionIds));
 
-  return <QuestionsSummaryWrapper session={session} questions={qs} />;
+  return <SummaryWrapper session={session} questions={qs} />;
 }

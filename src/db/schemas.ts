@@ -174,10 +174,12 @@ export const qbankSessions = sqliteTable("qbank_sessions", {
   userId: text("user_id")
     .references(() => users.id, { onDelete: "cascade" })
     .notNull(),
+  // mode: json<QBankMode>("mode").notNull(),
   questionIds: json<string[]>("question_ids").notNull(),
-  answers: json<QuestionChoice[]>("answers").notNull(),
+  answers: json<(QuestionChoice | null)[]>("answers").notNull(),
   flaggedQuestionIds: json<string[]>("flagged_questions").notNull(),
   createdAt: date("created_at").default(SQL_NOW).notNull(),
+  inProgress: json<boolean>("in_progress").default(true).notNull(),
 });
 
 export const reviewQuestions = sqliteTable(
