@@ -1,5 +1,5 @@
 import SessionProvider from "@/contexts/session-provider";
-import { getSession } from "@/lib/auth";
+import { tryGetSession } from "@/lib/auth";
 import { LOGIN_PATH } from "@/lib/constants";
 import { redirect } from "next/navigation";
 import SideNav from "./_components/side-nav";
@@ -9,7 +9,7 @@ export default async function ProtectedLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const session = await getSession();
+  const session = await tryGetSession();
   if (!session) redirect(LOGIN_PATH);
 
   return (

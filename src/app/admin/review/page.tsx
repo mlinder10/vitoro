@@ -1,18 +1,18 @@
 "use client";
 
-import { fetchQuestions } from "@/db/question";
 import useInfiniteScroll, { LoadingFooter } from "@/hooks/useInfiniteScroll";
 import {
   AnyCategory,
   AnySubcategory,
-  AuditStatus,
-  ParsedAudit,
-  ParsedQuestion,
+  AuditRating,
+  Question,
   QUESTION_TYPES,
   QuestionDifficulty,
   QuestionType,
   System,
   SYSTEMS,
+  YIELD_TYPES,
+  YieldType,
 } from "@/types";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
@@ -24,13 +24,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { CircleHelp } from "lucide-react";
+import { CircleHelp, Loader } from "lucide-react";
+import { fetchQuestionsWithAudits, updateYieldStatus } from "./actions";
+import { toast } from "sonner";
 
 const MAX_ITEMS_PER_PAGE = 30;
 
 export default function QuestionReviewListPage() {
   const [count, setCount] = useState(0);
-  const [status, setStatus] = useState<AuditStatus | undefined>();
+  const [status, setStatus] = useState<AuditRating | undefined>();
   const [difficulty, setDifficulty] = useState<
     QuestionDifficulty | undefined
   >();
@@ -52,7 +54,7 @@ export default function QuestionReviewListPage() {
   ]);
 
   async function handleFetchQuestions(offset: number) {
-    const { count, questions } = await fetchQuestions(
+    const { count, questions } = await fetchQuestionsWithAudits(
       offset,
       MAX_ITEMS_PER_PAGE,
       status,
@@ -102,7 +104,7 @@ export default function QuestionReviewListPage() {
         ) : (
           <ul>
             {questions.map((q) => (
-              <QuestionItem key={q.question.id} qa={q} />
+              <QuestionItem key={q.id} question={q} />
             ))}
           </ul>
         )}
@@ -115,33 +117,28 @@ export default function QuestionReviewListPage() {
 // Question Component ---------------------------------------------------------
 
 type QuestionItemProps = {
-  qa: {
-    question: ParsedQuestion;
-    audit: ParsedAudit | null;
-  };
+  question: Question;
   isLast?: boolean;
 };
 
-function QuestionItem({ qa, isLast = false }: QuestionItemProps) {
-  const { question, audit } = qa;
-
+function QuestionItem({ question, isLast = false }: QuestionItemProps) {
   function renderAuditStatus() {
-    switch (audit?.rating) {
+    switch (question.rating) {
       case "Pass":
         return (
-          <span className="flex items-center bg-green-500 px-4 py-1 border-2 border-green-700 rounded-md text-green-950 text-sm">
+          <span className="flex items-center bg-green-500 px-4 border-2 border-green-700 rounded-md h-9 text-green-950 text-sm">
             Passed
           </span>
         );
       case "Flag for Human Review":
         return (
-          <span className="flex items-center bg-yellow-300 px-4 py-1 border-2 border-yellow-500 rounded-md text-yellow-800 text-sm">
+          <span className="flex items-center bg-yellow-300 px-4 border-2 border-yellow-500 rounded-md h-9 text-yellow-800 text-sm">
             Flagged
           </span>
         );
       case "Reject":
         return (
-          <span className="flex items-center bg-red-500 px-4 py-1 border-2 border-red-700 rounded-md text-red-950 text-sm">
+          <span className="flex items-center bg-red-500 px-4 border-2 border-red-700 rounded-md h-9 text-red-950 text-sm">
             Rejected
           </span>
         );
@@ -150,8 +147,8 @@ function QuestionItem({ qa, isLast = false }: QuestionItemProps) {
 
   return (
     <li className={cn("py-2", !isLast && "border-b-2")}>
-      <Link href={`/admin/review/${question.id}`}>
-        <div className="flex justify-between">
+      <div className="flex justify-between">
+        <Link href={`/admin/review/${question.id}`}>
           <div>
             <div className="flex items-center gap-2">
               <span>{question.system}</span>
@@ -166,18 +163,65 @@ function QuestionItem({ qa, isLast = false }: QuestionItemProps) {
               {question.createdAt.toLocaleString()}
             </p>
           </div>
+        </Link>
+        <div className="flex gap-4">
+          <YieldSelect question={question} />
           {renderAuditStatus()}
         </div>
-      </Link>
+      </div>
     </li>
+  );
+}
+
+// Yield Select ---------------------------------------------------------------
+
+type YieldSelectProps = {
+  question: Question;
+};
+
+function YieldSelect({ question }: YieldSelectProps) {
+  const [value, setValue] = useState<YieldType>(question.yield);
+  const [isLoading, setIsLoading] = useState(false);
+
+  async function handleUpdateYield(yt: YieldType) {
+    setIsLoading(true);
+    try {
+      await updateYieldStatus(question.id, yt);
+      setValue(yt);
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to update yield status", { richColors: true });
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  return isLoading ? (
+    <div className="flex items-center gap-2 px-2 border rounded-md text-muted-foreground text-sm">
+      <span>Updating...</span>
+      <Loader className="animate-spin" size={12} />
+    </div>
+  ) : (
+    <Select value={value} onValueChange={handleUpdateYield}>
+      <SelectTrigger>
+        <SelectValue placeholder="Yield" />
+      </SelectTrigger>
+      <SelectContent>
+        {YIELD_TYPES.map((yt) => (
+          <SelectItem key={yt} value={yt}>
+            {yt}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
   );
 }
 
 // Inputs ---------------------------------------------------------------------
 
 type SelectInputsProps = {
-  status: AuditStatus | undefined;
-  setStatus: (status: AuditStatus | undefined) => void;
+  status: AuditRating | undefined;
+  setStatus: (status: AuditRating | undefined) => void;
   difficulty: QuestionDifficulty | undefined;
   setDifficulty: (difficulty: QuestionDifficulty | undefined) => void;
   system: System | undefined;
@@ -208,7 +252,7 @@ function SelectInputs({
     <div className="flex gap-2">
       <SimpleSelect
         value={status}
-        updateValue={(value) => setStatus(value as AuditStatus)}
+        updateValue={(value) => setStatus(value as AuditRating)}
         options={[
           { value: "Pass", label: "Passed" },
           { value: "Flag for Human Review", label: "Flagged" },

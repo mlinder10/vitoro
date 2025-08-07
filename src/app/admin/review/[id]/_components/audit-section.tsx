@@ -1,7 +1,6 @@
 "use client";
 
-import { CHECKLIST } from "@/lib/constants";
-import { AuditStatus, ParsedAudit, QuestionDifficulty } from "@/types";
+import { AuditRating, QuestionDifficulty } from "@/types";
 import { Check, Pencil, Save, Undo, X, Clipboard, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -20,22 +19,20 @@ import {
 } from "@/components/ui/select";
 
 export default function AuditSection() {
-  const { audit, pageType, setPageType, isSaving } = useAdminReview();
+  const { question, pageType, setPageType, isSaving } = useAdminReview();
 
   function togglePageType() {
     setPageType((prev) => (prev === "edit" ? "review" : "edit"));
   }
 
-  if (!audit) return null;
-
   return (
     <section className="flex-1/4 space-y-2 bg-secondary py-4 border-l-2 overflow-y-auto">
-      <AuditStatusView status={audit.rating} />
+      <AuditStatusView status={question.rating} />
       <div className="px-2">
         <AuditDifficulty />
       </div>
-      <AuditChecklist checklist={audit.checklist} />
-      <AuditSuggestions suggestions={audit.suggestions} />
+      {/* <AuditChecklist checklist={audit.checklist} /> */}
+      {/* <AuditSuggestions suggestions={audit.suggestions} /> */}
       <div className="px-2">
         <Button
           className="w-full"
@@ -52,7 +49,7 @@ export default function AuditSection() {
   );
 }
 
-function AuditStatusView({ status }: { status: AuditStatus }) {
+function AuditStatusView({ status }: { status: AuditRating }) {
   switch (status) {
     case "Pass":
       return (
@@ -110,55 +107,50 @@ function AuditDifficulty() {
   );
 }
 
-function AuditChecklist({
-  checklist,
-}: {
-  checklist: ParsedAudit["checklist"];
-}) {
-  return (
-    <ul>
-      {Object.entries(checklist || {}).map(([index, item]) => (
-        <li key={index} className="p-2 border-b-2 text-sm">
-          <div className="flex items-center gap-2">
-            {item.pass ? (
-              <Check className="text-green-500" />
-            ) : (
-              <X className="text-red-500" />
-            )}
-            <span>
-              {index}.{" "}
-              {CHECKLIST[index as keyof typeof CHECKLIST] ?? "No description"}
-            </span>
-          </div>
-          <p className="text-muted-foreground text-sm">{item.notes}</p>
-        </li>
-      ))}
-    </ul>
-  );
-}
+// function AuditChecklist({ checklist }: { checklist: Checklist }) {
+//   return (
+//     <ul>
+//       {Object.entries(checklist || {}).map(([index, item]) => (
+//         <li key={index} className="p-2 border-b-2 text-sm">
+//           <div className="flex items-center gap-2">
+//             {item.pass ? (
+//               <Check className="text-green-500" />
+//             ) : (
+//               <X className="text-red-500" />
+//             )}
+//             <span>
+//               {index}.{" "}
+//               {CHECKLIST[index as keyof typeof CHECKLIST] ?? "No description"}
+//             </span>
+//           </div>
+//           <p className="text-muted-foreground text-sm">{item.notes}</p>
+//         </li>
+//       ))}
+//     </ul>
+//   );
+// }
 
-function AuditSuggestions({ suggestions }: { suggestions: string[] }) {
-  if (suggestions.length === 0) {
-    return (
-      <p className="py-4 text-muted-foreground text-center">No suggestions</p>
-    );
-  }
+// function AuditSuggestions({ suggestions }: { suggestions: string[] }) {
+//   if (suggestions.length === 0) {
+//     return (
+//       <p className="py-4 text-muted-foreground text-center">No suggestions</p>
+//     );
+//   }
 
-  return (
-    <ul className="pl-4">
-      {suggestions.map((suggestion, index) => (
-        <li key={index} className="text-muted-foreground text-sm">
-          {suggestion}
-        </li>
-      ))}
-    </ul>
-  );
-}
+//   return (
+//     <ul className="pl-4">
+//       {suggestions.map((suggestion, index) => (
+//         <li key={index} className="text-muted-foreground text-sm">
+//           {suggestion}
+//         </li>
+//       ))}
+//     </ul>
+//   );
+// }
 
 function AuditButtons() {
   const {
     question,
-    audit,
     pageType,
     hasChanges,
     revertChanges,
@@ -168,7 +160,7 @@ function AuditButtons() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
-  async function updateAuditStatus(rating: AuditStatus) {
+  async function updateAuditStatus(rating: AuditRating) {
     setIsLoading(true);
     await handleUpdateAuditStatus(question.id, rating);
     setIsLoading(false);
@@ -200,7 +192,7 @@ function AuditButtons() {
     );
   }
 
-  if (audit?.rating === "Flag for Human Review") {
+  if (question.rating === "Flag for Human Review") {
     return (
       <div className="flex gap-2 px-2">
         <Button

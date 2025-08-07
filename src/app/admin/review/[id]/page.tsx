@@ -1,7 +1,7 @@
-import { fetchQuestionById } from "@/db/question";
 import { notFound } from "next/navigation";
 import ReviewPageWrapper from "./_components/page-wrapper";
 import AdminReviewProvider from "@/contexts/admin-review-provider";
+import { fetchQuestionById } from "@/app/actions/question";
 
 type ReviewQuestionPageProps = {
   params: Promise<{
@@ -13,12 +13,11 @@ export default async function ReviewQuestionPage({
   params,
 }: ReviewQuestionPageProps) {
   const { id } = await params;
-  const q = await fetchQuestionById(id);
-  if (!q) return notFound();
-  const { question, audit } = q;
+  const question = await fetchQuestionById(id);
+  if (!question) return notFound();
 
   return (
-    <AdminReviewProvider question={question} audit={audit}>
+    <AdminReviewProvider question={question}>
       <ReviewPageWrapper />
     </AdminReviewProvider>
   );

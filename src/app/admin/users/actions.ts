@@ -1,34 +1,45 @@
 "use server";
 
-import db from "@/db/db";
+import { db, users, admins } from "@/db";
+import { eq, ilike, or, sql } from "drizzle-orm";
 
 export async function handleFetchUsers(
   offset: number,
   limit: number,
   search?: string
 ) {
-  return await db.user.findMany({
-    select: {
-      id: true,
-      email: true,
-      firstName: true,
-      lastName: true,
-      createdAt: true,
-      admin: { select: { userId: true } },
-    },
-    where: search
-      ? {
-          OR: [
-            { email: { contains: search } },
-            { firstName: { contains: search } },
-            { lastName: { contains: search } },
-          ],
-        }
-      : undefined,
-    orderBy: { createdAt: "desc" },
-    skip: offset,
-    take: limit,
-  });
+  const conditions = search
+    ? or(
+        ilike(users.email, `%${search}%`),
+        ilike(users.firstName, `%${search}%`),
+        ilike(users.lastName, `%${search}%`)
+      )
+    : undefined;
+
+  const rows = await db
+    .select({
+      id: users.id,
+      email: users.email,
+      firstName: users.firstName,
+      lastName: users.lastName,
+      createdAt: users.createdAt,
+      isAdmin: admins.userId,
+    })
+    .from(users)
+    .leftJoin(admins, sql`${admins.userId} = ${users.id}`)
+    .where(conditions)
+    .orderBy(sql`${users.createdAt} DESC`)
+    .offset(offset)
+    .limit(limit);
+
+  return rows.map((row) => ({
+    id: row.id,
+    email: row.email,
+    firstName: row.firstName,
+    lastName: row.lastName,
+    createdAt: row.createdAt,
+    admin: row.isAdmin ? { userId: row.isAdmin } : null,
+  }));
 }
 
 export async function handleUpdateAdminStatus(
@@ -36,10 +47,10 @@ export async function handleUpdateAdminStatus(
   isAdmin: boolean
 ) {
   if (isAdmin) {
-    await db.admin.delete({ where: { userId } });
+    await db.delete(admins).where(eq(admins.userId, userId));
     return false;
   } else {
-    await db.admin.create({ data: { userId } });
+    await db.insert(admins).values({ userId });
     return true;
   }
 }

@@ -1,4 +1,4 @@
-import { getSession } from "@/lib/auth";
+import { tryGetSession } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import AuthHeader from "./_components/auth-header";
 
@@ -7,7 +7,7 @@ export default async function AuthLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const session = await getSession();
+  const session = await tryGetSession();
   if (session) redirect("/");
 
   return (

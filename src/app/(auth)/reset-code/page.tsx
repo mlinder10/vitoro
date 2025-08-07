@@ -5,17 +5,9 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Loader, LogIn } from "lucide-react";
 import { handleVerification } from "../actions";
-import { useRouter } from "next/navigation";
 
 export default function ResetCodePage() {
-  const [error, action, isPending] = useActionState(onSubmit, {});
-  const router = useRouter();
-
-  async function onSubmit(_: unknown, data: FormData) {
-    const res = await handleVerification(data);
-    if (res.success) router.push(res.redirectTo);
-    else if (res.success === false) return res;
-  }
+  const [error, action, isPending] = useActionState(handleVerification, {});
 
   return (
     <main className="place-items-center grid bg-secondary h-screen">

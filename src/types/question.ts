@@ -1,55 +1,53 @@
-import { Question } from "@prisma/client";
-import { AnyCategory, AnySubcategory, System } from "./systems";
+import { InferSelectModel } from "drizzle-orm";
+import { qbankSessions, questions } from "@/db";
+
+export type QBankSession = InferSelectModel<typeof qbankSessions>;
+export type Question = InferSelectModel<typeof questions>;
 
 export type QuestionChoice = "a" | "b" | "c" | "d" | "e";
+export type NBMEStep = (typeof NBME_STEPS)[number];
+export type QuestionType = (typeof QUESTION_TYPES)[number];
+export type QuestionDifficulty = (typeof QUESTION_DIFFICULTIES)[number];
+export type AuditRating = (typeof QUESTION_RATINGS)[number];
+export type YieldType = (typeof YIELD_TYPES)[number];
 
-export type QuestionDifficulty = "easy" | "moderate" | "hard";
+export const NBME_STEPS = ["Step 1", "Step 2", "Mixed"] as const;
 
 export const QUESTION_TYPES = [
-  "Next Best Step",
-  "Most Likely Diagnosis",
-  "Most Likely Etiology",
-  "Most Likely Complication",
-  "Best Initial Test",
-  "Most Accurate Test",
-  "Mechanism of Disease / Pathophysiology",
-  "Pharmacologic Mechanism / Adverse Effect",
+  "Diagnosis",
+  "Management",
+  "Mechanism",
+  "Risk factor/epidemiology",
+  "Complications",
+  "Prognosis",
 ] as const;
 
-export type QuestionType = (typeof QUESTION_TYPES)[number];
+export const QUESTION_DIFFICULTIES = ["Easy", "Moderate", "Hard"] as const;
+
+export const QUESTION_RATINGS = [
+  "Pass",
+  "Flag for Human Review",
+  "Reject",
+] as const;
+
+export const YIELD_TYPES = ["Low", "Medium", "High"] as const;
+
+export type Choices = {
+  a: string;
+  b: string;
+  c: string;
+  d: string;
+  e: string;
+};
 
 export type GeneratedQuestion = {
   question: string;
-  choices: {
-    a: string;
-    b: string;
-    c: string;
-    d: string;
-    e: string;
-  };
+  choices: Choices;
   answer: QuestionChoice;
-  explanations: {
-    a: string;
-    b: string;
-    c: string;
-    d: string;
-    e: string;
-  };
+  explanations: Choices;
 
   sources: string[];
   difficulty: QuestionDifficulty;
-  nbmeStyleNotes: string[];
-};
-
-export type ParsedQuestion = GeneratedQuestion & {
-  id: string;
-  createdAt: Date;
-  creatorId: string;
-
-  system: System;
-  category: AnyCategory;
-  subcategory: AnySubcategory;
-  type: QuestionType;
 };
 
 export function isValidGeneratedQuestion(question: GeneratedQuestion) {
@@ -70,50 +68,6 @@ export function isValidGeneratedQuestion(question: GeneratedQuestion) {
     typeof question.explanations.d === "string" &&
     typeof question.explanations.e === "string" &&
     Array.isArray(question.sources) &&
-    ["easy", "moderate", "hard"].includes(question.difficulty) &&
-    Array.isArray(question.nbmeStyleNotes)
+    ["easy", "moderate", "hard"].includes(question.difficulty)
   );
-}
-
-export function encodeQuestion(question: ParsedQuestion): Question {
-  return {
-    id: question.id,
-    system: question.system,
-    category: question.category,
-    subcategory: question.subcategory,
-    type: question.type,
-    createdAt: question.createdAt,
-    creatorId: question.creatorId,
-    question: question.question,
-    answer: question.answer,
-    difficulty: question.difficulty,
-    sources: JSON.stringify(question.sources),
-    choices: JSON.stringify(question.choices),
-    explanations: JSON.stringify(question.explanations),
-    nbmeStyleNotes: JSON.stringify(question.nbmeStyleNotes),
-  };
-}
-
-export function parseQuestion(encoded: Question): ParsedQuestion {
-  try {
-    return {
-      id: encoded.id,
-      system: encoded.system as System,
-      category: encoded.category as AnyCategory,
-      subcategory: encoded.subcategory as AnySubcategory,
-      type: encoded.type as QuestionType,
-      createdAt: encoded.createdAt,
-      creatorId: encoded.creatorId,
-      question: encoded.question,
-      sources: JSON.parse(encoded.sources),
-      choices: JSON.parse(encoded.choices),
-      answer: encoded.answer as QuestionChoice,
-      explanations: JSON.parse(encoded.explanations),
-      difficulty: encoded.difficulty as QuestionDifficulty,
-      nbmeStyleNotes: JSON.parse(encoded.nbmeStyleNotes),
-    };
-  } catch {
-    console.log(encoded.id);
-    return {} as ParsedQuestion;
-  }
 }

@@ -11,3 +11,23 @@ Content-Type: application/json
 
 ###
 GET https://main.d3g589sz66f9ek.amplifyapp.com/
+
+###
+POST https://main.d3g589sz66f9ek.amplifyapp.com/api/question
+Content-Type: application/json
+
+{
+  "userId": "ccd457b9-5332-49f1-a897-cb8e6a36a8b0"
+}
+
+###
+
+GET http://localhost:3000/api/dev
+
+###
+
+POST http://localhost:3000/api/dev
+
+###
+
+DELETE http://localhost:3000/api/dev

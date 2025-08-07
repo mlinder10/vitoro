@@ -7,20 +7,12 @@ import { Label } from "@/components/ui/label";
 import { ArrowRight, Loader } from "lucide-react";
 import { useActionState } from "react";
 import { handleLogin } from "../actions";
-import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
-  const [error, action, isPending] = useActionState(onSubmit, {});
-  const router = useRouter();
-
-  async function onSubmit(_: unknown, data: FormData) {
-    const res = await handleLogin(data);
-    if (res.success) router.push(res.redirectTo);
-    else if (res.success === false) return res;
-  }
+  const [error, action, isPending] = useActionState(handleLogin, {});
 
   return (
-    <main className="place-items-center grid h-page">
+    <main className="place-items-center grid py-8 h-page">
       <form action={action} className="flex flex-col items-center gap-6 w-1/4">
         <div className="relative">
           <h1 className="font-bold text-4xl">Login</h1>

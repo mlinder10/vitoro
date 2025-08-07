@@ -1,7 +1,7 @@
 "use client";
 
 import { handleSaveQuestionChanges } from "@/app/admin/review/[id]/actions";
-import { ParsedAudit, ParsedQuestion } from "@/types";
+import { Question } from "@/types";
 import { useRouter } from "next/navigation";
 import {
   createContext,
@@ -13,13 +13,12 @@ import {
 } from "react";
 
 type AdminReviewContextType = {
-  question: ParsedQuestion;
-  audit: ParsedAudit | null;
-  editQuestion: ParsedQuestion;
+  question: Question;
+  editQuestion: Question;
   hasChanges: boolean;
-  updateQuestion: <T extends keyof ParsedQuestion>(
+  updateQuestion: <T extends keyof Question>(
     key: T,
-    value: ((prev: ParsedQuestion[T]) => ParsedQuestion[T]) | ParsedQuestion[T]
+    value: ((prev: Question[T]) => Question[T]) | Question[T]
   ) => void;
   pageType: ReviewPageType;
   setPageType: Dispatch<SetStateAction<ReviewPageType>>;
@@ -29,9 +28,8 @@ type AdminReviewContextType = {
 };
 
 const AdminReviewContext = createContext<AdminReviewContextType>({
-  question: {} as ParsedQuestion,
-  audit: null,
-  editQuestion: {} as ParsedQuestion,
+  question: {} as Question,
+  editQuestion: {} as Question,
   hasChanges: false,
   updateQuestion: () => {},
   pageType: "review",
@@ -43,8 +41,7 @@ const AdminReviewContext = createContext<AdminReviewContextType>({
 
 type AdminReviewProviderProps = {
   children: ReactNode;
-  question: ParsedQuestion;
-  audit: ParsedAudit | null;
+  question: Question;
 };
 
 export type ReviewPageType = "review" | "edit";
@@ -52,7 +49,6 @@ export type ReviewPageType = "review" | "edit";
 export default function AdminReviewProvider({
   children,
   question,
-  audit,
 }: AdminReviewProviderProps) {
   const [editQuestion, setEditQuestion] = useState(question);
   const [pageType, setPageType] = useState<ReviewPageType>("review");
@@ -60,9 +56,9 @@ export default function AdminReviewProvider({
   const hasChanges = JSON.stringify(question) !== JSON.stringify(editQuestion);
   const router = useRouter();
 
-  function updateQuestion<T extends keyof ParsedQuestion>(
+  function updateQuestion<T extends keyof Question>(
     key: T,
-    value: ((prev: ParsedQuestion[T]) => ParsedQuestion[T]) | ParsedQuestion[T]
+    value: ((prev: Question[T]) => Question[T]) | Question[T]
   ) {
     if (typeof value === "function") value = value(editQuestion[key]);
     setEditQuestion((prev) => ({ ...prev, [key]: value }));
@@ -83,7 +79,6 @@ export default function AdminReviewProvider({
     <AdminReviewContext.Provider
       value={{
         question,
-        audit,
         editQuestion,
         hasChanges,
         updateQuestion,

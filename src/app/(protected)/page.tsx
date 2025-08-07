@@ -1,47 +1,28 @@
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { ArrowRight } from "lucide-react";
+import { Home, NotebookText, Target } from "lucide-react";
 import Link from "next/link";
 import { ComponentType } from "react";
-
-// const DUMMY_ITEM = {
-//   title: "Lorem ipsum",
-//   description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-//   link: "/",
-//   icon: ArrowRight,
-//   cta: "Lorem",
-// };
+import PageTitle from "./_components/page-title";
+import { cn } from "@/lib/utils";
 
 export default function HomePage() {
   return (
-    <div className="pt-24 h-full">
-      <p className="ml-8 font-bold text-4xl">Welcome to Vitoro!</p>
-      <section className="py-8">
-        <p className="ml-12 font-semibold">Study Materials</p>
+    <div className="h-full">
+      <PageTitle text="Welcome to Vitoro!" icon={Home} />
+      <section>
+        <h2 className="ml-8 font-semibold">Study Materials</h2>
         <div className="flex gap-4 py-4 pl-8 w-full overflow-x-auto snap-x">
           <RowItem
+            icon={Target}
             title="Question Bank"
             description="Prepare for your exams with our carefully curated question bank of MBME-style questions."
             link="/practice"
-            icon={ArrowRight}
-            cta="Practice"
           />
-          {/* {[...Array(5)].map((_, index) => (
-            <RowItem
-              key={index}
-              title={DUMMY_ITEM.title}
-              description={DUMMY_ITEM.description}
-              link={DUMMY_ITEM.link}
-              icon={DUMMY_ITEM.icon}
-              cta={DUMMY_ITEM.cta}
-            />
-          ))} */}
+          <RowItem
+            icon={NotebookText}
+            title="Review Questions"
+            description="Target your weak areas with your custom review questions."
+            link="/review"
+          />
         </div>
       </section>
     </div>
@@ -53,24 +34,23 @@ type RowItemProps = {
   description: string;
   link: string;
   icon: ComponentType<{ size?: number; className?: string }>;
-  cta: string;
 };
 
-function RowItem({ title, description, link, icon: Icon, cta }: RowItemProps) {
+function RowItem({ title, description, link, icon: Icon }: RowItemProps) {
   return (
-    <Card className="flex flex-col justify-between w-[256px] min-w-[256px]">
-      <CardHeader>
-        <CardTitle>{title}</CardTitle>
-        <CardDescription>{description}</CardDescription>
-      </CardHeader>
-      <CardFooter>
-        <Button asChild variant="accent-secondary" className="w-full">
-          <Link href={link}>
-            <span>{cta}</span>
-            <Icon />
-          </Link>
-        </Button>
-      </CardFooter>
-    </Card>
+    <Link href={link}>
+      <div
+        className={cn(
+          "flex flex-col items-center gap-2 bg-background p-4 border rounded-md max-w-[320px] h-full transition-all",
+          "hover:ring-custom-accent-secondary hover:ring-2"
+        )}
+      >
+        <Icon size={32} />
+        <p className="font-bold text-lg">{title}</p>
+        <p className="text-muted-foreground text-sm text-center">
+          {description}
+        </p>
+      </div>
+    </Link>
   );
 }

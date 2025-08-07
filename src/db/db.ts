@@ -1,16 +1,9 @@
-// import { PrismaLibSQL } from "@prisma/adapter-libsql";
-import { PrismaClient } from "@prisma/client";
+import { drizzle } from "drizzle-orm/libsql";
+import { createClient } from "@libsql/client";
 
-const prismaClientSingleton = () => new PrismaClient();
+const turso = createClient({
+  url: process.env.DATABASE_URL!,
+  authToken: process.env.DATABASE_AUTH_TOKEN,
+});
 
-declare global {
-  var db: ReturnType<typeof prismaClientSingleton>;
-}
-
-const db = globalThis.db ?? prismaClientSingleton();
-
-if (process.env.NODE_ENV !== "production") {
-  globalThis.db = db;
-}
-
-export default db;
+export const db = drizzle(turso);

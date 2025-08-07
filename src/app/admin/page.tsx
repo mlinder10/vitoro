@@ -1,4 +1,4 @@
-import db from "@/db/db";
+import { db, questions, users } from "@/db";
 import { subDays, format } from "date-fns";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -10,76 +10,79 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import QuestionChart from "./_components/question-chart";
+import { count, gte, eq } from "drizzle-orm";
 
 async function fetchQuestionData() {
-  const totalQuestions = await db.question.count();
+  const [{ count: total }] = await db
+    .select({ count: count() })
+    .from(questions);
 
   const startDate = subDays(new Date(), 30);
-  const dailyCountsRaw = await db.question.groupBy({
-    by: ["createdAt"],
-    _count: { _all: true },
-    where: {
-      createdAt: {
-        gte: startDate,
-      },
-    },
-  });
 
-  // Group by day (YYYY-MM-DD)
+  const raw = await db
+    .select({
+      createdAt: questions.createdAt,
+      count: count(),
+    })
+    .from(questions)
+    .where(gte(questions.createdAt, startDate))
+    .groupBy(questions.createdAt);
+
   const dailyCounts: Record<string, number> = {};
-  dailyCountsRaw.forEach(({ createdAt, _count }) => {
+  raw.forEach(({ createdAt, count }) => {
     const day = format(createdAt, "yyyy-MM-dd");
-    dailyCounts[day] = (dailyCounts[day] || 0) + _count._all;
+    dailyCounts[day] = (dailyCounts[day] || 0) + count;
   });
 
-  return { totalQuestions, dailyCounts };
+  return {
+    totalQuestions: total,
+    dailyCounts,
+  };
 }
 
 async function fetchSystemData() {
-  const grouped = await db.question.groupBy({
-    by: ["system", "category", "subcategory"],
-    _count: { _all: true },
-  });
+  const rows = await db
+    .select({
+      system: questions.system,
+      category: questions.category,
+      subcategory: questions.subcategory,
+      count: count(),
+    })
+    .from(questions)
+    .groupBy(questions.system, questions.category, questions.subcategory);
 
-  return grouped.map((g) => ({
-    system: g.system,
-    category: g.category,
-    subcategory: g.subcategory,
-    count: g._count._all,
+  return rows.map((row) => ({
+    system: row.system,
+    category: row.category,
+    subcategory: row.subcategory,
+    count: row.count,
   }));
 }
 
 async function fetchAdminData() {
-  const topAdmins = await db.question.groupBy({
-    by: ["creatorId"],
-    _count: {
-      creatorId: true,
+  const topCreators = await db
+    .select({
+      questionCount: count(),
+      creatorId: questions.creatorId,
+      id: users.id,
+      firstName: users.firstName,
+      lastName: users.lastName,
+      email: users.email,
+    })
+    .from(questions)
+    .innerJoin(users, eq(questions.creatorId, users.id))
+    .groupBy(users.id)
+    .orderBy(count())
+    .limit(5);
+
+  return topCreators.map((row) => ({
+    user: {
+      id: row.id,
+      firstName: row.firstName,
+      lastName: row.lastName,
+      email: row.email,
     },
-    orderBy: {
-      _count: {
-        creatorId: "desc",
-      },
-    },
-    take: 5,
-  });
-
-  const adminIds = topAdmins.map((a) => a.creatorId);
-
-  const users = await db.user.findMany({
-    where: { id: { in: adminIds } },
-    select: {
-      id: true,
-      firstName: true,
-      lastName: true,
-      email: true,
-    },
-  });
-
-  const userMap = Object.fromEntries(users.map((u) => [u.id, u]));
-
-  return topAdmins.map((entry) => ({
-    user: userMap[entry.creatorId],
-    questionCount: entry._count.creatorId,
+    questionCount: row.questionCount,
   }));
 }
 

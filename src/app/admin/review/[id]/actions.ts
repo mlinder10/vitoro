@@ -1,22 +1,19 @@
 "use server";
 
-import db from "@/db/db";
-import { AuditStatus, encodeQuestion, ParsedQuestion } from "@/types";
+import { db, questions } from "@/db";
+import { AuditRating, Question } from "@/types";
+import { eq } from "drizzle-orm";
 
 export async function handleUpdateAuditStatus(
   questionId: string,
-  rating: AuditStatus
+  rating: AuditRating
 ) {
-  await db.audit.update({
-    data: { rating },
-    where: { questionId },
-  });
+  await db
+    .update(questions)
+    .set({ rating })
+    .where(eq(questions.id, questionId));
 }
 
-export async function handleSaveQuestionChanges(question: ParsedQuestion) {
-  const encodedQuestion = encodeQuestion(question);
-  await db.question.update({
-    data: encodedQuestion,
-    where: { id: question.id },
-  });
+export async function handleSaveQuestionChanges(question: Question) {
+  await db.update(questions).set(question).where(eq(questions.id, question.id));
 }
