@@ -1,0 +1,19 @@
+{
+  "name": "APPLY_VARIATION",
+  "system_rules": [
+    "Create a near-neighbor vignette testing the same core concept with one twist.",
+    "Return only the JSON for the vignette and the answer key."
+  ],
+  "response_schema": {
+    "type": "object",
+    "properties": {
+      "vignette": { "type": "string" },
+      "options": { "type": "array", "items": { "type": "string" } },
+      "correct_index": { "type": "number" },
+      "rationale_one_liner": { "type": "string" }
+    },
+    "required": ["vignette", "options", "correct_index", "rationale_one_liner"]
+  }
+}
+
+

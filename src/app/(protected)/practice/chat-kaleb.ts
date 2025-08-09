@@ -1,6 +1,9 @@
 "use server";
 
-import { Gemini } from "@/ai";
+import { LLM, createVitoLLM } from "../../../../tutor/llm";
+import { ReasoningEngine } from "../../../../engine";
+import { Retriever } from "../../../../retriever";
+import { ensureProfile, makeAttempt, toEngineQuestion } from "../../../../tutor/adapters";
 import { Question, QuestionChoice } from "@/types";
 
 export type ChatStep =
@@ -58,18 +61,13 @@ type ChatPromptResponse = {
 
 // Separate validation functions
 class ValidationService {
-  private llm = new Gemini();
+  private llm = new LLM();
 
   async validateResponse(
     prompt: string
   ): Promise<{ valid: boolean; error?: string }> {
     try {
-      const res = await this.llm.prompt([
-        {
-          type: "text",
-          content: prompt,
-        },
-      ]);
+      const res = await this.llm.complete(prompt);
 
       const cleanResponse = res.trim().toLowerCase();
       return {
@@ -810,28 +808,6 @@ async function* stringToAsyncGenerator(s: string) {
   yield s;
 }
 
-// System prompt that defines Vito's role and persona for the entire conversation
-const VITO_SYSTEM_PROMPT = `
-You are Vito, an elite USMLE Step 2 tutor. Your mission: guide students through structured learning pathways that build diagnostic mastery.
-
-FORMATTING RULE: When displaying framework headings in ALL CAPS (like THE MONEY FINDING, THE MECHANISM, etc.), format them in bold for better readability.
-
-TONE:
-- Direct and focused but able to have fun and tell jokes
-- Challenging but supportive  
-- No fluff or excessive praise
-- Clinical precision
-
-TEACHING PHILOSOPHY:
-- Focus on the "money findings" that separate high scorers from average test-takers
-- Teach NBME patterns and trap analysis
-- Connect test-taking strategy to real clinical thinking
-- Build confidence through structured learning progressions
-- Always tie concepts back to actual patient care
-
-You maintain this persona and approach throughout all interactions with students.
-`;
-
 // Public API - unchanged
 export async function promptChat(
   question: Question,
@@ -855,15 +831,26 @@ export async function promptChat(
       prompt,
     };
   } else {
-    const llm = new Gemini();
+    const llm = createVitoLLM();
     try {
+      // Optionally run a one-shot engine plan using the current question + choice
+      // without changing existing UI behavior. This sets us up to incorporate
+      // engine steps into the streaming output next.
+      try {
+        const engine = new ReasoningEngine(new Retriever());
+        const engQ = toEngineQuestion((question as unknown) as any);
+        const attempt = makeAttempt({
+          userId: "anon",
+          q: (question as unknown) as any,
+          clickedChoiceId: choice,
+        });
+        const profile = ensureProfile("anon");
+        void engine.tutorOnce(engQ, attempt, profile);
+      } catch (_) {
+        // non-blocking in case adapter mapping needs tweaks
+      }
       return {
-        stream: llm.promptStreamed([
-          {
-            type: "text",
-            content: VITO_SYSTEM_PROMPT + "\n\n" + prompt.message,
-          },
-        ]),
+        stream: llm.stream(prompt.message),
         prompt,
       };
     } catch (error) {

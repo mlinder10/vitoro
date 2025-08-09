@@ -1,0 +1,17 @@
+{
+    "name": "EXPLAIN_KEY_CONCEPT",
+    "system_rules": [
+      "Concise NBME tone.",
+      "Anchor claims to provided [doc:ID] citations when used."
+    ],
+    "response_schema": {
+      "type": "object",
+      "properties": {
+        "concept_summary": { "type": "string" },
+        "key_points": { "type": "array", "items": { "type": "string" } }
+      },
+      "required": ["concept_summary","key_points"]
+    }
+  }
+  
+

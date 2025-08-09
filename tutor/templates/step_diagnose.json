@@ -1,0 +1,18 @@
+{
+  "name": "DIAGNOSE_MISTAKE",
+  "system_rules": [
+    "Identify the most likely reasoning failure mode without shaming.",
+    "Use one sentence for the failure type, one for the evidence."
+  ],
+  "response_schema": {
+    "type": "object",
+    "properties": {
+      "failure_mode": { "type": "string" },
+      "evidence": { "type": "string" },
+      "one_line_fix": { "type": "string" }
+    },
+    "required": ["failure_mode", "evidence", "one_line_fix"]
+  }
+}
+
+

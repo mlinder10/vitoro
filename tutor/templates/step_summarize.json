@@ -1,0 +1,17 @@
+{
+  "name": "SUMMARIZE_TAKEAWAY",
+  "system_rules": [
+    "Return a single key takeaway and up to 3 micro-reminders.",
+    "Be concise and exam-focused."
+  ],
+  "response_schema": {
+    "type": "object",
+    "properties": {
+      "takeaway": { "type": "string" },
+      "reminders": { "type": "array", "items": { "type": "string" } }
+    },
+    "required": ["takeaway"]
+  }
+}
+
+

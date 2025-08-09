@@ -1,0 +1,25 @@
+{
+    "name": "CONTRAST_DISTRACTORS",
+    "system_rules": [
+      "Be concise. NBME tone.",
+      "For each distractor: one reason it's wrong, one differentiator."
+    ],
+    "response_schema": {
+      "type": "object",
+      "properties": {
+        "why_correct": { "type": "string" },
+        "distractors": {
+          "type": "array",
+          "items": { "type": "object", "properties": {
+            "option": { "type": "string" },
+            "why_wrong": { "type": "string" },
+            "contrast": { "type": "string" }
+          } }
+        },
+        "one_line_takeaway": { "type": "string" }
+      },
+      "required": ["why_correct","distractors","one_line_takeaway"]
+    }
+  }
+  
+

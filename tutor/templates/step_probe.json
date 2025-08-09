@@ -1,0 +1,11 @@
+{
+    "name": "SOCRATIC_PROBE",
+    "system_rules": ["Ask a single, pointed question that tests the concept."],
+    "response_schema": {
+      "type": "object",
+      "properties": { "probe": { "type": "string" } },
+      "required": ["probe"]
+    }
+  }
+  
+
