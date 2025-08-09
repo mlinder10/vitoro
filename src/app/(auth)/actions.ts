@@ -1,6 +1,7 @@
 "use server";
 
 import { admins, db, passwordResets, users } from "@/db";
+import { isDbConfigured } from "@/db/db";
 import { sendResetPasswordEmail } from "@/email/reset-password";
 import { authenticate, hashPassword, verifyPassword } from "@/lib/auth";
 import { generateColor } from "@/lib/utils";
@@ -34,6 +35,10 @@ export async function handleLogin(
 ): Promise<LoginResult> {
   const result = LoginSchema.safeParse(Object.fromEntries(data.entries()));
   if (!result.success) return result.error.formErrors.fieldErrors;
+
+  if (!isDbConfigured) {
+    return { email: ["Database not configured on this environment."] };
+  }
 
   const [user] = await db
     .select({
@@ -99,6 +104,10 @@ export async function handleRegister(
 ): Promise<RegisterResult> {
   const result = RegisterSchema.safeParse(Object.fromEntries(data.entries()));
   if (!result.success) return result.error.formErrors.fieldErrors;
+
+  if (!isDbConfigured) {
+    return { error: ["Database not configured on this environment."] };
+  }
   const {
     email,
     firstName,

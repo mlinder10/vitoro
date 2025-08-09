@@ -1,3 +1,41 @@
+# Dev setup
+
+1) Install dependencies
+
+```bash
+npm install
+```
+
+2) Copy env and fill values
+
+Create a file named `.env.local` in the project root:
+
+```ini
+# --- LLM (Gemini) ---
+GEMINI_API_KEY="your-google-genai-api-key"
+
+# --- Database (Turso / libsql) — optional ---
+# If you don't have a DB, leave these unset; DB calls will throw only when executed.
+# DATABASE_URL looks like: libsql://<db-name>-<org>.turso.io
+# DATABASE_AUTH_TOKEN is your Turso auth token
+# DATABASE_URL="libsql://your-db-url"
+# DATABASE_AUTH_TOKEN="your-auth-token"
+```
+
+3) Run tests
+
+```bash
+npm run test
+```
+
+4) Start dev
+
+```bash
+npm run dev
+```
+
+Then open http://localhost:3000
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started

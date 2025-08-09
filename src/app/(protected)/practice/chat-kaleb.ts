@@ -4,6 +4,7 @@ import { LLM, createVitoLLM } from "../../../../tutor/llm";
 import { ReasoningEngine } from "../../../../engine";
 import { Retriever } from "../../../../retriever";
 import { ensureProfile, makeAttempt, toEngineQuestion } from "../../../../tutor/adapters";
+import { runStepWithRetry, defaultRetryAdjust } from "../../../../tutor/assembly";
 import { Question, QuestionChoice } from "@/types";
 
 export type ChatStep =
@@ -845,7 +846,21 @@ export async function promptChat(
           clickedChoiceId: choice,
         });
         const profile = ensureProfile("anon");
-        void engine.tutorOnce(engQ, attempt, profile);
+        // Fire-and-forget: log plan and per-step outputs without affecting UI stream
+        void (async () => {
+          const plan = await engine.tutorOnce(engQ, attempt, profile);
+          console.log("[Engine plan]", plan);
+          for (const sp of plan.steps) {
+            const res = await runStepWithRetry(createVitoLLM(), sp, { question: engQ, attempt, retrieved: [] }, {
+              timeoutMs: 15000,
+              maxRetries: 2,
+              backoffMs: 300,
+              onRetryAdjust: defaultRetryAdjust,
+              onRetry: ({ attempt, error }) => console.warn(`[step ${sp.step}] retry #${attempt}:`, error),
+            });
+            console.log("[Step result]", res);
+          }
+        })();
       } catch (_) {
         // non-blocking in case adapter mapping needs tweaks
       }

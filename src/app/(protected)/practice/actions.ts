@@ -1,12 +1,7 @@
 "use server";
 
-import {
-  db,
-  questions,
-  answeredQuestions,
-  reviewQuestions,
-  qbankSessions,
-} from "@/db";
+import { db, questions, answeredQuestions, reviewQuestions, qbankSessions } from "@/db";
+import { isDbConfigured } from "@/db/db";
 import { eq, and, isNull, or, sql, notInArray } from "drizzle-orm";
 import {
   GeneratedReviewQuestion,
@@ -108,6 +103,11 @@ export async function fetchQuestions(
 ) {
   if (count > 50) throw new Error("Too many questions requested");
 
+  // Dev bypass: if DB isn't configured or userId missing, return empty
+  if (!isDbConfigured || !userId) {
+    return [] as Awaited<ReturnType<typeof db.select>>;
+  }
+
   const answered = await db
     .select({ id: answeredQuestions.questionId })
     .from(answeredQuestions)
@@ -134,6 +134,9 @@ export async function redirectToQuestion(
   userId: string,
   filters: QuestionFilters
 ) {
+  if (!isDbConfigured || !userId) {
+    redirect("/practice/no-questions");
+  }
   const [question] = await db
     .select({ id: questions.id })
     .from(questions)

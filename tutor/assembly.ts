@@ -128,4 +128,169 @@ export async function runStepWithGuardrails(
   }
 }
 
+// --- Retry + timeout support ---
+
+export class TimeoutError extends Error {
+  constructor(msg = "LLM step timed out") {
+    super(msg);
+    this.name = "TimeoutError";
+  }
+}
+
+export class ValidationError extends Error {
+  constructor(msg = "Model JSON failed schema validation") {
+    super(msg);
+    this.name = "ValidationError";
+  }
+}
+
+export interface RetryOptions {
+  timeoutMs?: number; // Default 15000
+  maxRetries?: number; // Default 1
+  backoffMs?: number; // Default 400
+  onRetryAdjust?: (info: {
+    attempt: number;
+    planStep: StepPlan["step"];
+    lastError: unknown;
+    previousSystem: string;
+    previousUser: string;
+  }) => Partial<{ system: string; user: string }> | void;
+  onRetry?: (info: { attempt: number; error: unknown }) => void;
+  fallbackFactory?: () => StepResult<any>;
+}
+
+async function streamWithTimeout(
+  streamFn: (system: string, user: string) => AsyncIterable<string>,
+  system: string,
+  user: string,
+  timeoutMs: number
+): Promise<string> {
+  let buffer = "";
+  let timedOut = false;
+
+  const timer = setTimeout(() => {
+    timedOut = true;
+  }, timeoutMs);
+
+  try {
+    for await (const chunk of streamFn(system, user)) {
+      if (timedOut) throw new TimeoutError();
+      buffer += chunk;
+    }
+  } finally {
+    clearTimeout(timer);
+  }
+
+  return buffer;
+}
+
+function makeTwoPartStreamer(llm: LLM) {
+  return async function* (system: string, user: string): AsyncGenerator<string> {
+    for await (const chunk of llm.stream([
+      { type: "text", content: system },
+      { type: "text", content: user },
+    ] as any)) {
+      yield chunk;
+    }
+  };
+}
+
+export async function runStepWithRetry<T = StepOutput>(
+  llm: LLM,
+  plan: StepPlan,
+  ctx: RunContext,
+  opts: RetryOptions = {}
+): Promise<StepResult<T>> {
+  const {
+    timeoutMs = 15_000,
+    maxRetries = 1,
+    backoffMs = 400,
+    onRetryAdjust,
+    onRetry,
+    fallbackFactory,
+  } = opts;
+
+  const tpl = await loadTemplate(plan.step);
+  let { system, user } = assembleStepPayload(plan, ctx, tpl);
+
+  const streamer = makeTwoPartStreamer(llm);
+
+  let attempt = 0;
+  let lastErr: unknown;
+
+  while (attempt <= maxRetries) {
+    try {
+      const raw = await streamWithTimeout(streamer, system, user, timeoutMs);
+      const parsed: any = safeParseModelJSON(raw);
+      validateAgainstSchema(parsed, (tpl as any).response_schema);
+
+      return {
+        step: plan.step,
+        focusConcepts: plan.focusConcepts,
+        citations: plan.citations ?? [],
+        output: parsed as T,
+      };
+    } catch (err) {
+      lastErr = err;
+      if (attempt === maxRetries) break;
+
+      onRetry?.({ attempt: attempt + 1, error: err });
+
+      const wait = backoffMs * Math.pow(2, attempt) + Math.floor(Math.random() * 100);
+      await new Promise((r) => setTimeout(r, wait));
+
+      const adj = onRetryAdjust?.({
+        attempt: attempt + 1,
+        planStep: plan.step,
+        lastError: err,
+        previousSystem: system,
+        previousUser: user,
+      });
+      if (adj?.system) system = adj.system;
+      if (adj?.user) user = adj.user;
+
+      attempt += 1;
+      continue;
+    }
+  }
+
+  if (fallbackFactory) return fallbackFactory();
+  throw (lastErr instanceof Error ? lastErr : new Error(String(lastErr)));
+}
+
+export function defaultRetryAdjust(info: {
+  attempt: number;
+  planStep: StepPlan["step"];
+  previousSystem: string;
+  previousUser: string;
+}) {
+  if (info.attempt === 1) {
+    const extra = [
+      "\nCRITICAL: Output ONLY a single valid JSON object. No explanations. No code fences.",
+      "If unsure, return the minimal object that satisfies `response_schema.required`.",
+    ].join("\n");
+    return { system: info.previousSystem + extra };
+  }
+  if (info.attempt >= 2) {
+    try {
+      const user = JSON.parse(info.previousUser);
+      const minimal = {
+        schema: user.schema,
+        step: user.step,
+        focusConcepts: user.focusConcepts,
+        citations: user.citations,
+        question: {
+          stem: user.question?.stem,
+          options: user.question?.options,
+          chosenIndex: user.question?.chosenIndex,
+        },
+      };
+      return { user: JSON.stringify(minimal) };
+    } catch {
+      // ignore
+    }
+  }
+  return {};
+}
+
 

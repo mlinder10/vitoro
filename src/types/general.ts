@@ -1,4 +1,4 @@
-import { reviewQuestions } from "@/db";
+import { reviewQuestions } from "@/db/schemas";
 import { InferSelectModel } from "drizzle-orm";
 
 export type ReviewQuestion = InferSelectModel<typeof reviewQuestions>;
