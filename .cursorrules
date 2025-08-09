@@ -1,0 +1,7 @@
+- Create a tutor/ folder with: engine.ts, logic_graph.ts, retriever.ts, llm.ts, profiling.ts, models.ts, flow.ts, templates/.
+- LLM calls must live only in tutor/llm.ts with a provider-agnostic interface.
+- chat-kaleb.ts must not import OpenAI/Gemini directly.
+- Engine API: tutorOnce(q, attempt, profile) -> structured JSON (no UI text).
+- Step templates live in tutor/templates/*.json and responses must be valid per schema.
+- No business logic in UI/streaming handlers.
+- Add light unit tests where feasible.
