@@ -1,22 +1,11 @@
-import { QBankSession, Question, QuestionDifficulty } from "@/types";
+import ProgressCircle from "@/components/progress-circle";
+import {
+  QBankSession,
+  Question,
+  QuestionChoice,
+  QuestionDifficulty,
+} from "@/types";
 import React from "react";
-
-/**
- * Enhanced Session Summary for an NBME-style practice exam
- *
- * Drop-in replacement for your current component. Keeps your ProgressCircle
- * but adds: key stats, system & difficulty breakdowns, weak topics, and CTAs.
- *
- * Assumptions:
- * - You have a <ProgressCircle percentage size startColor> component
- * - You have scoreToHex(percentage: number): string
- * - splitQuestions(session, questions) -> { correct, incorrect, unanswered }
- * - question.system is a string or enum that can be stringified
- * - question.difficulty is one of: "Easy" | "Medium" | "Hard"
- */
-
-// ------- Types (align these with your actual app types) -------
-export type QuestionChoice = string | number; // adjust as needed
 
 export type SplitResult = {
   correct: Question[];
@@ -27,41 +16,32 @@ export type SplitResult = {
 export type SessionSummaryProps = {
   session: QBankSession;
   questions: Question[];
-  splitQuestions: (s: QBankSession, qs: Question[]) => SplitResult;
-  ProgressCircle: React.ComponentType<{
-    percentage: number; // 0..1
-    size?: number;
-    startColor?: string;
-    children?: React.ReactNode;
-  }>;
-  scoreToHex: (p: number) => string;
   onReviewAll?: () => void;
   onRetakeIncorrect?: () => void;
-  onReviewTopic?: (system: string) => void; // called from weak areas list
+  onReviewTopic?: (system: string) => void;
 };
 
-// ------- Utilities -------
 const clamp01 = (n: number) => Math.max(0, Math.min(1, n));
 
 const formatPercent = (ratio: number) => `${Math.round(clamp01(ratio) * 100)}%`;
 
-// const formatDuration = (sec?: number) => {
-//   if (!sec || sec <= 0) return "—";
-//   const h = Math.floor(sec / 3600);
-//   const m = Math.floor((sec % 3600) / 60);
-//   const s = Math.floor(sec % 60);
-//   if (h > 0) return `${h}h ${m}m`;
-//   if (m > 0) return `${m}m ${s}s`;
-//   return `${s}s`;
-// };
+function scoreToHex(percentage: number) {
+  const hue = Math.round(clamp01(percentage) * 120);
+  return `hsl(${hue}, 100%, 50%)`;
+}
 
-// rank helper for weak areas: lower correct% first
+function splitQuestions(s: QBankSession, qs: Question[]): SplitResult {
+  const correct = qs.filter((q, i) => s.answers[i] === q.answer);
+  const incorrect = qs.filter((q, i) => s.answers[i] !== q.answer);
+  const unanswered = qs.filter((q, i) => s.answers[i] === null);
+  return { correct, incorrect, unanswered };
+}
+
 const byAscendingPct = (
   a: { system: string; pct: number },
   b: { system: string; pct: number }
 ) => a.pct - b.pct;
 
-// Tailwind bar component for simple viz
 const Bar = ({ pct }: { pct: number }) => (
   <div className="bg-muted rounded-full w-full h-2">
     <div
@@ -84,18 +64,13 @@ const StatChip = ({
   </div>
 );
 
-// ------- Main Component -------
 export default function SessionSummary({
   session,
   questions,
-  splitQuestions,
-  ProgressCircle,
-  scoreToHex,
   onReviewAll,
   onRetakeIncorrect,
   onReviewTopic,
 }: SessionSummaryProps) {
-  // Build answer map for per-question evaluation
   const answerById = React.useMemo(() => {
     const map = new Map<string, QuestionChoice | null>();
     session.questionIds.forEach((qid, i) =>
@@ -128,15 +103,11 @@ export default function SessionSummary({
   for (const q of questions) {
     const given = answerById.get(q.id);
     const isCorrect = given != null && given === q.answer;
-
-    // system
     const sys = String(q.system);
     const s = systemAgg.get(sys) ?? { total: 0, correct: 0 };
     s.total += 1;
     if (isCorrect) s.correct += 1;
     systemAgg.set(sys, s);
-
-    // difficulty
     const d = difficultyAgg.get(q.difficulty) ?? { total: 0, correct: 0 };
     d.total += 1;
     if (isCorrect) d.correct += 1;
@@ -150,7 +121,7 @@ export default function SessionSummary({
       correct,
       pct: total > 0 ? correct / total : 0,
     }))
-    .sort((a, b) => b.pct - a.pct); // best first in the table
+    .sort((a, b) => b.pct - a.pct);
 
   const weakest = [...systemRows]
     .sort(byAscendingPct)
@@ -190,16 +161,6 @@ export default function SessionSummary({
 
         <div className="md:col-span-2">
           <div className="flex flex-wrap items-center gap-2 mb-3">
-            {/* {session.examName && (
-              <span className="bg-primary/10 px-3 py-1 rounded-full font-medium text-primary text-xs">
-                {session.examName}
-              </span>
-            )}
-            {session.step && (
-              <span className="bg-secondary/60 px-3 py-1 rounded-full font-medium text-xs">
-                {session.step}
-              </span>
-            )} */}
             <span className="bg-muted px-3 py-1 rounded-full font-medium text-muted-foreground text-xs">
               {dateStr}
             </span>
@@ -218,35 +179,37 @@ export default function SessionSummary({
               label="Unanswered"
               value={<span className="tabular-nums">{numUnanswered}</span>}
             />
-            {/* <StatChip label="Time" value={formatDuration(session.durationSec)} /> */}
           </div>
 
           <div className="flex flex-wrap gap-2 mt-4">
-            <button
-              type="button"
-              onClick={onReviewAll}
-              className="hover:bg-accent shadow-sm px-4 py-2 border rounded-2xl font-medium text-sm"
-            >
-              Review All Questions
-            </button>
-            <button
-              type="button"
-              onClick={onRetakeIncorrect}
-              className="bg-primary hover:opacity-90 shadow-sm px-4 py-2 rounded-2xl font-medium text-primary-foreground text-sm"
-              disabled={numIncorrect + numUnanswered === 0}
-              title={
-                numIncorrect + numUnanswered === 0
-                  ? "Nothing to retake"
-                  : undefined
-              }
-            >
-              Retake Incorrect Only
-            </button>
+            {onReviewAll && (
+              <button
+                type="button"
+                onClick={onReviewAll}
+                className="hover:bg-accent shadow-sm px-4 py-2 border rounded-2xl font-medium text-sm"
+              >
+                Review All Questions
+              </button>
+            )}
+            {onRetakeIncorrect && (
+              <button
+                type="button"
+                onClick={onRetakeIncorrect}
+                className="bg-primary hover:opacity-90 shadow-sm px-4 py-2 rounded-2xl font-medium text-primary-foreground text-sm"
+                disabled={numIncorrect + numUnanswered === 0}
+                title={
+                  numIncorrect + numUnanswered === 0
+                    ? "Nothing to retake"
+                    : undefined
+                }
+              >
+                Retake Incorrect Only
+              </button>
+            )}
           </div>
         </div>
       </section>
 
-      {/* Performance by System */}
       <section>
         <h3 className="mb-3 font-semibold text-lg">Performance by System</h3>
         {systemRows.length === 0 ? (
@@ -293,7 +256,6 @@ export default function SessionSummary({
         )}
       </section>
 
-      {/* Difficulty Breakdown */}
       <section className="gap-4 grid grid-cols-1 md:grid-cols-3">
         <div className="shadow-sm p-4 border rounded-2xl">
           <div className="mb-2 font-semibold text-sm">Easy</div>
@@ -318,7 +280,6 @@ export default function SessionSummary({
         </div>
       </section>
 
-      {/* Weak Areas */}
       <section>
         <h3 className="mb-3 font-semibold text-lg">Top Weak Areas</h3>
         {weakest.length === 0 ? (
@@ -358,7 +319,6 @@ export default function SessionSummary({
         )}
       </section>
 
-      {/* Flags and Notes */}
       <section className="gap-4 grid grid-cols-1 sm:grid-cols-2">
         <div className="shadow-sm p-4 border rounded-2xl">
           <div className="mb-1 font-semibold text-sm">Flagged</div>
@@ -370,17 +330,6 @@ export default function SessionSummary({
             question{session.flaggedQuestionIds.length === 1 ? "" : "s"} to
             revisit.
           </p>
-        </div>
-        <div className="shadow-sm p-4 border rounded-2xl">
-          <div className="mb-1 font-semibold text-sm">Pacing</div>
-          {/* <p className="text-muted-foreground text-sm">
-            Total time: <span className="font-semibold">{formatDuration(session.durationSec)}</span>
-            {" "}• Avg/question: {total > 0 && session.durationSec ? (
-              <span className="font-semibold">{formatDuration(Math.round(session.durationSec / total))}</span>
-            ) : (
-              "—"
-            )}
-          </p> */}
         </div>
       </section>
     </div>
