@@ -4,13 +4,13 @@ import { Button } from "@/components/ui/button";
 import { useSession } from "@/contexts/session-provider";
 import { cn } from "@/lib/utils";
 import {
+  ChevronLeft,
   Home,
   LogOut,
   Menu,
   NotebookText,
   ShieldUserIcon,
   Target,
-  X,
 } from "lucide-react";
 import Link from "next/link";
 import { ComponentType, useEffect, useState } from "react";
@@ -48,8 +48,8 @@ export default function SideNav() {
   return (
     <nav
       className={cn(
-        "flex flex-col justify-between p-4 border-r-2 h-full max-w-[320px] transition-all",
-        isOpen && "flex-1"
+        "flex flex-col justify-between p-4 border-r-2 h-screen sticky top-0 transition-all shrink-0",
+        isOpen ? "w-[320px]" : "w-[64px]"
       )}
     >
       <div className="space-y-4">
@@ -60,7 +60,7 @@ export default function SideNav() {
             </Link>
           )}
           <Button variant="ghost" onClick={() => setIsOpen((prev) => !prev)}>
-            {isOpen ? <X /> : <Menu />}
+            {isOpen ? <ChevronLeft /> : <Menu />}
           </Button>
         </div>
         <ul>
@@ -142,7 +142,7 @@ function ListLink({
       <Link
         href={href}
         className={cn(
-          "flex justify-start items-center gap-2 px-2 py-2 rounded-md w-full text-muted-foreground  text-sm",
+          "flex justify-start items-center gap-2 px-2 py-2 rounded-md w-full text-muted-foreground text-sm",
           "hover:bg-secondary focus:bg-secondary hover:text-primary",
           path === href && "font-bold text-primary"
         )}

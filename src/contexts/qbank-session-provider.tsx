@@ -1,8 +1,10 @@
 "use client";
 
 import {
+  countQuestions,
   createQbankSession,
   fetchQuestions,
+  getCountsGrouped,
   updateQbankSession,
 } from "@/app/(protected)/practice/actions";
 import {
@@ -28,7 +30,7 @@ import {
 
 // Context Typing --------------------------------------------------------------
 
-export const DEFAULT_QUESTION_COUNT = 30;
+export const DEFAULT_QUESTION_COUNT = 0;
 
 type QBankSessionType = {
   // State
@@ -38,6 +40,8 @@ type QBankSessionType = {
   setStep: Dispatch<SetStateAction<NBMEStep | undefined>>;
   type: QuestionType | undefined;
   setType: Dispatch<SetStateAction<QuestionType | undefined>>;
+  status: QBankStatus;
+  setStatus: Dispatch<SetStateAction<QBankStatus>>;
   system: System | undefined;
   setSystem: Dispatch<SetStateAction<System | undefined>>;
   category: AnyCategory | undefined;
@@ -50,6 +54,10 @@ type QBankSessionType = {
   setDifficulty: Dispatch<SetStateAction<QuestionDifficulty | undefined>>;
   questionCount: number;
   setQuestionCount: Dispatch<SetStateAction<number>>;
+  availableCount: number;
+  refreshAvailableCount: (userId: string) => Promise<void>;
+  groupedCounts: Record<string, number>;
+  refreshGroupedCounts: (userId: string) => Promise<void>;
   time: number | null;
   // question data
   index: number;
@@ -71,6 +79,8 @@ const QBankSessionContext = createContext<QBankSessionType>({
   setStep: () => {},
   type: undefined,
   setType: () => {},
+  status: "Unanswered",
+  setStatus: () => {},
   system: undefined,
   setSystem: () => {},
   category: undefined,
@@ -83,6 +93,10 @@ const QBankSessionContext = createContext<QBankSessionType>({
   setDifficulty: () => {},
   questionCount: DEFAULT_QUESTION_COUNT,
   setQuestionCount: () => {},
+  availableCount: 0,
+  refreshAvailableCount: async () => {},
+  groupedCounts: {},
+  refreshGroupedCounts: async () => {},
   time: null,
   // question data
   index: 0,
@@ -106,6 +120,7 @@ type QBankSessionProviderProps = {
 const TIME_PER_QUESTION = 90; // 1.5 min
 
 export type QBankMode = "timed" | "tutor";
+export type QBankStatus = "Unanswered" | "Answered" | "Correct" | "Incorrect";
 
 export default function QBankSessionProvider({
   children,
@@ -114,12 +129,17 @@ export default function QBankSessionProvider({
   const [mode, setMode] = useState<QBankMode>("tutor");
   const [step, setStep] = useState<NBMEStep>();
   const [type, setType] = useState<QuestionType>();
+  const [status, setStatus] = useState<QBankStatus>("Unanswered");
   const [system, setSystem] = useState<System>();
   const [category, setCategory] = useState<AnyCategory>();
   const [subcategory, setSubcategory] = useState<AnySubcategory>();
   const [topic, setTopic] = useState<string>("");
   const [difficulty, setDifficulty] = useState<QuestionDifficulty>();
   const [questionCount, setQuestionCount] = useState(DEFAULT_QUESTION_COUNT);
+  const [availableCount, setAvailableCount] = useState(0);
+  const [groupedCounts, setGroupedCounts] = useState<Record<string, number>>(
+    {}
+  );
 
   const [questions, setQuestions] = useState<Question[]>([]);
   const [index, setIndex] = useState(0);
@@ -159,6 +179,7 @@ export default function QBankSessionProvider({
       {
         step: filter ? step : undefined,
         type: filter ? type : undefined,
+        status: filter ? status : "Unanswered",
         system: filter ? system : undefined,
         category: filter ? category : undefined,
         subcategory: filter ? subcategory : undefined,
@@ -198,6 +219,54 @@ export default function QBankSessionProvider({
     router.replace(`/practice/summary/${sessionId}`);
   }
 
+  async function refreshAvailableCount(userId: string) {
+    try {
+      const value = await countQuestions(userId, {
+        step,
+        type,
+        status,
+        system,
+        category,
+        subcategory,
+        topic,
+        difficulty,
+      });
+      setAvailableCount(value);
+    } catch (e) {
+      setAvailableCount(0);
+      console.error("refreshAvailableCount failed", e);
+    }
+  }
+
+  async function refreshGroupedCounts(userId: string) {
+    try {
+      const rows = await getCountsGrouped(userId, {
+        step,
+        type,
+        status,
+        system,
+        category,
+        subcategory,
+        topic,
+        difficulty,
+      });
+      const map: Record<string, number> = {};
+      for (const r of rows) {
+        const key = `${r.system}__${r.category}__${r.subcategory}`;
+        map[key] = r.count;
+        // also rollups
+        const sysKey = `${r.system}__`;
+        const catKey = `${r.system}__${r.category}__`;
+        map[sysKey] = (map[sysKey] ?? 0) + r.count;
+        map[catKey] = (map[catKey] ?? 0) + r.count;
+      }
+      setGroupedCounts(map);
+    } catch (e) {
+      setGroupedCounts({});
+      console.error("refreshGroupedCounts failed", e);
+    }
+  }
+
   return (
     <QBankSessionContext.Provider
       value={{
@@ -207,6 +276,8 @@ export default function QBankSessionProvider({
         setStep,
         type,
         setType,
+        status,
+        setStatus,
         system,
         setSystem,
         category,
@@ -219,6 +290,10 @@ export default function QBankSessionProvider({
         setDifficulty,
         questionCount,
         setQuestionCount,
+        availableCount,
+        refreshAvailableCount,
+        groupedCounts,
+        refreshGroupedCounts,
         time,
         // question data
         index,
@@ -241,6 +316,7 @@ export default function QBankSessionProvider({
 export type QuestionFilters = {
   step: NBMEStep | undefined;
   type: QuestionType | undefined;
+  status?: QBankStatus;
   system: System | undefined;
   category: AnyCategory | undefined;
   subcategory: AnySubcategory | undefined;

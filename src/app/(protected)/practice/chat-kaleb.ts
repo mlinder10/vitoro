@@ -86,12 +86,14 @@ class ValidationService {
 
   async validateExplanation(
     question: Question,
+    choice: QuestionChoice,
     userResponse: string
   ): Promise<{ valid: boolean; error?: string }> {
     const prompt = `
 Only respond with "yes" or "no".
 Is this a valid response to the question: "What clinical finding made you go with that choice?": ${userResponse}
-In relation to the question: ${JSON.stringify(question)}
+In relation to the question: "${question.question}"
+and choice: "${question.choices[choice]}"
 The response does not need to be correct or particularly sophisticated, but it should be related to the question.`;
 
     return this.validateResponse(prompt);
@@ -127,7 +129,7 @@ ANSWER: ${userResponse}`;
     const prompt = `
 Only respond with "yes" or "no".
 Is this a valid answer to the question: "What would you do NEXT in a real patient?"
-In reference to the question: "${JSON.stringify(question)}"
+In reference to the question: "${question.question}"
 RESPONSE: ${userResponse}`;
 
     return this.validateResponse(prompt);
@@ -188,6 +190,7 @@ class StepDefinitions {
           const userResponse = this.getLastUserMessage(messages);
           const validation = await this.validator.validateExplanation(
             question,
+            choice,
             userResponse
           );
 
@@ -205,7 +208,7 @@ class StepDefinitions {
           if (!validation.valid) {
             return {
               prompt: false,
-              message: `Sorry, could you please be more descriptive? What clinical finding made you go with that choice?`,
+              message: `Sorry, it seems like your response was vague or unrelated to the question. Please try again. What clinical finding made you go with that choice?`,
               tags: [],
               nextTags: ["student-explanation"],
               next: "incorrect-1-check",
@@ -292,7 +295,7 @@ in reference to: QUESTION: ${JSON.stringify(question)}, STUDENT'S ANSWER: ${user
           if (!validation.valid) {
             return {
               prompt: false,
-              message: `Sorry, could you please be more descriptive? What key finding makes ${question.answer} the right answer and why does that rule out ${choice}?`,
+              message: `Sorry, it seems like your response was vague or unrelated to the question. Please try again. What key finding makes ${question.answer} the right answer and why does that rule out ${choice}?`,
               tags: [],
               nextTags: [],
               next: "incorrect-3-check",
@@ -323,6 +326,7 @@ in reference to: QUESTION: ${JSON.stringify(question)}, STUDENT'S ANSWER: ${user
           const userResponse = this.getLastUserMessage(messages);
           const validation = await this.validator.validateExplanation(
             question,
+            choice,
             userResponse
           );
 
@@ -340,7 +344,7 @@ in reference to: QUESTION: ${JSON.stringify(question)}, STUDENT'S ANSWER: ${user
           if (!validation.valid) {
             return {
               prompt: false,
-              message: `Sorry, could you please be more descriptive? What made you choose this answer?`,
+              message: `Sorry, it seems like your response was vague or unrelated to the question. Please try again. What made you choose this answer?`,
               tags: [],
               nextTags: ["student-explanation"],
               next: "correct-1-check",
@@ -533,10 +537,10 @@ in reference to: QUESTION: ${JSON.stringify(question)}, STUDENT'S ANSWER: ${user
           return {
             prompt: false,
             message: `Want to go deeper? Choose your next move:
-🔹 **Challenge** – Give me a nightmare-mode case on this topic
-🔹 **Schema** – Quiz me on the framework (diagnosis, HPI, key findings, tx)
-🔹 **Systems** – Connect this to other systems in the differential
-🔹 **Integration** – Hit me with a different twist on the same core concept`,
+🔹 **Challenge** - Give me a nightmare-mode case on this topic
+🔹 **Schema** - Quiz me on the framework (diagnosis, HPI, key findings, tx)
+🔹 **Systems** - Connect this to other systems in the differential
+🔹 **Integration** - Hit me with a different twist on the same core concept`,
             tags: [],
             nextTags: [],
             next: "follow-up-menu",
