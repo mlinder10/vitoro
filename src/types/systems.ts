@@ -68,14 +68,15 @@ export const SYSTEMS: {
           "Leukemias",
           "Lymphomas",
           "Multiple myeloma and related neoplasms",
+          "Others",
         ],
       },
       {
-        name: "Anemia, cytopenias, polycythemia",
+        name: "Anemia, cytopenias, and polycythemia anemias",
         subcategories: [
           "Decreased production",
           "Hemolysis",
-          "Membrane disorders",
+          "Disorders of hemoglobin/heme/membrane",
           "Other causes",
           "Cytopenias",
           "Polycythemia",
@@ -83,11 +84,11 @@ export const SYSTEMS: {
       },
       {
         name: "Coagulation disorders",
-        subcategories: ["Hypocoagulable", "Hypercoagulable"],
-      },
-      {
-        name: "Reactions to blood components",
-        subcategories: ["Transfusion reactions", "TRALI, anaphylactoid"],
+        subcategories: [
+          "Hypocoagulable",
+          "Hypercoagulable",
+          "Reactions to blood components",
+        ],
       },
       {
         name: "Traumatic/mechanical/vascular disorders",
@@ -138,6 +139,7 @@ export const SYSTEMS: {
           "Bulimia",
           "Binge-eating",
           "Disruptive/Impulse-control",
+          "Others",
         ],
       },
       {
@@ -160,7 +162,11 @@ export const SYSTEMS: {
       },
       {
         name: "Sexual disorders & gender dysphoria",
-        subcategories: ["Gender dysphoria", "Psychosexual dysfunctions"],
+        subcategories: [
+          "Gender dysphoria",
+          "Psychosexual dysfunctions",
+          "Others",
+        ],
       },
       {
         name: "Substance use disorders",
@@ -194,7 +200,10 @@ export const SYSTEMS: {
       },
       {
         name: "Cerebrovascular disease",
-        subcategories: ["Stroke, TIA, hemorrhage, aneurysm, vascular dementia"],
+        subcategories: [
+          "Stroke, TIA, hemorrhage, aneurysm, vascular dementia",
+          "Others",
+        ],
       },
       {
         name: "Spinal cord/root disorders",
@@ -210,19 +219,30 @@ export const SYSTEMS: {
       },
       {
         name: "Pain syndromes",
-        subcategories: ["Trigeminal neuralgia", "Fibromyalgia", "CRPS"],
+        subcategories: [
+          "Trigeminal neuralgia",
+          "Fibromyalgia",
+          "CRPS",
+          "Others",
+        ],
       },
       {
         name: "Degenerative/amnestic disorders",
-        subcategories: ["Alzheimer", "FTD", "Lewy body dementia", "MCI"],
+        subcategories: [
+          "Alzheimer",
+          "FTD",
+          "Lewy body dementia",
+          "MCI",
+          "Others",
+        ],
       },
       {
         name: "Global cerebral dysfunction",
-        subcategories: ["Delirium", "Coma", "Brain death"],
+        subcategories: ["Delirium", "Coma", "Brain death", "AMS"],
       },
       {
         name: "Neuromuscular disorders",
-        subcategories: ["ALS", "Muscular dystrophies", "SMA"],
+        subcategories: ["ALS", "Muscular dystrophies", "Others"],
       },
       {
         name: "Movement disorders",
@@ -265,7 +285,7 @@ export const SYSTEMS: {
       },
       {
         name: "Adverse drug effects",
-        subcategories: ["Neurotoxicity", "Serotonin syndrome", "EPS"],
+        subcategories: ["Neurotoxicity", "Serotonin syndrome", "EPS", "Others"],
       },
       {
         name: "Eye and eyelid disorders",
@@ -350,6 +370,7 @@ export const SYSTEMS: {
           "Septic arthritis",
           "Myositis",
           "Discitis",
+          "Others",
         ],
       },
       {
@@ -359,6 +380,7 @@ export const SYSTEMS: {
           "Ankylosing spondylitis",
           "Juvenile idiopathic arthritis",
           "Dermatomyositis/polymyositis",
+          "Others",
         ],
       },
       {
@@ -383,6 +405,7 @@ export const SYSTEMS: {
           "Osteomalacia",
           "Gout",
           "Muscle disorders",
+          "Others",
         ],
       },
       {
@@ -393,6 +416,7 @@ export const SYSTEMS: {
           "Dislocations",
           "Amputation",
           "Compartment syndrome",
+          "Others",
         ],
       },
       {
@@ -401,6 +425,7 @@ export const SYSTEMS: {
           "Achondroplasia",
           "Hip dysplasia",
           "Osteogenesis imperfecta",
+          "Others",
         ],
       },
       {
@@ -418,7 +443,12 @@ export const SYSTEMS: {
     categories: [
       {
         name: "Infections/inflammation",
-        subcategories: ["Endocarditis", "Myocarditis", "Pericarditis"],
+        subcategories: [
+          "Endocarditis",
+          "Myocarditis",
+          "Pericarditis",
+          "Atherosclerosis",
+        ],
       },
       {
         name: "Neoplasms",
@@ -427,11 +457,11 @@ export const SYSTEMS: {
       {
         name: "Dysrhythmias",
         subcategories: [
-          "Atrial fibrillation/flutter",
-          "Ventricular tachycardia",
+          "Tachyarrhythmias",
+          "Bradyarrhythmias",
           "Heart block",
-          "WPW",
-          "Long QT",
+          "Premature beats",
+          "Others",
         ],
       },
       {
@@ -442,11 +472,12 @@ export const SYSTEMS: {
           "High-output",
           "Cor pulmonale",
           "CHF",
+          "Other causes",
         ],
       },
       {
         name: "Ischemic heart disease",
-        subcategories: ["Angina", "MI", "Coronary artery disease"],
+        subcategories: ["Angina", "ACS/MI", "Coronary artery disease"],
       },
       {
         name: "Myocardial diseases",
@@ -462,6 +493,7 @@ export const SYSTEMS: {
           "Tamponade",
           "Constrictive pericarditis",
           "Pericardial effusion",
+          "Others",
         ],
       },
       {
@@ -472,16 +504,26 @@ export const SYSTEMS: {
           "Prolapse",
           "Vegetations",
           "Rheumatic disease",
+          "Others",
         ],
       },
       { name: "Hypotension", subcategories: ["Orthostatic hypotension"] },
       {
         name: "Hypertension",
-        subcategories: ["Essential", "Secondary", "Hypertensive emergency"],
+        subcategories: [
+          "Essential",
+          "Secondary",
+          "Hypertensive emergency",
+          "Others",
+        ],
       },
       {
         name: "Dyslipidemia",
-        subcategories: ["Hypercholesterolemia", "Hypertriglyceridemia"],
+        subcategories: [
+          "Hypercholesterolemia",
+          "Hypertriglyceridemia",
+          "Others",
+        ],
       },
       {
         name: "Vascular disorders",
@@ -490,11 +532,17 @@ export const SYSTEMS: {
           "Peripheral arterial disease",
           "DVT/PE",
           "Varicose veins",
+          "Others",
         ],
       },
       {
         name: "Traumatic/mechanical disorders",
-        subcategories: ["Aortic dissection", "Cardiac contusion", "Tamponade"],
+        subcategories: [
+          "Aortic dissection",
+          "Cardiac contusion",
+          "Tamponade",
+          "Others",
+        ],
       },
       {
         name: "Congenital disorders",
@@ -504,6 +552,7 @@ export const SYSTEMS: {
           "Tetralogy of Fallot",
           "Coarctation",
           "Transposition",
+          "Others",
         ],
       },
       {
@@ -512,6 +561,7 @@ export const SYSTEMS: {
           "ACE inhibitors",
           "Cocaine-related",
           "Cardiotoxic drugs",
+          "Others",
         ],
       },
     ],
@@ -522,8 +572,8 @@ export const SYSTEMS: {
       {
         name: "Infectious/inflammatory",
         subcategories: [
-          "Upper airway infections",
-          "Lower airway pneumonia",
+          "Upper airway infections/inflammation",
+          "Lower airway infections/inflammation",
           "Tuberculosis",
           "Fungal infections",
         ],
@@ -546,11 +596,17 @@ export const SYSTEMS: {
       },
       {
         name: "Respiratory failure & pulmonary vascular",
-        subcategories: ["ARDS", "PE", "Pulmonary hypertension", "Edema"],
+        subcategories: [
+          "ARDS",
+          "PE",
+          "Pulmonary hypertension",
+          "Edema",
+          "Others",
+        ],
       },
       {
         name: "Metabolic/structural disorders",
-        subcategories: ["Hypoventilation", "Gas exchange disorders"],
+        subcategories: ["Hypoventilation", "Gas exchange disorders", "Others"],
       },
       {
         name: "Pleura/mediastinum/chest wall",
@@ -560,6 +616,7 @@ export const SYSTEMS: {
           "Empyema",
           "Mediastinitis",
           "Chylothorax",
+          "Others",
         ],
       },
       {
@@ -568,13 +625,19 @@ export const SYSTEMS: {
           "Epistaxis",
           "Barotrauma",
           "Sleep apnea",
-          "Chest trauma",
+          "Trauma",
           "Foreign body",
+          "Others",
         ],
       },
       {
         name: "Congenital disorders",
-        subcategories: ["Pulmonary sequestration", "Bronchogenic cyst", "CDH"],
+        subcategories: [
+          "Pulmonary sequestration",
+          "Bronchogenic cyst",
+          "CDH",
+          "Others",
+        ],
       },
       {
         name: "Adverse effects of drugs",
@@ -582,6 +645,7 @@ export const SYSTEMS: {
           "Amiodarone lung",
           "Bleomycin toxicity",
           "Oxygen toxicity",
+          "Others",
         ],
       },
     ],
@@ -591,25 +655,22 @@ export const SYSTEMS: {
     categories: [
       {
         name: "Infectious/inflammatory",
-        subcategories: [
-          "Bacterial enteritis",
-          "Viral hepatitis",
-          "Fungal thrush",
-          "Parasitic infections",
-        ],
+        subcategories: ["Bacterial", "Viral", "Fungal", "Parasitic", "Other"],
       },
       {
         name: "Autoimmune/inflammatory",
-        subcategories: ["IBD", "Celiac", "Autoimmune hepatitis"],
+        subcategories: ["IBD", "Celiac", "Autoimmune hepatitis", "Other"],
       },
       {
         name: "Neoplasms",
         subcategories: [
-          "Polypoid benign",
-          "Adenocarcinomas",
-          "GIST",
-          "Pancreatic CA",
-          "Liver CA",
+          "Others",
+          "Oral Tumors",
+          "Pancreatic Tumors",
+          "Liver/Gallbladder Tumors",
+          "Gastric Tumors",
+          "Small Intestine Tumors",
+          "Large Intestine Tumors",
         ],
       },
       {
@@ -641,7 +702,12 @@ export const SYSTEMS: {
           "IBS",
           "Volvulus",
           "Malabsorption",
+          "Others",
         ],
+      },
+      {
+        name: "Rectum/anus disorders",
+        subcategories: ["Fissure", "Abscess", "Fistula", "Ulcer", "Others"],
       },
       {
         name: "Liver/biliary",
@@ -651,11 +717,12 @@ export const SYSTEMS: {
           "Cholelithiasis",
           "PSC",
           "Fatty liver",
+          "Others",
         ],
       },
       {
         name: "Pancreatic disorders",
-        subcategories: ["Acute/chronic pancreatitis", "Pseudocyst"],
+        subcategories: ["Pancreatitis", "Pseudocyst", "Others"],
       },
       {
         name: "Peritoneal disorders",
@@ -672,6 +739,7 @@ export const SYSTEMS: {
           "Atresias",
           "Malrotation",
           "Annular pancreas",
+          "Others",
         ],
       },
       {
@@ -680,6 +748,7 @@ export const SYSTEMS: {
           "NSAID ulcers",
           "Opioid-induced constipation",
           "Acetaminophen hepatitis",
+          "Others",
         ],
       },
     ],
@@ -694,15 +763,21 @@ export const SYSTEMS: {
           "Pyelonephritis",
           "Glomerulonephritis",
           "Interstitial nephritis",
+          "Others",
         ],
       },
       {
         name: "Neoplasms",
-        subcategories: ["Renal cell CA", "Wilms tumor", "Bladder CA"],
+        subcategories: ["Renal cell CA", "Wilms tumor", "Bladder CA", "Others"],
       },
       {
         name: "Signs/symptoms",
-        subcategories: ["Hematuria", "Proteinuria", "Oliguria/dysuria"],
+        subcategories: [
+          "Hematuria",
+          "Proteinuria",
+          "Oliguria/dysuria",
+          "Anuria",
+        ],
       },
       {
         name: "Metabolic/regulatory",
@@ -710,12 +785,18 @@ export const SYSTEMS: {
           "AKI",
           "CKD",
           "Nephrotic/nephritic syndrome",
-          "Renal calculi",
+          "Calculi",
+          "Renal Insufficiency",
+          "Others",
         ],
       },
       {
         name: "Vascular disorders",
-        subcategories: ["Renal artery stenosis", "Renal vein thrombosis"],
+        subcategories: [
+          "Renal artery stenosis",
+          "Renal vein thrombosis",
+          "Renal infarction",
+        ],
       },
       {
         name: "Trauma/mechanical",
@@ -837,6 +918,7 @@ export const SYSTEMS: {
         subcategories: [
           "IVF, IUD, oral contraceptives, condoms",
           "Infertility workup",
+          "Others",
         ],
       },
       {
@@ -845,11 +927,18 @@ export const SYSTEMS: {
           "Perimenopause",
           "Vasomotor symptoms",
           "Postmenopausal bleeding",
+          "Others",
         ],
       },
       {
         name: "Menstrual and endocrine disorders",
-        subcategories: ["Amenorrhea", "Dysmenorrhea", "PCOS", "Endometriosis"],
+        subcategories: [
+          "Amenorrhea",
+          "Dysmenorrhea",
+          "PCOS",
+          "Endometriosis",
+          "Others",
+        ],
       },
       {
         name: "Trauma/mechanical disorders",
@@ -883,7 +972,7 @@ export const SYSTEMS: {
       },
       {
         name: "Neoplasms",
-        subcategories: ["Prostate CA", "Testicular CA", "Penile CA"],
+        subcategories: ["Prostate CA", "Testicular CA", "Penile CA", "Others"],
       },
       {
         name: "Sexual dysfunction and metabolism",
@@ -901,6 +990,7 @@ export const SYSTEMS: {
           "Varicocele",
           "Penile fracture",
           "Circumcision complications",
+          "Others",
         ],
       },
       {
@@ -909,6 +999,7 @@ export const SYSTEMS: {
           "Hypospadias",
           "Undescended testicle",
           "Klinefelter syndrome",
+          "Others",
         ],
       },
       {
@@ -919,6 +1010,7 @@ export const SYSTEMS: {
           "Finasteride",
           "Testosterone",
           "Marijuana",
+          "Others",
         ],
       },
     ],
@@ -933,6 +1025,7 @@ export const SYSTEMS: {
           "DKA",
           "Hypoglycemia",
           "Insulinoma",
+          "Others",
         ],
       },
       {
@@ -942,6 +1035,7 @@ export const SYSTEMS: {
           "Hyperthyroidism",
           "Thyroid cancer",
           "Thyroiditis",
+          "Others",
         ],
       },
       {
@@ -950,7 +1044,13 @@ export const SYSTEMS: {
       },
       {
         name: "Adrenal disorders",
-        subcategories: ["Addison's", "Cushing's", "Pheochromocytoma"],
+        subcategories: [
+          "Addison's",
+          "Cushing's",
+          "Pheochromocytoma",
+          "Neoplasms",
+          "Others",
+        ],
       },
       {
         name: "Pituitary disorders",
@@ -959,6 +1059,7 @@ export const SYSTEMS: {
           "Diabetes insipidus",
           "Prolactinoma",
           "Pituitary apoplexy",
+          "Others",
         ],
       },
       {
@@ -987,19 +1088,11 @@ export const SYSTEMS: {
     name: "Multisystem Processes & Disorders",
     categories: [
       {
-        name: "Infectious disorders",
+        name: "Infectious, Immunologic, and Inflammatory Disorders",
         subcategories: [
-          "Brucellosis",
-          "Lyme disease",
-          "TB",
-          "Q fever",
-          "Fungal",
-          "Parasitic",
+          "Infectious Disorders",
+          "Immunolgical and Inflammatory Disorders",
         ],
-      },
-      {
-        name: "Immunologic/inflammatory",
-        subcategories: ["Vasculitis", "Autoimmune disorders"],
       },
       {
         name: "Paraneoplastic syndromes",
@@ -1068,6 +1161,7 @@ export const SYSTEMS: {
         subcategories: [
           "Electrolyte imbalances",
           "Drug‑induced acid/base disorders",
+          "Others",
         ],
       },
     ],
@@ -1225,11 +1319,12 @@ export type SystemsMap = {
       Leukemias: true;
       Lymphomas: true;
       "Multiple myeloma and related neoplasms": true;
+      Others: true;
     };
     "Anemia, cytopenias, polycythemia": {
       "Decreased production": true;
       Hemolysis: true;
-      "Membrane disorders": true;
+      "Disorders of hemoglobin/heme/membrane": true;
       "Other causes": true;
       Cytopenias: true;
       Polycythemia: true;
@@ -1237,10 +1332,7 @@ export type SystemsMap = {
     "Coagulation disorders": {
       Hypocoagulable: true;
       Hypercoagulable: true;
-    };
-    "Reactions to blood components": {
-      "Transfusion reactions": true;
-      "TRALI, anaphylactoid": true;
+      "Reactions to blood components": true;
     };
     "Traumatic/mechanical/vascular disorders": {
       "Mechanical hemolysis": true;
@@ -1281,6 +1373,7 @@ export type SystemsMap = {
       Bulimia: true;
       "Binge-eating": true;
       "Disruptive/Impulse-control": true;
+      Others: true;
     };
     "Disorders originating in infancy/childhood": {
       ADHD: true;
@@ -1298,6 +1391,7 @@ export type SystemsMap = {
     "Sexual disorders & gender dysphoria": {
       "Gender dysphoria": true;
       "Psychosexual dysfunctions": true;
+      Others: true;
     };
     "Substance use disorders": {
       Alcohol: true;
@@ -1328,6 +1422,7 @@ export type SystemsMap = {
     };
     "Cerebrovascular disease": {
       "Stroke, TIA, hemorrhage, aneurysm, vascular dementia": true;
+      Others: true;
     };
     "Spinal cord/root disorders": {
       "Cauda equina": true;
@@ -1343,22 +1438,25 @@ export type SystemsMap = {
       "Trigeminal neuralgia": true;
       Fibromyalgia: true;
       CRPS: true;
+      Others: true;
     };
     "Degenerative/amnestic disorders": {
       Alzheimer: true;
       FTD: true;
       "Lewy body dementia": true;
       MCI: true;
+      Others: true;
     };
     "Global cerebral dysfunction": {
       Delirium: true;
       Coma: true;
       "Brain death": true;
+      AMS: true;
     };
     "Neuromuscular disorders": {
       ALS: true;
       "Muscular dystrophies": true;
-      SMA: true;
+      Others: true;
     };
     "Movement disorders": {
       "Parkinson’s": true;
@@ -1396,6 +1494,7 @@ export type SystemsMap = {
       Neurotoxicity: true;
       "Serotonin syndrome": true;
       EPS: true;
+      Others: true;
     };
     "Eye and eyelid disorders": {
       Infections: true;
@@ -1459,12 +1558,14 @@ export type SystemsMap = {
       "Septic arthritis": true;
       Myositis: true;
       Discitis: true;
+      Others: true;
     };
     "Immunologic disorders": {
       RA: true;
       "Ankylosing spondylitis": true;
       "Juvenile idiopathic arthritis": true;
       "Dermatomyositis/polymyositis": true;
+      Others: true;
     };
     "Inflammatory disorders": {
       Bursitis: true;
@@ -1484,6 +1585,7 @@ export type SystemsMap = {
       Osteomalacia: true;
       Gout: true;
       "Muscle disorders": true;
+      Others: true;
     };
     "Trauma/mechanical": {
       Fractures: true;
@@ -1491,11 +1593,13 @@ export type SystemsMap = {
       Dislocations: true;
       Amputation: true;
       "Compartment syndrome": true;
+      Ohters: true;
     };
     "Congenital disorders": {
       Achondroplasia: true;
       "Hip dysplasia": true;
       "Osteogenesis imperfecta": true;
+      Others: true;
     };
     "Adverse drug effects": {
       "Steroid myopathy": true;
@@ -1508,6 +1612,7 @@ export type SystemsMap = {
       Endocarditis: true;
       Myocarditis: true;
       Pericarditis: true;
+      Atherosclerosis: true;
     };
     Neoplasms: {
       "Cardiac tumors": true;
@@ -1515,11 +1620,11 @@ export type SystemsMap = {
       Metastases: true;
     };
     Dysrhythmias: {
-      "Atrial fibrillation/flutter": true;
-      "Ventricular tachycardia": true;
+      Tachyarrhythmias: true;
+      Bradyarrhythmias: true;
       "Heart block": true;
-      WPW: true;
-      "Long QT": true;
+      "Premature beats": true;
+      Others: true;
     };
     "Heart failure": {
       Systolic: true;
@@ -1527,10 +1632,11 @@ export type SystemsMap = {
       "High-output": true;
       "Cor pulmonale": true;
       CHF: true;
+      "Other causes": true;
     };
     "Ischemic heart disease": {
       Angina: true;
-      MI: true;
+      "ACS/MI": true;
       "Coronary artery disease": true;
     };
     "Myocardial diseases": {
@@ -1542,6 +1648,7 @@ export type SystemsMap = {
       Tamponade: true;
       "Constrictive pericarditis": true;
       "Pericardial effusion": true;
+      Others: true;
     };
     "Valvular heart disease": {
       Stenosis: true;
@@ -1549,6 +1656,7 @@ export type SystemsMap = {
       Prolapse: true;
       Vegetations: true;
       "Rheumatic disease": true;
+      Others: true;
     };
     Hypotension: {
       "Orthostatic hypotension": true;
@@ -1557,21 +1665,25 @@ export type SystemsMap = {
       Essential: true;
       Secondary: true;
       "Hypertensive emergency": true;
+      Others: true;
     };
     Dyslipidemia: {
       Hypercholesterolemia: true;
       Hypertriglyceridemia: true;
+      Others: true;
     };
     "Vascular disorders": {
       Aneurysm: true;
       "Peripheral arterial disease": true;
       "DVT/PE": true;
       "Varicose veins": true;
+      Others: true;
     };
     "Traumatic/mechanical disorders": {
       "Aortic dissection": true;
       "Cardiac contusion": true;
       Tamponade: true;
+      Others: true;
     };
     "Congenital disorders": {
       ASD: true;
@@ -1579,17 +1691,19 @@ export type SystemsMap = {
       "Tetralogy of Fallot": true;
       Coarctation: true;
       Transposition: true;
+      Others: true;
     };
     "Adverse drug effects": {
       "ACE inhibitors": true;
       "Cocaine-related": true;
       "Cardiotoxic drugs": true;
+      Others: true;
     };
   };
   "Respiratory System": {
     "Infectious/inflammatory": {
-      "Upper airway infections": true;
-      "Lower airway pneumonia": true;
+      "Upper airway infections/inflammation": true;
+      "Lower airway infections/inflammation": true;
       Tuberculosis: true;
       "Fungal infections": true;
     };
@@ -1613,10 +1727,12 @@ export type SystemsMap = {
       PE: true;
       "Pulmonary hypertension": true;
       Edema: true;
+      Others: true;
     };
     "Metabolic/structural disorders": {
       Hypoventilation: true;
       "Gas exchange disorders": true;
+      Others: true;
     };
     "Pleura/mediastinum/chest wall": {
       "Pleural effusion": true;
@@ -1624,6 +1740,7 @@ export type SystemsMap = {
       Empyema: true;
       Mediastinitis: true;
       Chylothorax: true;
+      Others: true;
     };
     "Trauma/mechanical": {
       Epistaxis: true;
@@ -1631,36 +1748,43 @@ export type SystemsMap = {
       "Sleep apnea": true;
       "Chest trauma": true;
       "Foreign body": true;
+      Others: true;
     };
     "Congenital disorders": {
       "Pulmonary sequestration": true;
       "Bronchogenic cyst": true;
       CDH: true;
+      Others: true;
     };
     "Adverse effects of drugs": {
       "Amiodarone lung": true;
       "Bleomycin toxicity": true;
       "Oxygen toxicity": true;
+      Others: true;
     };
   };
   "Gastrointestinal System": {
     "Infectious/inflammatory": {
-      "Bacterial enteritis": true;
-      "Viral hepatitis": true;
-      "Fungal thrush": true;
-      "Parasitic infections": true;
+      Bacterial: true;
+      Viral: true;
+      Fungal: true;
+      Parasitic: true;
+      Other: true;
     };
     "Autoimmune/inflammatory": {
       IBD: true;
       Celiac: true;
       "Autoimmune hepatitis": true;
+      Other: true;
     };
     Neoplasms: {
-      "Polypoid benign": true;
-      Adenocarcinomas: true;
-      GIST: true;
-      "Pancreatic CA": true;
-      "Liver CA": true;
+      Others: true;
+      "Oral Tumors": true;
+      "Pancreatic Tumors": true;
+      "Liver/Gallbladder Tumors": true;
+      "Gastric Tumors": true;
+      "Small Intestine Tumors": true;
+      "Large Intestine Tumors": true;
     };
     "Signs, symptoms, ill-defined": {
       Bleeding: true;
@@ -1683,6 +1807,14 @@ export type SystemsMap = {
       IBS: true;
       Volvulus: true;
       Malabsorption: true;
+      Others: true;
+    };
+    "Rectum/anus disorders": {
+      Fissure: true;
+      Abscess: true;
+      Fistula: true;
+      Ulcer: true;
+      Others: true;
     };
     "Liver/biliary": {
       Cirrhosis: true;
@@ -1690,10 +1822,12 @@ export type SystemsMap = {
       Cholelithiasis: true;
       PSC: true;
       "Fatty liver": true;
+      Others: true;
     };
     "Pancreatic disorders": {
       "Acute/chronic pancreatitis": true;
       Pseudocyst: true;
+      Others: true;
     };
     "Peritoneal disorders": {
       Ascites: true;
@@ -1710,11 +1844,13 @@ export type SystemsMap = {
       Atresias: true;
       Malrotation: true;
       "Annular pancreas": true;
+      Others: true;
     };
     "Adverse drug effects": {
       "NSAID ulcers": true;
       "Opioid-induced constipation": true;
       "Acetaminophen hepatitis": true;
+      Others: true;
     };
   };
   "Renal & Urinary System": {
@@ -1723,26 +1859,32 @@ export type SystemsMap = {
       Pyelonephritis: true;
       Glomerulonephritis: true;
       "Interstitial nephritis": true;
+      Others: true;
     };
     Neoplasms: {
       "Renal cell CA": true;
       "Wilms tumor": true;
       "Bladder CA": true;
+      Others: true;
     };
     "Signs/symptoms": {
       Hematuria: true;
       Proteinuria: true;
       "Oliguria/dysuria": true;
+      Anuria: true;
     };
     "Metabolic/regulatory": {
       AKI: true;
       CKD: true;
       "Nephrotic/nephritic syndrome": true;
-      "Renal calculi": true;
+      Calculi: true;
+      "Renal Insufficiency": true;
+      Others: true;
     };
     "Vascular disorders": {
       "Renal artery stenosis": true;
       "Renal vein thrombosis": true;
+      "Renal infarction": true;
     };
     "Trauma/mechanical": {
       "Bladder rupture": true;
@@ -1828,17 +1970,20 @@ export type SystemsMap = {
     "Fertility and contraception": {
       "IVF, IUD, oral contraceptives, condoms": true;
       "Infertility workup": true;
+      Others: true;
     };
     Menopause: {
       Perimenopause: true;
       "Vasomotor symptoms": true;
       "Postmenopausal bleeding": true;
+      Others: true;
     };
     "Menstrual and endocrine disorders": {
       Amenorrhea: true;
       Dysmenorrhea: true;
       PCOS: true;
       Endometriosis: true;
+      Others: true;
     };
     "Trauma/mechanical disorders": {
       "Asherman syndrome": true;
@@ -1869,6 +2014,7 @@ export type SystemsMap = {
       "Prostate CA": true;
       "Testicular CA": true;
       "Penile CA": true;
+      Others: true;
     };
     "Sexual dysfunction and metabolism": {
       "Erectile dysfunction": true;
@@ -1881,11 +2027,13 @@ export type SystemsMap = {
       Varicocele: true;
       "Penile fracture": true;
       "Circumcision complications": true;
+      Others: true;
     };
     "Congenital disorders": {
       Hypospadias: true;
       "Undescended testicle": true;
       "Klinefelter syndrome": true;
+      Others: true;
     };
     "Adverse drug effects": {
       Antipsychotics: true;
@@ -1893,6 +2041,7 @@ export type SystemsMap = {
       Finasteride: true;
       Testosterone: true;
       Marijuana: true;
+      Others: true;
     };
   };
   "Endocrine System": {
@@ -1901,12 +2050,14 @@ export type SystemsMap = {
       DKA: true;
       Hypoglycemia: true;
       Insulinoma: true;
+      Others: true;
     };
     "Thyroid disorders": {
       Hypothyroidism: true;
       Hyperthyroidism: true;
       "Thyroid cancer": true;
       Thyroiditis: true;
+      Others: true;
     };
     "Parathyroid disorders": {
       Hyperparathyroidism: true;
@@ -1916,12 +2067,15 @@ export type SystemsMap = {
       "Addison's": true;
       "Cushing's": true;
       Pheochromocytoma: true;
+      Neoplasms: true;
+      Others: true;
     };
     "Pituitary disorders": {
       Acromegaly: true;
       "Diabetes insipidus": true;
       Prolactinoma: true;
       "Pituitary apoplexy": true;
+      Others: true;
     };
     "Hypothalamic disorders": {
       "MEN1/2": true;
@@ -1939,17 +2093,9 @@ export type SystemsMap = {
     };
   };
   "Multisystem Processes & Disorders": {
-    "Infectious disorders": {
-      Brucellosis: true;
-      "Lyme disease": true;
-      TB: true;
-      "Q fever": true;
-      Fungal: true;
-      Parasitic: true;
-    };
-    "Immunologic/inflammatory": {
-      Vasculitis: true;
-      "Autoimmune disorders": true;
+    "Infectious, Immunologic, and Inflammatory Disorders": {
+      "Infectious Disorders": true;
+      "Immunolgical and Inflammatory Disorders": true;
     };
     "Paraneoplastic syndromes": {
       SIADH: true;
@@ -2009,6 +2155,7 @@ export type SystemsMap = {
     "Adverse drug effects": {
       "Electrolyte imbalances": true;
       "Drug‑induced acid/base disorders": true;
+      Others: true;
     };
   };
   "Biostatistics, Epidemiology/Population Health, & Interpretation of the Medical Literature": {

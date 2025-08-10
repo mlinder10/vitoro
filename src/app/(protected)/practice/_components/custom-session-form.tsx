@@ -415,7 +415,6 @@ export default function CustomSessionForm() {
               key={s.system}
               level={0}
               label={s.system}
-              pathKey={`${s.system}__`}
               count={getCountFor(s.system)}
               expanded={expandedItems.has(`${s.system}__`)}
               onToggle={() => toggleExpanded(`${s.system}__`)}
@@ -434,7 +433,6 @@ export default function CustomSessionForm() {
                     key={`${s.system}__${c.name}`}
                     level={1}
                     label={c.name}
-                    pathKey={`${s.system}__${c.name}__`}
                     count={getCountFor(s.system, c.name)}
                     expanded={expandedItems.has(`${s.system}__${c.name}__`)}
                     onToggle={() => toggleExpanded(`${s.system}__${c.name}__`)}
@@ -453,7 +451,6 @@ export default function CustomSessionForm() {
                           key={`${s.system}__${c.name}__${sub}`}
                           level={2}
                           label={sub}
-                          pathKey={`${s.system}__${c.name}__${sub}`}
                           count={getCountFor(s.system, c.name, sub)}
                           checked={
                             !!selectedKeys[`${s.system}__${c.name}__${sub}`]
@@ -518,12 +515,10 @@ type FormSelectProps<T> = {
 type TreeRowProps = {
   level: number;
   label: string;
-  pathKey: string;
   count: number;
   expanded?: boolean;
   onToggle?: () => void;
   childrenFn?: () => ReactNode;
-  // selection for leaves
   checked?: boolean;
   onCheckedChange?: (checked: boolean) => void;
 };
