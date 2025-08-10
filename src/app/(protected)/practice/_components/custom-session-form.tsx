@@ -489,7 +489,7 @@ export default function CustomSessionForm() {
               onChange={(e) =>
                 setTmpCount(e.target.value ? e.target.valueAsNumber : "")
               }
-              className="pr-4 w-36 text-right"
+              className="pr-4 w-36"
             />
           </div>
           <Button
