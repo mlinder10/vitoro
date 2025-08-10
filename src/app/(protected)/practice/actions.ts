@@ -7,7 +7,7 @@ import {
   reviewQuestions,
   qbankSessions,
 } from "@/db";
-import { eq, and, isNull, or, sql, notInArray } from "drizzle-orm";
+import { eq, and, isNull, isNotNull, or, sql } from "drizzle-orm";
 import {
   GeneratedReviewQuestion,
   isValidGeneratedReviewQuestion,
@@ -108,26 +108,26 @@ export async function fetchQuestions(
 ) {
   if (count > 50) throw new Error("Too many questions requested");
 
-  const answered = await db
-    .select({ id: answeredQuestions.questionId })
-    .from(answeredQuestions)
-    .where(eq(answeredQuestions.userId, userId));
-
-  return await db
-    .select()
+  const rows = await db
+    .select({ q: questions })
     .from(questions)
+    .leftJoin(
+      answeredQuestions,
+      and(
+        eq(answeredQuestions.questionId, questions.id),
+        eq(answeredQuestions.userId, userId)
+      )
+    )
     .where(
       and(
         eq(questions.rating, "Pass"),
-        ...buildWhereClause(filters),
-        notInArray(
-          questions.id,
-          answered.map((q) => q.id)
-        )
+        ...buildWhereClause(filters)
       )
     )
     .orderBy(sql`RANDOM()`)
     .limit(count);
+
+  return rows.map((r) => r.q);
 }
 
 export async function redirectToQuestion(
@@ -144,13 +144,7 @@ export async function redirectToQuestion(
         eq(answeredQuestions.userId, userId)
       )
     )
-    .where(
-      and(
-        eq(questions.rating, "Pass"),
-        ...buildWhereClause(filters),
-        isNull(answeredQuestions.userId)
-      )
-    )
+    .where(and(eq(questions.rating, "Pass"), ...buildWhereClause(filters)))
     .orderBy(sql`RANDOM()`)
     .limit(1);
 
@@ -162,6 +156,7 @@ export async function redirectToQuestion(
 function buildWhereClause({
   step,
   type,
+  status,
   system,
   category,
   subcategory,
@@ -173,10 +168,85 @@ function buildWhereClause({
       ? or(eq(questions.step, step), eq(questions.step, "Mixed"))
       : undefined,
     type ? eq(questions.type, type) : undefined,
+    // status filter (requires LEFT JOIN to answeredQuestions in queries)
+    status === "Correct"
+      ? and(isNotNull(answeredQuestions.userId), eq(answeredQuestions.answer, questions.answer))
+      : status === "Incorrect"
+      ? and(isNotNull(answeredQuestions.userId), sql`${answeredQuestions.answer} != ${questions.answer}`)
+      : status === "Answered"
+      ? isNotNull(answeredQuestions.userId)
+      : status === "Unanswered"
+      ? isNull(answeredQuestions.userId)
+      : undefined,
     system ? eq(questions.system, system) : undefined,
     category ? eq(questions.category, category) : undefined,
     subcategory ? eq(questions.subcategory, subcategory) : undefined,
     topic ? eq(questions.topic, topic) : undefined,
     difficulty ? eq(questions.difficulty, difficulty) : undefined,
   ].filter((c) => c !== undefined);
+}
+
+export type GroupedCountRow = {
+  system: string;
+  category: string;
+  subcategory: string;
+  count: number;
+};
+
+// Grouped counts by system/category/subcategory, excluding answered by this user
+export async function getCountsGrouped(
+  userId: string,
+  filters: QuestionFilters
+) {
+  const baseFilters: QuestionFilters = {
+    ...filters,
+    system: undefined,
+    category: undefined,
+    subcategory: undefined,
+  };
+
+  const rows = await db
+    .select({
+      system: questions.system,
+      category: questions.category,
+      subcategory: questions.subcategory,
+      value: sql<number>`count(*)`,
+    })
+    .from(questions)
+    .leftJoin(
+      answeredQuestions,
+      and(
+        eq(answeredQuestions.questionId, questions.id),
+        eq(answeredQuestions.userId, userId)
+      )
+    )
+    .where(and(eq(questions.rating, "Pass"), ...buildWhereClause(baseFilters)))
+    .groupBy(questions.system, questions.category, questions.subcategory);
+
+  return rows.map((r) => ({
+    system: r.system as string,
+    category: r.category as string,
+    subcategory: r.subcategory as string,
+    count: (r as unknown as { value: number }).value ?? 0,
+  })) satisfies GroupedCountRow[];
+}
+
+// Count available questions (excludes already answered by this user)
+export async function countQuestions(
+  userId: string,
+  filters: QuestionFilters
+) {
+  const [{ value }] = await db
+    .select({ value: sql<number>`count(*)` })
+    .from(questions)
+    .leftJoin(
+      answeredQuestions,
+      and(
+        eq(answeredQuestions.questionId, questions.id),
+        eq(answeredQuestions.userId, userId)
+      )
+    )
+    .where(and(eq(questions.rating, "Pass"), ...buildWhereClause(filters)));
+
+  return value ?? 0;
 }

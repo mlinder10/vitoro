@@ -48,8 +48,8 @@ export default function SideNav() {
   return (
     <nav
       className={cn(
-        "flex flex-col justify-between p-4 border-r-2 max-w-[320px] h-full transition-all",
-        isOpen && "flex-1"
+        "flex flex-col justify-between p-4 border-r-2 h-screen sticky top-0 transition-all shrink-0",
+        isOpen ? "w-[320px]" : "w-[64px]"
       )}
     >
       <div className="space-y-4">
