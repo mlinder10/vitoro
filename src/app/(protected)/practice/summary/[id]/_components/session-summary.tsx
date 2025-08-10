@@ -5,7 +5,7 @@ import {
   QuestionChoice,
   QuestionDifficulty,
 } from "@/types";
-import React from "react";
+import { useMemo } from "react";
 
 export type SplitResult = {
   correct: Question[];
@@ -31,38 +31,50 @@ function scoreToHex(percentage: number) {
 }
 
 function splitQuestions(s: QBankSession, qs: Question[]): SplitResult {
-  const correct = qs.filter((q, i) => s.answers[i] === q.answer);
-  const incorrect = qs.filter((q, i) => s.answers[i] !== q.answer);
-  const unanswered = qs.filter((q, i) => s.answers[i] === null);
+  const answerById = new Map<string, QuestionChoice | null>();
+  s.questionIds.forEach((qid, i) => answerById.set(qid, s.answers[i] ?? null));
+  const correct: Question[] = [];
+  const incorrect: Question[] = [];
+  const unanswered: Question[] = [];
+  for (const q of qs) {
+    const given = answerById.get(q.id);
+    if (given == null) {
+      unanswered.push(q);
+    } else if (given === q.answer) {
+      correct.push(q);
+    } else {
+      incorrect.push(q);
+    }
+  }
   return { correct, incorrect, unanswered };
 }
 
-const byAscendingPct = (
+function byAscendingPct(
   a: { system: string; pct: number },
   b: { system: string; pct: number }
-) => a.pct - b.pct;
+) {
+  return a.pct - b.pct;
+}
 
-const Bar = ({ pct }: { pct: number }) => (
-  <div className="bg-muted rounded-full w-full h-2">
-    <div
-      className="bg-primary rounded-full h-2"
-      style={{ width: `${clamp01(pct) * 100}%` }}
-    />
-  </div>
-);
+function Bar({ pct }: { pct: number }) {
+  return (
+    <div className="bg-muted rounded-full w-full h-2">
+      <div
+        className="bg-primary rounded-full h-2"
+        style={{ width: `${clamp01(pct) * 100}%` }}
+      />
+    </div>
+  );
+}
 
-const StatChip = ({
-  label,
-  value,
-}: {
-  label: string;
-  value: React.ReactNode;
-}) => (
-  <div className="flex flex-col justify-center items-center shadow-sm p-3 border rounded-2xl text-center">
-    <div className="text-muted-foreground text-xs">{label}</div>
-    <div className="font-semibold text-lg">{value}</div>
-  </div>
-);
+function StatChip({ label, value }: { label: string; value: React.ReactNode }) {
+  return (
+    <div className="flex flex-col justify-center items-center shadow-sm p-3 border rounded-2xl text-center">
+      <div className="text-muted-foreground text-xs">{label}</div>
+      <div className="font-semibold text-lg">{value}</div>
+    </div>
+  );
+}
 
 export default function SessionSummary({
   session,
@@ -71,7 +83,7 @@ export default function SessionSummary({
   onRetakeIncorrect,
   onReviewTopic,
 }: SessionSummaryProps) {
-  const answerById = React.useMemo(() => {
+  const answerById = useMemo(() => {
     const map = new Map<string, QuestionChoice | null>();
     session.questionIds.forEach((qid, i) =>
       map.set(qid, session.answers[i] ?? null)
@@ -89,7 +101,6 @@ export default function SessionSummary({
   const pct = total > 0 ? numCorrect / total : 0;
   const pctLabel = formatPercent(pct);
 
-  // Aggregate by system and difficulty
   const systemAgg = new Map<string, { total: number; correct: number }>();
   const difficultyAgg = new Map<
     QuestionDifficulty,
