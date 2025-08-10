@@ -31,3 +31,7 @@ POST http://localhost:3000/api/dev
 ###
 
 DELETE http://localhost:3000/api/dev
+
+###
+
+GET http://localhost:3000/api/tmp
