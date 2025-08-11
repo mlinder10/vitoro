@@ -121,7 +121,6 @@ export default function CustomSessionForm() {
     }
   }
 
-  // TODO: toggle children
   function handleToggleSystem(system: System) {
     setSelected((prev) => {
       if (prev.systems.has(system)) prev.systems.delete(system);
