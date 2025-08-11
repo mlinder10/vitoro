@@ -54,9 +54,9 @@ type QBankSessionType = {
   questionCount: number;
   setQuestionCount: Dispatch<SetStateAction<number>>;
   availableCount: number;
-  refreshAvailableCount: (userId: string) => Promise<void>;
+  refreshAvailableCount: (userId: string, selectedStatuses?: QBankStatus[]) => Promise<void>;
   groupedCounts: Record<string, number>;
-  refreshGroupedCounts: (userId: string) => Promise<void>;
+  refreshGroupedCounts: (userId: string, selectedStatuses?: QBankStatus[]) => Promise<void>;
   time: number | null;
   // question data
   index: number;
@@ -67,7 +67,7 @@ type QBankSessionType = {
   flagged: string[];
   setFlagged: Dispatch<SetStateAction<string[]>>;
   // Methods
-  startSession: (userId: string, filter?: boolean) => Promise<void>;
+  startSession: (userId: string, filter?: boolean, selectedLeafKeys?: string[], selectedStatuses?: QBankStatus[]) => Promise<void>;
   endSession: (userId: string) => Promise<void>;
 };
 
@@ -145,18 +145,20 @@ export default function QBankSessionProvider({
 
   const router = useRouter();
 
-  async function startSession(userId: string, filter = true) {
+  async function startSession(userId: string, filter = true, selectedLeafKeys?: string[], selectedStatuses?: QBankStatus[]) {
     const questions = await fetchQuestions(
       userId,
       {
         step: filter ? step : undefined,
         type: filter ? type : undefined,
         status: filter ? status : "Unanswered",
+        statuses: selectedStatuses && selectedStatuses.length > 0 ? selectedStatuses : undefined,
         system: filter ? system : undefined,
         category: filter ? category : undefined,
         subcategory: filter ? subcategory : undefined,
         topic: filter ? topic : undefined,
         difficulty: filter ? difficulty : undefined,
+        selectedLeafKeys: Array.isArray(selectedLeafKeys) && selectedLeafKeys.length > 0 ? selectedLeafKeys : undefined,
       },
       questionCount
     );
@@ -169,7 +171,7 @@ export default function QBankSessionProvider({
     }
   }
 
-  async function refreshAvailableCount(userId: string) {
+  async function refreshAvailableCount(userId: string, selectedStatuses?: QBankStatus[]) {
     try {
       const value = await countQuestions(
         userId,
@@ -177,6 +179,7 @@ export default function QBankSessionProvider({
           step,
           type,
           status,
+          statuses: selectedStatuses && selectedStatuses.length > 0 ? selectedStatuses : undefined,
           system,
           category,
           subcategory,
@@ -191,12 +194,13 @@ export default function QBankSessionProvider({
     }
   }
 
-  async function refreshGroupedCounts(userId: string) {
+  async function refreshGroupedCounts(userId: string, selectedStatuses?: QBankStatus[]) {
     try {
       const rows = await getCountsGrouped(userId, {
         step,
         type,
         status,
+        statuses: selectedStatuses && selectedStatuses.length > 0 ? selectedStatuses : undefined,
         system,
         category,
         subcategory,
@@ -295,11 +299,15 @@ export type QuestionFilters = {
   step: NBMEStep | undefined;
   type: QuestionType | undefined;
   status?: QBankStatus;
+  statuses?: QBankStatus[]; // New: support for multiple statuses
   system: System | undefined;
   category: AnyCategory | undefined;
   subcategory: AnySubcategory | undefined;
   topic: string | undefined;
   difficulty: QuestionDifficulty | undefined;
+  // Optional: explicit leaf selections from the builder of the form
+  // Format: `${system}__${category}__${subcategory}`
+  selectedLeafKeys?: string[];
 };
 
 // Hook --------------------------------------------------------------------

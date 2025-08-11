@@ -65,6 +65,7 @@ export default function CustomSessionForm() {
   const [tmpCount, setTmpCount] = useState<number | "">(DEFAULT_QUESTION_COUNT);
   const [isLoading, setIsLoading] = useState(false);
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
+  const [selectedStatuses, setSelectedStatuses] = useState<Set<"Unanswered" | "Answered" | "Correct" | "Incorrect">>(new Set(["Unanswered"]));
 
   async function handleStartSession(filter = true) {
     if (tmpCount === "")
@@ -85,7 +86,14 @@ export default function CustomSessionForm() {
         richColors: true,
       });
     setIsLoading(true);
-    await startSession(id, filter);
+    // Build explicit selected leaf keys from the tree if any are chosen
+    const leafKeys = Object.entries(selectedKeys)
+      .filter(([, v]) => v)
+      .map(([k]) => k)
+      .filter((k) => k.split("__").length === 3);
+    // Convert selectedStatuses Set to array
+    const statusesArray = Array.from(selectedStatuses);
+    await startSession(id, filter, leafKeys.length > 0 ? leafKeys : undefined, statusesArray.length > 0 ? statusesArray : undefined);
     setIsLoading(false);
     router.replace(`/practice/questions`);
   }
@@ -111,11 +119,12 @@ export default function CustomSessionForm() {
   useEffect(() => {
     if (!id) return;
     const t = setTimeout(() => {
-      refreshAvailableCount(id);
-      refreshGroupedCounts(id);
+      const statusesArray = Array.from(selectedStatuses);
+      refreshAvailableCount(id, statusesArray.length > 0 ? statusesArray : undefined);
+      refreshGroupedCounts(id, statusesArray.length > 0 ? statusesArray : undefined);
     }, 150);
     return () => clearTimeout(t);
-  }, [id, step, type, status, system, category, subcategory, topic, difficulty, refreshAvailableCount, refreshGroupedCounts]);
+  }, [id, step, type, status, selectedStatuses, system, category, subcategory, topic, difficulty, refreshAvailableCount, refreshGroupedCounts]);
 
   // Dynamically derive systems/categories/subcategories from DB, fallback to static SYSTEMS
   type DbRow = {
@@ -262,10 +271,12 @@ export default function CustomSessionForm() {
     setStatus("Unanswered");
     setSelectedKeys({});
     setExpandedItems(new Set());
+    setSelectedStatuses(new Set(["Unanswered"]));
     setTmpCount(DEFAULT_QUESTION_COUNT);
     if (id) {
-      refreshAvailableCount(id);
-      refreshGroupedCounts(id);
+      // Use the reset value instead of the old selectedStatuses
+      refreshAvailableCount(id, ["Unanswered"]);
+      refreshGroupedCounts(id, ["Unanswered"]);
     }
   }
 
@@ -287,10 +298,46 @@ export default function CustomSessionForm() {
               </Button>
             </div>
             <div className="flex items-center gap-4 ml-8">
-              <StatusPill current={status} value="Unanswered" onSelect={() => setStatus("Unanswered")} />
-              <StatusPill current={status} value="Answered" onSelect={() => setStatus("Answered")} />
-              <StatusPill current={status} value="Correct" onSelect={() => setStatus("Correct")} />
-              <StatusPill current={status} value="Incorrect" onSelect={() => setStatus("Incorrect")} />
+              <StatusPill 
+                value="Unanswered" 
+                checked={selectedStatuses.has("Unanswered")}
+                onToggle={(checked) => {
+                  const newSet = new Set(selectedStatuses);
+                  if (checked) newSet.add("Unanswered");
+                  else newSet.delete("Unanswered");
+                  setSelectedStatuses(newSet);
+                }} 
+              />
+              <StatusPill 
+                value="Answered" 
+                checked={selectedStatuses.has("Answered")}
+                onToggle={(checked) => {
+                  const newSet = new Set(selectedStatuses);
+                  if (checked) newSet.add("Answered");
+                  else newSet.delete("Answered");
+                  setSelectedStatuses(newSet);
+                }} 
+              />
+              <StatusPill 
+                value="Correct" 
+                checked={selectedStatuses.has("Correct")}
+                onToggle={(checked) => {
+                  const newSet = new Set(selectedStatuses);
+                  if (checked) newSet.add("Correct");
+                  else newSet.delete("Correct");
+                  setSelectedStatuses(newSet);
+                }} 
+              />
+              <StatusPill 
+                value="Incorrect" 
+                checked={selectedStatuses.has("Incorrect")}
+                onToggle={(checked) => {
+                  const newSet = new Set(selectedStatuses);
+                  if (checked) newSet.add("Incorrect");
+                  else newSet.delete("Incorrect");
+                  setSelectedStatuses(newSet);
+                }} 
+              />
             </div>
             <div className="ml-auto">
               <Button variant="destructive" onClick={resetAll}>Reset</Button>
@@ -324,7 +371,7 @@ export default function CustomSessionForm() {
       </div>
 
       {/* Multi-level dropdown structure */}
-      <div className="mt-6 border rounded-md">
+      <div className="mt-6 border rounded-md" style={{ contain: 'layout' }}>
         {/* Header row with SYSTEM and Select All */}
         <div className="flex items-center justify-between p-2">
           <div className="pl-3">
@@ -347,7 +394,7 @@ export default function CustomSessionForm() {
                 setSelectedKeys(next);
               }}
             />
-            <div className="relative w-5 h-5 border-2 border-gray-300 rounded peer-checked:bg-blue-600 peer-checked:border-blue-600 peer-focus:ring-2 peer-focus:ring-blue-500 transition-all duration-200">
+            <div className="relative w-5 h-5 border-2 border-gray-300 rounded peer-checked:bg-blue-600 peer-checked:border-blue-600 transition-all duration-200">
               <svg className="absolute inset-0 w-full h-full text-white scale-0 peer-checked:scale-100 transition-transform duration-200" viewBox="0 0 16 16">
                 <path fill="currentColor" d="M13.5 3.5L6 11l-3.5-3.5L1 9l5 5L15 5z"/>
               </svg>
@@ -501,10 +548,19 @@ function TreeRow({ level, label, count, expanded, onToggle, childrenFn, checked 
             <div className="h-6 w-6" />
           )}
           {onCheckedChange && (
-            <label className="flex items-center space-x-3 cursor-pointer" onClick={(e) => e.stopPropagation()}>
-              <input type="checkbox" className="peer sr-only" checked={checked} onChange={(e) => onCheckedChange(e.target.checked)} />
-              <div className="relative w-5 h-5 border-2 border-gray-300 rounded peer-checked:bg-blue-600 peer-checked:border-blue-600 peer-focus:ring-2 peer-focus:ring-blue-500 transition-all duration-200">
-                <svg className="absolute inset-0 w-full h-full text-white scale-0 peer-checked:scale-100 transition-transform duration-200" viewBox="0 0 16 16">
+            <label 
+              className="flex items-center space-x-3 cursor-pointer" 
+              onClick={(e) => e.stopPropagation()}
+            >
+              <input type="checkbox" className="sr-only" checked={checked} onChange={(e) => onCheckedChange(e.target.checked)} />
+              <div className={`relative w-5 h-5 border-2 rounded transition-colors duration-200 ${
+                checked 
+                  ? 'bg-blue-600 border-blue-600' 
+                  : 'border-gray-300 bg-background'
+              }`}>
+                <svg className={`absolute inset-0 w-full h-full transition-transform duration-200 ${
+                  checked ? 'scale-100 text-white' : 'scale-0 text-foreground'
+                }`} viewBox="0 0 16 16">
                   <path fill="currentColor" d="M13.5 3.5L6 11l-3.5-3.5L1 9l5 5L15 5z"/>
                 </svg>
               </div>
@@ -514,7 +570,14 @@ function TreeRow({ level, label, count, expanded, onToggle, childrenFn, checked 
           <span className="text-muted-foreground">({count})</span>
         </div>
       </div>
-      <div ref={contentRef} style={contentStyles} className="overflow-hidden will-change-[max-height,opacity,transform]">
+      <div 
+        ref={contentRef} 
+        style={{
+          ...contentStyles,
+          contain: 'layout style',
+        }} 
+        className="overflow-hidden will-change-[max-height,opacity,transform]"
+      >
         {childrenFn ? <div className="mt-1 space-y-1">{childrenFn()}</div> : null}
       </div>
     </div>
@@ -567,31 +630,30 @@ function FormSelect<T extends string>({
 }
 
 type StatusPillProps = {
-  current: "Unanswered" | "Answered" | "Correct" | "Incorrect";
   value: "Unanswered" | "Answered" | "Correct" | "Incorrect";
-  onSelect: () => void;
+  checked: boolean;
+  onToggle: (checked: boolean) => void;
   count?: number;
 };
 
-function StatusPill({ current, value, onSelect, count }: StatusPillProps) {
-  const checked = current === value;
+function StatusPill({ value, checked, onToggle, count }: StatusPillProps) {
 
   const colorSchemes = {
     Unanswered: {
-      active: "bg-blue-100 text-blue-700 border-blue-200",
-      inactive: "bg-white text-gray-600 border-gray-200 hover:bg-gray-50",
+      active: "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-700",
+      inactive: "bg-background text-muted-foreground border-border hover:bg-accent/50",
     },
     Answered: {
-      active: "bg-purple-100 text-purple-700 border-purple-200",
-      inactive: "bg-white text-gray-600 border-gray-200 hover:bg-gray-50",
+      active: "bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-700",
+      inactive: "bg-background text-muted-foreground border-border hover:bg-accent/50",
     },
     Correct: {
-      active: "bg-green-100 text-green-700 border-green-200",
-      inactive: "bg-white text-gray-600 border-gray-200 hover:bg-gray-50",
+      active: "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 border-green-200 dark:border-green-700",
+      inactive: "bg-background text-muted-foreground border-border hover:bg-accent/50",
     },
     Incorrect: {
-      active: "bg-red-100 text-red-700 border-red-200",
-      inactive: "bg-white text-gray-600 border-gray-200 hover:bg-gray-50",
+      active: "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 border-red-200 dark:border-red-700",
+      inactive: "bg-background text-muted-foreground border-border hover:bg-accent/50",
     },
   } as const;
 
@@ -600,7 +662,7 @@ function StatusPill({ current, value, onSelect, count }: StatusPillProps) {
   return (
     <button
       type="button"
-      onClick={onSelect}
+      onClick={() => onToggle(!checked)}
       className={`
         inline-flex items-center gap-2
         px-4 py-2
@@ -619,11 +681,11 @@ function StatusPill({ current, value, onSelect, count }: StatusPillProps) {
           border-2
           transition-all duration-200
           flex items-center justify-center
-          ${checked ? "border-current bg-current" : "border-gray-300 bg-white"}
+          ${checked ? "border-current bg-current" : "border-border bg-background"}
         `}
       >
         {checked && (
-          <svg className="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 16 16">
+          <svg className="w-2.5 h-2.5 text-white dark:text-background" fill="currentColor" viewBox="0 0 16 16">
             <path d="M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z"/>
           </svg>
         )}
@@ -632,7 +694,7 @@ function StatusPill({ current, value, onSelect, count }: StatusPillProps) {
       <span className="text-sm">{value}</span>
 
       {count !== undefined && (
-        <span className={`text-sm ${checked ? "font-semibold" : "text-gray-500"}`}>
+        <span className={`text-sm ${checked ? "font-semibold" : "text-muted-foreground"}`}>
           ({count})
         </span>
       )}

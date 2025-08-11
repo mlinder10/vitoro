@@ -157,32 +157,61 @@ function buildWhereClause({
   step,
   type,
   status,
+  statuses,
   system,
   category,
   subcategory,
   topic,
   difficulty,
+  selectedLeafKeys,
 }: QuestionFilters) {
+  // Use statuses array if provided, otherwise fall back to single status
+  const statusesToFilter = statuses && statuses.length > 0 ? statuses : (status ? [status] : []);
+  
+  // Build status filter conditions
+  const statusConditions = statusesToFilter.map(statusValue => {
+    switch (statusValue) {
+      case "Correct":
+        return and(isNotNull(answeredQuestions.userId), eq(answeredQuestions.answer, questions.answer));
+      case "Incorrect":
+        return and(isNotNull(answeredQuestions.userId), sql`${answeredQuestions.answer} != ${questions.answer}`);
+      case "Answered":
+        return isNotNull(answeredQuestions.userId);
+      case "Unanswered":
+        return isNull(answeredQuestions.userId);
+      default:
+        return undefined;
+    }
+  }).filter(Boolean);
+
   return [
     step && step !== "Mixed"
       ? or(eq(questions.step, step), eq(questions.step, "Mixed"))
       : undefined,
     type ? eq(questions.type, type) : undefined,
     // status filter (requires LEFT JOIN to answeredQuestions in queries)
-    status === "Correct"
-      ? and(isNotNull(answeredQuestions.userId), eq(answeredQuestions.answer, questions.answer))
-      : status === "Incorrect"
-      ? and(isNotNull(answeredQuestions.userId), sql`${answeredQuestions.answer} != ${questions.answer}`)
-      : status === "Answered"
-      ? isNotNull(answeredQuestions.userId)
-      : status === "Unanswered"
-      ? isNull(answeredQuestions.userId)
-      : undefined,
+    statusConditions.length > 0 ? or(...statusConditions) : undefined,
     system ? eq(questions.system, system) : undefined,
     category ? eq(questions.category, category) : undefined,
     subcategory ? eq(questions.subcategory, subcategory) : undefined,
     topic ? eq(questions.topic, topic) : undefined,
     difficulty ? eq(questions.difficulty, difficulty) : undefined,
+    Array.isArray(selectedLeafKeys) && selectedLeafKeys.length > 0
+      ? or(
+          ...selectedLeafKeys
+            .map((k) => {
+              const parts = k.split("__");
+              if (parts.length !== 3) return undefined as any;
+              const [sys, cat, sub] = parts;
+              return and(
+                eq(questions.system, sys as any),
+                eq(questions.category, cat as any),
+                eq(questions.subcategory, sub as any)
+              );
+            })
+            .filter(Boolean as any)
+        )
+      : undefined,
   ].filter((c) => c !== undefined);
 }
 

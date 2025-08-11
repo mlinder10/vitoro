@@ -56,6 +56,16 @@ type ChatPromptResponse = {
   error?: string;
 };
 
+// PATCH: quick heuristic so reasonable replies pass even if LLM is picky
+function isNontrivialResponse(text: string): boolean {
+  const t = (text || "").trim().toLowerCase();
+  if (t.length < 8) return false; // too short
+  // looks like an "objective" or at least concrete detail?
+  const medicalish =
+    /(elevated|decreased|fever|tachy|brady|hypo|hyper|septic|st|t-wave|ecg|ekg|ct|x-?ray|d-dimer|crp|wbc|hemoglobin|creatinine|bp|blood pressure|hr|heart rate|rr|respiratory rate|sat|oxygen|spo2|exam|murmur|rales|wheez|edema|tender|ulcer|mass|lesion|bilirubin|ast|alt|lactate|anion gap)/i;
+  return /\d/.test(t) || t.split(/\s+/).length >= 2 || medicalish.test(text);
+}
+
 // Separate validation functions
 class ValidationService {
   private llm = new Gemini();
@@ -84,20 +94,49 @@ class ValidationService {
     }
   }
 
-  async validateExplanation(
-    question: Question,
-    choice: QuestionChoice,
-    userResponse: string
-  ): Promise<{ valid: boolean; error?: string }> {
-    const prompt = `
-Only respond with "yes" or "no".
-Is this a valid response to the question: "What clinical finding made you go with that choice?": ${userResponse}
-In relation to the question: "${question.question}"
-and choice: "${question.choices[choice]}"
-The response does not need to be correct or particularly sophisticated, but it should be related to the question.`;
-
-    return this.validateResponse(prompt);
+  // PATCH: be forgiving; accept symptoms/partials; still use LLM but allow heuristic pass
+async validateExplanation(
+  question: Question,
+  choice: QuestionChoice,
+  userResponse: string
+): Promise<{ valid: boolean; error?: string; reason?: string }> {
+  // short-circuit if it's clearly nontrivial
+  if (isNontrivialResponse(userResponse)) {
+    return { valid: true };
   }
+
+  const prompt = `
+Answer ONLY "yes" or "no".
+
+We asked the student: "What clinical finding made you go with that choice?"
+
+Student reply:
+"${userResponse}"
+
+Context (for reference):
+QUESTION: "${question.question}"
+CHOICE: "${question.choices[choice]}"
+
+Say "yes" if the reply mentions ANY specific case detail
+(symptom, vital sign, lab, exam, imaging, risk factor, or timeline),
+even if it's not ideal. Say "no" only if it's off-topic, empty, or pure fluff.
+
+Examples that should be "yes":
+- "tachycardia"
+- "the ST elevations"
+- "progressive fatigue and weight loss"
+- "elevated D-dimer"
+- "hypotension on exam"
+
+Examples that should be "no":
+- "idk"
+- "because I felt like it"
+- "this is dumb"
+- (blank)
+`;
+  const r = await this.validateResponse(prompt);
+  return r.valid ? { valid: true } : { valid: false, reason: "model_no" };
+}
 
   async validateSatisfaction(
     userResponse: string
@@ -160,13 +199,14 @@ class StepDefinitions {
   }
 
   // Helper to get last user message
-  private getLastUserMessage(messages: Message[]): string {
-    const lastMessage = messages.at(-1);
-    if (!lastMessage) {
-      throw new Error("No user message found");
-    }
-    return lastMessage.content;
+  // PATCH: pick the last USER message, not just the last message
+private getLastUserMessage(messages: Message[]): string {
+  const lastUser = [...messages].reverse().find((m) => m.role === "user");
+  if (!lastUser) {
+    throw new Error("No user message found");
   }
+  return lastUser.content;
+}
 
   async getStepResponse(
     step: ChatStep,
@@ -204,16 +244,21 @@ class StepDefinitions {
               error: validation.error,
             };
           }
-
           if (!validation.valid) {
+            const userResponse = this.getLastUserMessage(messages); // ensure available here
             return {
               prompt: false,
-              message: `Sorry, it seems like your response was vague or unrelated to the question. Please try again. What clinical finding made you go with that choice?`,
+              message:
+          `I got your reasoning (“${userResponse}”). Let’s make it concrete:
+          Pick ONE specific detail from the case that pushed you toward ${choice}.
+          Examples: a vital (e.g., BP/HR), a lab value, an exam sign, or an imaging clue.`,
               tags: [],
               nextTags: ["student-explanation"],
               next: "incorrect-1-check",
+              error: validation.reason || "no_specific_finding_detected",
             };
           }
+          
 
           // Valid response - move to combined teaching + prompt step
           return {
@@ -295,12 +340,16 @@ in reference to: QUESTION: ${JSON.stringify(question)}, STUDENT'S ANSWER: ${user
           if (!validation.valid) {
             return {
               prompt: false,
-              message: `Sorry, it seems like your response was vague or unrelated to the question. Please try again. What key finding makes ${question.answer} the right answer and why does that rule out ${choice}?`,
+              message:
+          `Close. Name the **key finding** that makes ${question.answer} correct,
+          and one concrete reason that rules out ${choice}.
+          Example: “ST elevations in II, III, aVF → inferior MI; that rules out pericarditis because no diffuse ST elevations.”`,
               tags: [],
-              nextTags: [],
+              nextTags: ["student-explanation"],
               next: "incorrect-3-check",
+              error: "explain_key_finding_missed",
             };
-          }
+          }          
 
           return {
             prompt: false,
@@ -342,14 +391,20 @@ in reference to: QUESTION: ${JSON.stringify(question)}, STUDENT'S ANSWER: ${user
           }
 
           if (!validation.valid) {
+            const userResponse = this.getLastUserMessage(messages);
             return {
               prompt: false,
-              message: `Sorry, it seems like your response was vague or unrelated to the question. Please try again. What made you choose this answer?`,
+              message:
+          `Good start. Now name ONE **objective** finding that made you lock in this answer.
+          Think: vital sign, lab value, exam sign, or imaging clue.
+          (Your last reply was: “${userResponse}”.)`,
               tags: [],
               nextTags: ["student-explanation"],
               next: "correct-1-check",
+              error: validation.reason || "no_specific_finding_detected",
             };
           }
+          
 
           // Valid response - move to combined technique praise + integration challenge
           return {
@@ -429,12 +484,16 @@ in reference to: QUESTION: ${JSON.stringify(question)}, STUDENT'S ANSWER: ${user
           if (!validation.valid) {
             return {
               prompt: false,
-              message: `Sorry, that doesn't seem right. Please try again.`,
+              message:
+          `Not quite. Answer the integration prompt directly:
+          respond to the specific question posed (pick one concrete clinical detail and justify it).`,
               tags: [],
-              nextTags: [],
+              nextTags: ["student-explanation"],
               next: "correct-3-check",
+              error: "integration_answer_invalid",
             };
           }
+          
 
           return {
             prompt: true,
@@ -515,12 +574,16 @@ in reference to: QUESTION: ${JSON.stringify(question)}, STUDENT'S ANSWER: ${user
           if (!validation.valid) {
             return {
               prompt: false,
-              message: `Sorry, that doesn't seem right. Please try again.`,
+              message:
+          `Aim for a clear **next step** in real life (order/test/treatment) with rationale.
+          Example: “Start heparin because …”, or “Order CT angiography because …”.`,
               tags: [],
-              nextTags: [],
+              nextTags: ["student-explanation"],
               next: "correct-5-check",
+              error: "next_step_invalid",
             };
           }
+          
 
           return {
             prompt: false,
@@ -832,56 +895,108 @@ TEACHING PHILOSOPHY:
 You maintain this persona and approach throughout all interactions with students.
 `;
 
+type PromptControl = {
+  next: ChatStep;
+  tags: MessageTag[];
+  nextTags: MessageTag[];
+};
+
+type NormalizedPrompt = PromptControl & {
+  status: "ok" | "error";
+  reason?: string;     // machine-friendly
+  message: string;     // human-friendly text we feed to the LLM (or show on error)
+};
+
+type PromptChatResponse = {
+  prompt: NormalizedPrompt;
+  stream: AsyncIterable<string>;
+};
+
+// util: make any string into an AsyncIterable<string>
+function stringToAsyncIterable(text: string): AsyncIterable<string> {
+  async function* gen() { yield text; }
+  return { [Symbol.asyncIterator]: gen };
+}
+
+// util: detect async-iterables
+function isAsyncIterable<T = unknown>(obj: any): obj is AsyncIterable<T> {
+  return obj && typeof obj[Symbol.asyncIterator] === "function";
+}
+
 // Public API - unchanged
 export async function promptChat(
   question: Question,
   choice: QuestionChoice,
   messages: Message[],
   step: ChatStep
-) {
-  const prompt = await getChatPrompt(question, choice, step, messages);
+): Promise<PromptChatResponse> {
+ // getChatPrompt likely returns { message, error?, prompt? }
+ const raw = await getChatPrompt(question, choice, step, messages);
 
-  if (prompt.error) {
-    // Handle errors gracefully
-    return {
-      stream: stringToAsyncGenerator(prompt.message),
-      prompt,
-    };
-  }
+ // Normalize control so the client always gets next/tags/nextTags.
+ const control: PromptControl = raw?.prompt
+   ? {
+       next: raw.prompt.next as ChatStep,
+       tags: Array.isArray(raw.prompt.tags) ? raw.prompt.tags : [],
+       nextTags: Array.isArray(raw.prompt.nextTags) ? raw.prompt.nextTags : [],
+     }
+   : {
+       // Safe fallbacks if validation failed / no prompt
+       next: "help-1" as ChatStep,
+       tags: ["general_help"] as MessageTag[],
+       nextTags: ["freeform"] as MessageTag[],
+     };
 
-  if (!prompt.prompt) {
-    return {
-      stream: stringToAsyncGenerator(prompt.message),
-      prompt,
-    };
-  } else {
-    const llm = new Gemini();
-    try {
-      return {
-        stream: llm.promptStreamed([
-          {
-            type: "text",
-            content: VITO_SYSTEM_PROMPT + "\n\n" + prompt.message,
-          },
-        ]),
-        prompt,
-      };
-    } catch (error) {
-      console.error("LLM streaming failed:", error);
-      return {
-        stream: stringToAsyncGenerator(
-          "I'm having trouble connecting to the AI service. Please try again."
-        ),
-        prompt: {
-          ...prompt,
-          error: "LLM service unavailable",
-        },
-      };
-    }
-  }
-}
+ const status: "ok" | "error" = raw?.error || !raw?.prompt ? "error" : "ok";
+ const message: string =
+   typeof raw?.message === "string" && raw.message.length
+     ? raw.message
+     : status === "ok"
+     ? "Continue."
+     : "I couldn’t process that. Let’s try a different approach.";
 
-// IMPLEMENTATION NOTES:
+ // Success path: stream from LLM
+ if (status === "ok") {
+   const llm = new Gemini();
+   try {
+     const streamMaybe = llm.promptStreamed([
+       { type: "text", content: VITO_SYSTEM_PROMPT + "\n\n" + message },
+     ]);
+     const stream = isAsyncIterable<string>(streamMaybe)
+       ? streamMaybe
+       : stringToAsyncIterable("[stream unavailable]");
+
+     return {
+       prompt: { status, message, ...control },
+       stream,
+     };
+   } catch (err) {
+     console.error("LLM streaming failed:", err);
+     return {
+       prompt: {
+         status: "error",
+         reason: "llm_stream_error",
+         message: "I'm having trouble connecting to the AI service. Please try again.",
+         ...control,
+       },
+       stream: stringToAsyncIterable(
+         "I'm having trouble connecting to the AI service. Please try again."
+       ),
+     };
+   }
+ }
+
+ // Error path: provide consistent control + error message as a one-shot stream
+ return {
+   prompt: {
+     status,
+     reason: raw?.error || "prompt_validation_failed",
+     message,
+     ...control,
+   },
+   stream: stringToAsyncIterable(message),
+ };
+}// IMPLEMENTATION NOTES:
 /*
 KEY IMPROVEMENTS MADE:
 
@@ -927,3 +1042,6 @@ TESTING RECOMMENDATIONS:
 - Check that integration challenges match question types appropriately
 - Validate that all validation steps work as expected
 */
+
+
+
