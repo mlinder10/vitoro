@@ -7,6 +7,7 @@ import {
   getCountsGrouped,
   updateQbankSession,
 } from "@/app/(protected)/practice/actions";
+import useDeepState from "@/hooks/use-deep-state";
 import {
   AnyCategory,
   AnySubcategory,
@@ -32,6 +33,13 @@ import {
 
 export const DEFAULT_QUESTION_COUNT = 0;
 
+export type Selected = {
+  systems: Set<System>;
+  categories: Set<AnyCategory>;
+  subcategories: Set<AnySubcategory>;
+};
+
+// TODO: only use topics in filtering
 type QBankSessionType = {
   // State
   mode: QBankMode;
@@ -40,16 +48,10 @@ type QBankSessionType = {
   setStep: Dispatch<SetStateAction<NBMEStep | undefined>>;
   type: QuestionType | undefined;
   setType: Dispatch<SetStateAction<QuestionType | undefined>>;
-  status: QBankStatus;
-  setStatus: Dispatch<SetStateAction<QBankStatus>>;
-  system: System | undefined;
-  setSystem: Dispatch<SetStateAction<System | undefined>>;
-  category: AnyCategory | undefined;
-  setCategory: Dispatch<SetStateAction<AnyCategory | undefined>>;
-  subcategory: AnySubcategory | undefined;
-  setSubcategory: Dispatch<SetStateAction<AnySubcategory | undefined>>;
-  topic: string | undefined;
-  setTopic: Dispatch<SetStateAction<string>>;
+  status: QBankStatus[];
+  setStatus: Dispatch<SetStateAction<QBankStatus[]>>;
+  selected: Selected;
+  setSelected: (updater: (draft: Selected) => void) => void;
   difficulty: QuestionDifficulty | undefined;
   setDifficulty: Dispatch<SetStateAction<QuestionDifficulty | undefined>>;
   questionCount: number;
@@ -79,16 +81,14 @@ const QBankSessionContext = createContext<QBankSessionType>({
   setStep: () => {},
   type: undefined,
   setType: () => {},
-  status: "Unanswered",
+  status: [],
   setStatus: () => {},
-  system: undefined,
-  setSystem: () => {},
-  category: undefined,
-  setCategory: () => {},
-  subcategory: undefined,
-  setSubcategory: () => {},
-  topic: undefined,
-  setTopic: () => {},
+  selected: {
+    systems: new Set(),
+    categories: new Set(),
+    subcategories: new Set(),
+  },
+  setSelected: () => {},
   difficulty: undefined,
   setDifficulty: () => {},
   questionCount: DEFAULT_QUESTION_COUNT,
@@ -129,11 +129,12 @@ export default function QBankSessionProvider({
   const [mode, setMode] = useState<QBankMode>("tutor");
   const [step, setStep] = useState<NBMEStep>();
   const [type, setType] = useState<QuestionType>();
-  const [status, setStatus] = useState<QBankStatus>("Unanswered");
-  const [system, setSystem] = useState<System>();
-  const [category, setCategory] = useState<AnyCategory>();
-  const [subcategory, setSubcategory] = useState<AnySubcategory>();
-  const [topic, setTopic] = useState<string>("");
+  const [status, setStatus] = useState<QBankStatus[]>([]);
+  const [selected, setSelected] = useDeepState<Selected>({
+    systems: new Set(),
+    categories: new Set(),
+    subcategories: new Set(),
+  });
   const [difficulty, setDifficulty] = useState<QuestionDifficulty>();
   const [questionCount, setQuestionCount] = useState(DEFAULT_QUESTION_COUNT);
   const [availableCount, setAvailableCount] = useState(0);
@@ -179,11 +180,8 @@ export default function QBankSessionProvider({
       {
         step: filter ? step : undefined,
         type: filter ? type : undefined,
-        status: filter ? status : "Unanswered",
-        system: filter ? system : undefined,
-        category: filter ? category : undefined,
-        subcategory: filter ? subcategory : undefined,
-        topic: filter ? topic : undefined,
+        status: filter ? status : undefined,
+        selected: filter ? selected : undefined,
         difficulty: filter ? difficulty : undefined,
       },
       questionCount
@@ -225,10 +223,7 @@ export default function QBankSessionProvider({
         step,
         type,
         status,
-        system,
-        category,
-        subcategory,
-        topic,
+        selected,
         difficulty,
       });
       setAvailableCount(value);
@@ -244,21 +239,14 @@ export default function QBankSessionProvider({
         step,
         type,
         status,
-        system,
-        category,
-        subcategory,
-        topic,
+        selected,
         difficulty,
       });
       const map: Record<string, number> = {};
       for (const r of rows) {
-        const key = `${r.system}__${r.category}__${r.subcategory}`;
-        map[key] = r.count;
-        // also rollups
-        const sysKey = `${r.system}__`;
-        const catKey = `${r.system}__${r.category}__`;
-        map[sysKey] = (map[sysKey] ?? 0) + r.count;
-        map[catKey] = (map[catKey] ?? 0) + r.count;
+        map[r.system] = (map[r.system] ?? 0) + r.count;
+        map[r.category] = (map[r.category] ?? 0) + r.count;
+        map[r.subcategory] = (map[r.subcategory] ?? 0) + r.count;
       }
       setGroupedCounts(map);
     } catch (e) {
@@ -278,22 +266,15 @@ export default function QBankSessionProvider({
         setType,
         status,
         setStatus,
-        system,
-        setSystem,
-        category,
-        setCategory,
-        subcategory,
-        setSubcategory,
-        topic,
-        setTopic,
+        selected,
+        setSelected,
         difficulty,
         setDifficulty,
         questionCount,
         setQuestionCount,
+        // readonly
         availableCount,
-        refreshAvailableCount,
         groupedCounts,
-        refreshGroupedCounts,
         time,
         // question data
         index,
@@ -306,6 +287,8 @@ export default function QBankSessionProvider({
         // Methods
         startSession,
         endSession,
+        refreshAvailableCount,
+        refreshGroupedCounts,
       }}
     >
       {children}
@@ -316,11 +299,8 @@ export default function QBankSessionProvider({
 export type QuestionFilters = {
   step: NBMEStep | undefined;
   type: QuestionType | undefined;
-  status?: QBankStatus;
-  system: System | undefined;
-  category: AnyCategory | undefined;
-  subcategory: AnySubcategory | undefined;
-  topic: string | undefined;
+  status: QBankStatus[] | undefined;
+  selected: Selected | undefined;
   difficulty: QuestionDifficulty | undefined;
 };
 

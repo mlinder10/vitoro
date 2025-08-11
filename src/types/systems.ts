@@ -2263,3 +2263,17 @@ export function getSystems(
       )?.subcategories ?? [],
   };
 }
+
+export function getCategories(system: System): AnyCategory[] {
+  return (
+    SYSTEMS.find((s) => s.name === system)?.categories.map((c) => c.name) ?? []
+  );
+}
+
+export function getSubcategories(category: AnyCategory): AnySubcategory[] {
+  return (
+    SYSTEMS.find((s) =>
+      s.categories.find((c) => c.name === category)
+    )?.categories.find((c) => c.name === category)?.subcategories ?? []
+  );
+}

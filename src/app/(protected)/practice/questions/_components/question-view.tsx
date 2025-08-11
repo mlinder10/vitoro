@@ -48,7 +48,6 @@ export default function QuestionView({
 
   function handleRemoveHighlight(e: globalThis.MouseEvent) {
     const element = e.target as HTMLElement;
-    console.log(element);
     if (element.classList.contains("highlight")) {
       element.classList.remove("highlight");
     }

@@ -7,7 +7,7 @@ import {
   reviewQuestions,
   qbankSessions,
 } from "@/db";
-import { eq, and, isNull, isNotNull, or, sql } from "drizzle-orm";
+import { eq, and, isNull, isNotNull, or, sql, inArray, not } from "drizzle-orm";
 import {
   GeneratedReviewQuestion,
   isValidGeneratedReviewQuestion,
@@ -148,12 +148,7 @@ export async function fetchQuestions(
         eq(answeredQuestions.userId, userId)
       )
     )
-    .where(
-      and(
-        eq(questions.rating, "Pass"),
-        ...buildWhereClause(filters)
-      )
-    )
+    .where(and(eq(questions.rating, "Pass"), ...buildWhereClause(filters)))
     .orderBy(sql`RANDOM()`)
     .limit(count);
 
@@ -187,10 +182,7 @@ function buildWhereClause({
   step,
   type,
   status,
-  system,
-  category,
-  subcategory,
-  topic,
+  selected,
   difficulty,
 }: QuestionFilters) {
   return [
@@ -199,22 +191,30 @@ function buildWhereClause({
       : undefined,
     type ? eq(questions.type, type) : undefined,
     // status filter (requires LEFT JOIN to answeredQuestions in queries)
-    status === "Correct"
-      ? and(isNotNull(answeredQuestions.userId), eq(answeredQuestions.answer, questions.answer))
-      : status === "Incorrect"
-      ? and(isNotNull(answeredQuestions.userId), sql`${answeredQuestions.answer} != ${questions.answer}`)
-      : status === "Answered"
-      ? isNotNull(answeredQuestions.userId)
-      : status === "Unanswered"
-      ? isNull(answeredQuestions.userId)
+    status && status.length > 0
+      ? or(
+          status.includes("Correct")
+            ? eq(answeredQuestions.answer, questions.answer)
+            : undefined,
+          status.includes("Incorrect")
+            ? not(eq(answeredQuestions.answer, questions.answer))
+            : undefined,
+          status.includes("Unanswered")
+            ? isNull(answeredQuestions.userId)
+            : undefined,
+          status.includes("Answered")
+            ? isNotNull(answeredQuestions.userId)
+            : undefined
+        )
       : undefined,
-    system ? eq(questions.system, system) : undefined,
-    category ? eq(questions.category, category) : undefined,
-    subcategory ? eq(questions.subcategory, subcategory) : undefined,
-    topic ? eq(questions.topic, topic) : undefined,
+    selected && selected.subcategories.length > 0
+      ? inArray(questions.subcategory, selected.subcategories)
+      : undefined,
     difficulty ? eq(questions.difficulty, difficulty) : undefined,
   ].filter((c) => c !== undefined);
 }
+
+// Counts ---------------------------------------------------------------------
 
 export type GroupedCountRow = {
   system: string;
@@ -230,9 +230,7 @@ export async function getCountsGrouped(
 ) {
   const baseFilters: QuestionFilters = {
     ...filters,
-    system: undefined,
-    category: undefined,
-    subcategory: undefined,
+    selected: undefined,
   };
 
   const rows = await db
@@ -262,10 +260,7 @@ export async function getCountsGrouped(
 }
 
 // Count available questions (excludes already answered by this user)
-export async function countQuestions(
-  userId: string,
-  filters: QuestionFilters
-) {
+export async function countQuestions(userId: string, filters: QuestionFilters) {
   const [{ value }] = await db
     .select({ value: sql<number>`count(*)` })
     .from(questions)
