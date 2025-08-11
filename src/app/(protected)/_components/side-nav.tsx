@@ -48,7 +48,7 @@ export default function SideNav() {
   return (
     <nav
       className={cn(
-        "flex flex-col justify-between p-4 border-r-2 h-screen sticky top-0 transition-all shrink-0",
+        "flex flex-col justify-between p-4 border-r-2 h-screen transition-all",
         isOpen ? "w-[320px]" : "w-[64px]"
       )}
     >

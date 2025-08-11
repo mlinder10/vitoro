@@ -216,10 +216,12 @@ export const chatHistory = sqliteTable("chat_history", {
 
 export const foundationalQuestions = sqliteTable("foundational_questions", {
   id: text("id").primaryKey().default(SQL_UUID).notNull(),
-  shelf: text("shelf").notNull(),
+  shelf: text("shelf"),
   topic: text("topic").notNull(),
   question: text("question").notNull(),
   expectedAnswer: text("expected_answer").notNull(),
+  // step
+  // system
 });
 
 export const foundationalFollowUps = sqliteTable("foundational_followups", {
