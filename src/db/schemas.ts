@@ -216,12 +216,12 @@ export const chatHistory = sqliteTable("chat_history", {
 
 export const foundationalQuestions = sqliteTable("foundational_questions", {
   id: text("id").primaryKey().default(SQL_UUID).notNull(),
+  step: json<NBMEStep>("step").notNull(),
   shelf: text("shelf"),
+  system: text("system").notNull(),
   topic: text("topic").notNull(),
   question: text("question").notNull(),
   expectedAnswer: text("expected_answer").notNull(),
-  // step
-  // system
 });
 
 export const foundationalFollowUps = sqliteTable("foundational_followups", {
@@ -235,3 +235,24 @@ export const foundationalFollowUps = sqliteTable("foundational_followups", {
   answer: json<QuestionChoice>("answer").notNull(),
   type: json<QuestionType>("type").notNull(),
 });
+
+export const answeredFoundationals = sqliteTable(
+  "answered_foundational_questions",
+  {
+    id: text("id").primaryKey().default(SQL_UUID).notNull(),
+    userId: text("user_id")
+      .references(() => users.id, { onDelete: "cascade" })
+      .notNull(),
+    foundationalQuestionId: text("foundational_question_id")
+      .references(() => foundationalQuestions.id, { onDelete: "cascade" })
+      .notNull(),
+    createdAt: date("created_at").default(SQL_NOW).notNull(),
+    shortResponse: text("short_response").notNull(),
+    answers: json<QuestionChoice[]>("answers").notNull(),
+    isComplete: json<boolean>("is_complete").default(false).notNull(),
+  },
+  (table) => [
+    index("foundational_answer_user_idx").on(table.userId),
+    index("foundational_answer_question_idx").on(table.foundationalQuestionId),
+  ]
+);

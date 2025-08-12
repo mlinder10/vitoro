@@ -18,7 +18,7 @@ export default {
 
 // export default {
 //   schema: ["src/db/schemas.ts"],
-//   out: "./migrations-prod",
+//   out: "./migrations-dev",
 //   dialect: "turso",
 //   dbCredentials: {
 //     url: process.env.DATABASE_URL!,

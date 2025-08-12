@@ -1,8 +1,23 @@
 import { InferSelectModel } from "drizzle-orm";
-import { qbankSessions, questions } from "@/db";
+import {
+  answeredFoundationals,
+  foundationalFollowUps,
+  foundationalQuestions,
+  qbankSessions,
+  questions,
+} from "@/db";
 
 export type QBankSession = InferSelectModel<typeof qbankSessions>;
 export type Question = InferSelectModel<typeof questions>;
+export type FoundationalQuestion = InferSelectModel<
+  typeof foundationalQuestions
+>;
+export type FoundationalFollowup = InferSelectModel<
+  typeof foundationalFollowUps
+>;
+export type AnsweredFoundational = InferSelectModel<
+  typeof answeredFoundationals
+>;
 
 export type QuestionChoice = "a" | "b" | "c" | "d" | "e";
 export type NBMEStep = (typeof NBME_STEPS)[number];

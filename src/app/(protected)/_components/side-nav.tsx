@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import {
   ChevronLeft,
   Home,
+  Layers,
   LogOut,
   Menu,
   NotebookText,
@@ -69,6 +70,12 @@ export default function SideNav() {
             href="/practice"
             icon={Target}
             label="Practice"
+            isOpen={isOpen}
+          />
+          <ListLink
+            href="/foundational"
+            icon={Layers}
+            label="Foundational"
             isOpen={isOpen}
           />
           <ListLink
