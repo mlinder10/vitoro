@@ -1,3 +1,4 @@
+import { QBankMode } from "@/contexts/qbank-session-provider";
 import {
   AnyCategory,
   AnySubcategory,
@@ -81,8 +82,8 @@ export const users = sqliteTable("users", {
   email: text("email").unique().notNull(),
   firstName: text("first_name").notNull(),
   lastName: text("last_name").notNull(),
-  gradYear: text("grad_year").default("2026").notNull(),
-  exam: json<NBMEStep>("exam").default("Step 1").notNull(),
+  gradYear: text("grad_year").notNull(),
+  exam: json<NBMEStep>("exam").notNull(),
   color: text("color").notNull(),
   password: text("password").notNull(),
   createdAt: date("created_at").default(SQL_NOW),
@@ -122,16 +123,13 @@ export const questions = sqliteTable(
     subcategory: json<AnySubcategory>("subcategory").notNull(),
     topic: text("topic").notNull(),
     type: json<QuestionType>("type").notNull(),
-    step: json<NBMEStep>("step")
-      .default(JSON.stringify("mixed") as NBMEStep)
-      .notNull(),
+    step: json<NBMEStep>("step").notNull(),
 
     question: text("question").notNull(),
     answer: json<QuestionChoice>("answer").notNull(),
     choices: json<Choices>("choices").notNull(),
     explanations: json<Choices>("explanations").notNull(),
 
-    sources: json<string[]>("sources").notNull(),
     difficulty: json<QuestionDifficulty>("difficulty").notNull(),
 
     yield: json<YieldType>("yield")
@@ -174,7 +172,7 @@ export const qbankSessions = sqliteTable("qbank_sessions", {
   userId: text("user_id")
     .references(() => users.id, { onDelete: "cascade" })
     .notNull(),
-  // mode: json<QBankMode>("mode").notNull(),
+  mode: json<QBankMode>("mode").notNull(),
   questionIds: json<string[]>("question_ids").notNull(),
   answers: json<(QuestionChoice | null)[]>("answers").notNull(),
   flaggedQuestionIds: json<string[]>("flagged_questions").notNull(),
@@ -203,21 +201,9 @@ export const reviewQuestions = sqliteTable(
   ]
 );
 
-export const chatHistory = sqliteTable("chat_history", {
-  id: text("id").primaryKey().default(SQL_UUID).notNull(),
-  userId: text("user_id")
-    .references(() => users.id, { onDelete: "cascade" })
-    .notNull(),
-  questionId: text("question_id")
-    .references(() => questions.id, { onDelete: "cascade" })
-    .notNull(),
-  conversation: json<string[]>("conversation"),
-});
-
 export const foundationalQuestions = sqliteTable("foundational_questions", {
   id: text("id").primaryKey().default(SQL_UUID).notNull(),
   step: json<NBMEStep>("step").notNull(),
-  shelf: text("shelf"),
   system: text("system").notNull(),
   topic: text("topic").notNull(),
   question: text("question").notNull(),

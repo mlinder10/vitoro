@@ -191,7 +191,8 @@ export default function QBankSessionProvider({
     setAnswers(Array(questions.length).fill(null));
     const id = await createQbankSession(
       userId,
-      questions.map((q) => q.id)
+      questions.map((q) => q.id),
+      mode
     );
     setSessionId(id);
 

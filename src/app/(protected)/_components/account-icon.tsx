@@ -10,8 +10,7 @@ export default function AccountIcon({
   size = 24,
   className,
 }: AccountIconProps) {
-  const { firstName, lastName } = useSession();
-  const color = "#f00000";
+  const { firstName, lastName, color } = useSession();
 
   const initials =
     firstName.length === 0 || lastName.length === 0

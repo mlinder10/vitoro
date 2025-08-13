@@ -3,7 +3,8 @@ import PageTitle from "../_components/page-title";
 import { getSession } from "@/lib/auth";
 import { sql, eq, and } from "drizzle-orm";
 import { SYSTEMS } from "@/types";
-import { ArrowRight, Link } from "lucide-react";
+import { ArrowRight } from "lucide-react";
+import Link from "next/link";
 
 type SystemData = {
   system: string;
@@ -11,9 +12,7 @@ type SystemData = {
   unanswered: number;
 };
 
-// fetch question count from each system (answered and unanswered)
 async function fetchSystems(userId: string): Promise<SystemData[]> {
-  // 1) Total foundational questions per system
   const totals = await db
     .select({
       system: foundationalQuestions.system,
@@ -22,8 +21,6 @@ async function fetchSystems(userId: string): Promise<SystemData[]> {
     .from(foundationalQuestions)
     .groupBy(foundationalQuestions.system);
 
-  // 2) Answered (completed) foundational questions per system for this user
-  //    Use DISTINCT to avoid double-counting if a question was answered multiple times.
   const answered = await db
     .select({
       system: foundationalQuestions.system,
@@ -40,7 +37,6 @@ async function fetchSystems(userId: string): Promise<SystemData[]> {
     .where(
       and(
         eq(answeredFoundationals.userId, userId),
-        // isComplete is a json<boolean> column; comparing to true is fine
         eq(answeredFoundationals.isComplete, true)
       )
     )
@@ -72,10 +68,9 @@ export default async function FoundationalQuestionsPage() {
         {SYSTEMS.map((s) => {
           const data = systems.find((sys) => sys.system === s.name);
           return (
-            <Link
+            <div
               key={s.name}
-              className="flex justify-between items-center px-6 py-4 hover:pr-2 border rounded-md transition-all cursor-pointer"
-              href={`/foundational/${s.name}`}
+              className="relative flex justify-between items-center px-6 py-4 hover:pr-2 border rounded-md transition-all"
             >
               <div className="space-y-2">
                 <p>{s.name}</p>
@@ -85,7 +80,13 @@ export default async function FoundationalQuestionsPage() {
                 </div>
               </div>
               <ArrowRight size={16} className="text-muted-foreground" />
-            </Link>
+              <Link
+                href={`/foundational/${s.name}`}
+                className="absolute inset-0 opacity-0"
+              >
+                {s.name}
+              </Link>
+            </div>
           );
         })}
       </div>

@@ -30,19 +30,6 @@ function QuestionSection() {
           />
         ))}
       </ul>
-      <div className="space-y-2">
-        <p className="font-semibold">References</p>
-        <ul className="space-y-2">
-          {question.sources.map((source, index) => (
-            <li
-              key={index}
-              className="ml-4 text-muted-foreground text-xs -indent-4"
-            >
-              {source}
-            </li>
-          ))}
-        </ul>
-      </div>
     </section>
   );
 }

@@ -28,7 +28,13 @@ async function fetchFoundationalQuestion(userId: string, system: string) {
     )
     .leftJoin(
       answeredFoundationals,
-      eq(answeredFoundationals.foundationalQuestionId, foundationalQuestions.id)
+      and(
+        eq(
+          answeredFoundationals.foundationalQuestionId,
+          foundationalQuestions.id
+        ),
+        eq(answeredFoundationals.userId, userId)
+      )
     )
     .limit(1);
 
@@ -62,7 +68,8 @@ export default async function FoundationalSystemPage({
 }: FoundationalSystemPageProps) {
   const { id } = await getSession();
   const { system } = await params;
-  const data = await fetchFoundationalQuestion(id, system);
+  const decodedSystem = decodeURIComponent(system);
+  const data = await fetchFoundationalQuestion(id, decodedSystem);
 
   if (data === null) return notFound(); // TODO: replace with "completed all questions" page
 

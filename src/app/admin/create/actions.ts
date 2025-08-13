@@ -30,7 +30,6 @@ const DEFAULT_QUESTION = (
   subcategory,
   topic,
   type,
-  sources: [],
   creatorId: userId,
   createdAt: new Date(),
   id: crypto.randomUUID(),
@@ -140,6 +139,7 @@ async function handleGenerateQuestion(
         category,
         subcategory,
         type,
+        step: "Step 2",
         creatorId: userId,
         rating: "Flag for Human Review",
       })

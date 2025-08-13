@@ -15,7 +15,7 @@ import {
   QuestionChoice,
 } from "@/types";
 import { Gemini, stripAndParse } from "@/ai";
-import { QuestionFilters } from "@/contexts/qbank-session-provider";
+import { QBankMode, QuestionFilters } from "@/contexts/qbank-session-provider";
 import { redirect } from "next/navigation";
 
 export async function resetProgress(userId: string) {
@@ -51,12 +51,14 @@ export async function createAnswerRecord(
 
 export async function createQbankSession(
   userId: string,
-  questionIds: string[]
+  questionIds: string[],
+  mode: QBankMode
 ) {
   const [{ id }] = await db
     .insert(qbankSessions)
     .values({
       userId,
+      mode,
       questionIds,
       flaggedQuestionIds: [],
       answers: [],
@@ -207,8 +209,8 @@ function buildWhereClause({
             : undefined
         )
       : undefined,
-    selected && selected.subcategories.length > 0
-      ? inArray(questions.subcategory, selected.subcategories)
+    selected && selected.subcategories.size > 0
+      ? inArray(questions.subcategory, Array.from(selected.subcategories))
       : undefined,
     difficulty ? eq(questions.difficulty, difficulty) : undefined,
   ].filter((c) => c !== undefined);
