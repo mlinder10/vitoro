@@ -3,6 +3,34 @@ import { InferSelectModel } from "drizzle-orm";
 
 export type ReviewQuestion = InferSelectModel<typeof reviewQuestions>;
 
+export type Task =
+  | "auto-triage"
+  | "breakdown"
+  | "distractor"
+  | "gap-finder"
+  | "strategy"
+  | "timing"
+  | "pattern"
+  | "memory"
+  | "pimp-mode";
+
+export const TASKS: Task[] = [
+  "auto-triage",
+  "breakdown",
+  "distractor",
+  "gap-finder",
+  "strategy",
+  "timing",
+  "pattern",
+  "memory",
+  "pimp-mode",
+];
+
+export type Message = {
+  role: "user" | "assistant";
+  content: string;
+};
+
 export type GeneratedReviewQuestion = {
   question: string;
   answerCriteria: string[];
