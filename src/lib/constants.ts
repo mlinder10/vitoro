@@ -1,6 +1,7 @@
 export const LOGIN_PATH = "/login";
 export const REGISTER_PATH = "/register";
 export const ADMIN_PATH = "/admin";
+
 export const APP_URL =
   process.env.NODE_ENV === "development"
     ? "http://localhost:3000"

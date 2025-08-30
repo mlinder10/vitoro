@@ -27,3 +27,18 @@
     transform: translatey(0px);
   }
 }
+
+/* globals.css */
+@keyframes gradient-move {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+}
+
+.animate-gradient {
+  background-size: 200% 200%; /* bigger background so it has room to move */
+  animation: gradient-move 2s linear infinite alternate;
+}
