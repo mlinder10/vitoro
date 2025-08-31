@@ -215,7 +215,11 @@ Correct answer: ${question.answer}
 
 Explanation: ${question.explanations[question.answer]}
 
-Provide clear, concise educational responses.`;
+Provide clear, concise educational responses.
+
+Previous Conversation:
+
+`;
 
   const joined =
     basePrompt +
