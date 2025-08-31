@@ -1,18 +1,17 @@
-import { Button } from "@/components/ui/button";
 import { capitalize, cn } from "@/lib/utils";
 import { Message, Question, QuestionChoice, Task, TASKS } from "@/types";
 import { ArrowLeft, ArrowUp, BotIcon, Loader } from "lucide-react";
 import { RefObject, useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
-import { KeyboardEvent } from "react";
 import { promptChatWithTask, promptGeneralChat } from "../../chat";
+import { Button } from "@/components/ui/button";
 
-type ChatboxProps = {
+type ChatCardProps = {
   question: Question;
-  answer: QuestionChoice | null;
+  choice: QuestionChoice;
 };
 
-export default function ChatBox({ question, answer }: ChatboxProps) {
+export default function ChatCard({ question, choice }: ChatCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -22,9 +21,9 @@ export default function ChatBox({ question, answer }: ChatboxProps) {
   // Prompting ----------------------------------------------------------------
 
   async function promptWithTask(task: Task) {
-    if (!answer) return;
+    if (!choice) return;
     setIsLoading(true);
-    const res = await promptChatWithTask(task, question, answer);
+    const res = await promptChatWithTask(task, question, choice);
     while (true) {
       const { value, done } = await res.next();
       if (done) break;
@@ -34,7 +33,7 @@ export default function ChatBox({ question, answer }: ChatboxProps) {
   }
 
   async function promptGeneral() {
-    if (!answer || !inputRef.current) return;
+    if (!choice || !inputRef.current) return;
     setIsLoading(true);
     const newMessage: Message = {
       role: "user",
@@ -42,7 +41,7 @@ export default function ChatBox({ question, answer }: ChatboxProps) {
     };
     setMessages((prev) => [...prev, newMessage]);
     inputRef.current.value = "";
-    const res = await promptGeneralChat(question, answer, messages);
+    const res = await promptGeneralChat(question, choice, messages);
     while (true) {
       const { value, done } = await res.next();
       if (done) break;
@@ -60,7 +59,7 @@ export default function ChatBox({ question, answer }: ChatboxProps) {
     });
   }
 
-  function handleInput(e: KeyboardEvent) {
+  function handleInput(e: React.KeyboardEvent) {
     if (e.key === "Enter") {
       e.preventDefault();
       promptGeneral();
@@ -71,12 +70,10 @@ export default function ChatBox({ question, answer }: ChatboxProps) {
     endRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // Rendering ----------------------------------------------------------------
-
   return (
     <section
       className={cn(
-        "relative flex flex-col flex-1 bg-background border-2 rounded-md transition-all",
+        "relative flex flex-col flex-1 bg-tertiary border rounded-md h-full transition-all",
         isExpanded && "flex-3"
       )}
     >

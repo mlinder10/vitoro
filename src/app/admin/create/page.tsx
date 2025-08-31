@@ -81,7 +81,7 @@ export default function CreateQuestionPage() {
         </Button>
         <Button
           className="w-full"
-          variant="accent-tertiary"
+          variant="accent"
           name="action"
           value="create"
           type="submit"

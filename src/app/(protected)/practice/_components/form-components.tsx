@@ -135,7 +135,7 @@ export function FormSelect<T extends string>({
           </SelectContent>
         </Select>
         <Button
-          variant="accent-tertiary"
+          variant="accent"
           onClick={() => updateValue(undefined)}
           disabled={disabled}
         >

@@ -22,15 +22,13 @@ const buttonVariants = cva(
           "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
         link: "text-primary underline-offset-4 hover:underline",
         accent:
-          "bg-custom-accent text-background hover:bg-custom-accent-dark focus:bg-custom-accent-dark",
-        "accent-secondary":
-          "bg-custom-accent-secondary text-background hover:bg-custom-accent-secondary-dark focus:bg-custom-accent-secondary-dark",
-        "accent-tertiary":
-          "bg-custom-accent-tertiary text-background hover:bg-custom-accent-tertiary-dark focus:bg-custom-accent-tertiary-dark",
+          "bg-custom-accent hover:bg-custom-accent-dark focus:bg-custom-accent-dark",
         gradient: cn(
-          "bg-gradient-to-tr from-custom-accent to-custom-accent-secondary text-background",
+          "bg-gradient-to-tr from-custom-accent text-background to-custom-accent-secondary",
           "hover:from-custom-accent-dark hover:to-custom-accent-secondary-dark focus:from-custom-accent-dark focus:to-custom-accent-secondary-dark"
         ),
+        "accent-light":
+          "bg-custom-accent-light border border-custom-accent text-custom-accent hover:bg-custom-accent-dark hover:text-muted hover:border-muted",
       },
       size: {
         default: "h-9 px-4 py-2 has-[>svg]:px-3",

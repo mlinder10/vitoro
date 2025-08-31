@@ -21,3 +21,5 @@ export const CHECKLIST = {
   "8": "Every answer choice is anchored to clues in the vignette",
   "9": "No duplicate correct answers or overly vague distractors",
 } as const;
+
+export const MINS_PER_QUESTION = 1.5;

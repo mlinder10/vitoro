@@ -42,7 +42,7 @@ function RowItem({ title, description, link, icon: Icon }: RowItemProps) {
       <div
         className={cn(
           "flex flex-col items-center gap-2 bg-background p-4 border rounded-md max-w-[320px] h-full transition-all",
-          "hover:ring-custom-accent-secondary hover:ring-2"
+          "hover:ring-custom-accent hover:ring-2"
         )}
       >
         <Icon size={32} />

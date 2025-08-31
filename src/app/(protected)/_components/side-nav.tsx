@@ -113,11 +113,7 @@ export default function SideNav() {
               <span>Account</span>
             </Link>
           </Button>
-          <Button
-            variant="accent-tertiary"
-            onClick={handleLogout}
-            disabled={isLoading}
-          >
+          <Button variant="accent" onClick={handleLogout} disabled={isLoading}>
             <LogOut />
             <span>Logout</span>
           </Button>

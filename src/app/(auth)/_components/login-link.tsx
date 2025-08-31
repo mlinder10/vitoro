@@ -10,14 +10,14 @@ export default function LoginLink() {
 
   if (pathname === LOGIN_PATH) {
     return (
-      <Button asChild variant="accent-tertiary">
+      <Button asChild variant="accent">
         <Link href={REGISTER_PATH}>Register</Link>
       </Button>
     );
   }
 
   return (
-    <Button asChild variant="accent-tertiary">
+    <Button asChild variant="accent">
       <Link href={LOGIN_PATH}>Login</Link>
     </Button>
   );

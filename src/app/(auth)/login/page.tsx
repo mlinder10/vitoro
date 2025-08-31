@@ -61,11 +61,7 @@ export default function LoginPage() {
               </>
             )}
           </Button>
-          <AccentLink
-            href="/forgot-password"
-            className="mr-auto text-sm"
-            accent="tertiary"
-          >
+          <AccentLink href="/forgot-password" className="mr-auto text-sm">
             Forgot Password
           </AccentLink>
         </div>

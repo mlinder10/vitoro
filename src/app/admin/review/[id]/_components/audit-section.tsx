@@ -31,12 +31,10 @@ export default function AuditSection() {
       <div className="px-2">
         <AuditDifficulty />
       </div>
-      {/* <AuditChecklist checklist={audit.checklist} /> */}
-      {/* <AuditSuggestions suggestions={audit.suggestions} /> */}
       <div className="px-2">
         <Button
           className="w-full"
-          variant="accent-tertiary"
+          variant="accent"
           onClick={togglePageType}
           disabled={isSaving}
         >

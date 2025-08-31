@@ -65,7 +65,7 @@ const date = customType<{
     return "TEXT";
   },
   fromDriver(value: string) {
-    return new Date(value);
+    return new Date(value.endsWith("Z") ? value : value + "Z");
   },
   toDriver(value: Date) {
     return value.toISOString();

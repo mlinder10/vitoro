@@ -3,6 +3,8 @@ import { InferSelectModel } from "drizzle-orm";
 
 export type ReviewQuestion = InferSelectModel<typeof reviewQuestions>;
 
+export type Focus = "step-1" | "high-yield" | "nbme-mix";
+
 export type Task =
   | "auto-triage"
   | "breakdown"

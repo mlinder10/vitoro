@@ -31,7 +31,7 @@ export default function ResetDialog() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="accent-tertiary">
+        <Button variant="accent">
           <span>Reset Progress</span>
           <RefreshCcw />
         </Button>

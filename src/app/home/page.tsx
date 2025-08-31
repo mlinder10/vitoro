@@ -1,3 +1,4 @@
+import GradientTitle from "@/components/gradient-title";
 import { Button } from "@/components/ui/button";
 import { Session, tryGetSession } from "@/lib/auth";
 import Link from "next/link";
@@ -36,16 +37,19 @@ function Header({ session }: { session: Session | null }) {
         style={{ maxWidth: INNER_WIDTH }}
         className="grid grid-cols-3 w-full"
       >
-        <h1 className="font-bold text-2xl">Vitoro</h1>
+        <Link href="#">
+          <h1 className="font-bold text-2xl">Vitoro</h1>
+        </Link>
         <ul className="flex justify-self-center items-center gap-8 text-muted-foreground">
           <li>
             <Link href="#features">Features</Link>
           </li>
           <li>
-            <Link href="#about">About</Link>
+            <Link href="#features">About</Link>
           </li>
           <li>
-            <Link href="#contact">Contact</Link>
+            {/* TODO: contact page */}
+            <Link href="#">Contact</Link>
           </li>
         </ul>
         <Button asChild variant="accent" className="justify-self-end w-fit">
@@ -91,9 +95,7 @@ function QuestionSection() {
       style={{ height: SECTION_HEIGHT }}
       className="place-items-center grid"
     >
-      <p className="bg-clip-text bg-gradient-to-r from-primary to-custom-accent font-black text-transparent text-9xl animate-gradient">
-        HOW?
-      </p>
+      <GradientTitle text="HOW?" className="font-black text-9xl" />
     </section>
   );
 }
