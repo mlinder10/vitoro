@@ -11,10 +11,10 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { RefreshCcw } from "lucide-react";
-import { resetProgress } from "../actions";
 import { useState } from "react";
 import { useSession } from "@/contexts/session-provider";
 import { useRouter } from "next/navigation";
+import { resetQuestions } from "../actions";
 
 export default function ResetDialog() {
   const { id } = useSession();
@@ -23,7 +23,7 @@ export default function ResetDialog() {
 
   async function handleReset() {
     setIsLoading(true);
-    await resetProgress(id);
+    await resetQuestions(id);
     setIsLoading(false);
     router.refresh();
   }

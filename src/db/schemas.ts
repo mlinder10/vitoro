@@ -1,10 +1,10 @@
-import { QBankMode } from "@/contexts/qbank-session-provider";
 import {
   AnyCategory,
   AnySubcategory,
   AuditRating,
   Choices,
   NBMEStep,
+  QBankMode,
   QuestionChoice,
   QuestionDifficulty,
   QuestionType,

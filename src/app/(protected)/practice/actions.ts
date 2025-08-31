@@ -1,167 +1,18 @@
 "use server";
 
-import {
-  db,
-  questions,
-  answeredQuestions,
-  reviewQuestions,
-  qbankSessions,
-} from "@/db";
-import { eq, and, isNull, isNotNull, or, sql, inArray, not } from "drizzle-orm";
-import {
-  GeneratedReviewQuestion,
-  isValidGeneratedReviewQuestion,
-  Question,
-  QuestionChoice,
-} from "@/types";
-import { Gemini, stripAndParse } from "@/ai";
-import { QBankMode, QuestionFilters } from "@/contexts/qbank-session-provider";
-import { redirect } from "next/navigation";
+import { answeredQuestions, db, qbankSessions, questions } from "@/db";
+import { Focus, QBankMode, QuestionChoice } from "@/types";
+import { isNull, eq, and } from "drizzle-orm";
 
-export async function resetProgress(userId: string) {
-  await db
-    .delete(answeredQuestions)
-    .where(eq(answeredQuestions.userId, userId));
-}
-
-export async function checkForActiveSession(userId: string) {
-  const [session] = await db
-    .select()
-    .from(qbankSessions)
-    .where(
-      and(eq(qbankSessions.userId, userId), eq(qbankSessions.inProgress, true))
-    )
-    .limit(1);
-  return session ?? null;
-}
-
-// Records
-
-export async function createAnswerRecord(
-  userId: string,
-  questionId: string,
-  answer: QuestionChoice
-) {
-  await db.insert(answeredQuestions).values({
-    userId,
-    questionId,
-    answer,
-  });
-}
+// Create Session
 
 export async function createQbankSession(
   userId: string,
-  questionIds: string[],
-  mode: QBankMode
-) {
-  const [{ id }] = await db
-    .insert(qbankSessions)
-    .values({
-      userId,
-      mode,
-      questionIds,
-      flaggedQuestionIds: [],
-      answers: [],
-    })
-    .returning({ id: qbankSessions.id });
-  return id;
-}
-
-type UpdateQbankSessionArgs = {
-  id: string;
-  flaggedIds?: string[];
-  answers?: (QuestionChoice | null)[];
-  inProgress?: boolean;
-};
-
-export async function updateQbankSession({
-  id,
-  flaggedIds,
-  answers,
-  inProgress,
-}: UpdateQbankSessionArgs) {
-  const setClause: Record<string, unknown> = {};
-  if (flaggedIds !== undefined) setClause["flaggedQuestionIds"] = flaggedIds;
-  if (answers !== undefined) setClause["answers"] = answers;
-  if (inProgress !== undefined) setClause["inProgress"] = inProgress;
-  await db.update(qbankSessions).set(setClause).where(eq(qbankSessions.id, id));
-}
-
-// Review Questions -----------------------------------------------------------
-
-export async function createReviewQuestion(
-  question: Question,
-  answer: QuestionChoice,
-  userId: string
-) {
-  const prompt = `
-    You are an NBME exam tutor.
-
-    A student was just presented this question:
-    Stem: ${question.question}
-    Choices: ${JSON.stringify(question.choices)}
-    Explanations: ${JSON.stringify(question.explanations)}
-    Answer: ${question.answer}
-
-    The student selected: ${answer}
-
-    Please generate a review question based on this question and the student's answer.
-
-    Please respond in the following JSON format:
-
-    {
-      "question": "<review question>",
-      "answerCriteria": ["<answer criteria>"]
-    }
-  `;
-
-  const llm = new Gemini();
-  const result = await llm.prompt([{ type: "text", content: prompt }]);
-
-  if (!result) throw new Error("Failed to generate text");
-  const parsed = stripAndParse<GeneratedReviewQuestion>(result);
-  if (!parsed) throw new Error("Failed to parse JSON");
-  if (!isValidGeneratedReviewQuestion(parsed))
-    throw new Error("Invalid JSON: " + result);
-
-  await db.insert(reviewQuestions).values({
-    ...parsed,
-    questionId: question.id,
-    userId,
-  });
-}
-
-// Filtered Questions ---------------------------------------------------------
-
-export async function fetchQuestions(
-  userId: string,
-  filters: QuestionFilters,
+  mode: QBankMode,
+  focus: Focus | undefined,
   count: number
 ) {
-  if (count > 50) throw new Error("Too many questions requested");
-
-  const rows = await db
-    .select({ q: questions })
-    .from(questions)
-    .leftJoin(
-      answeredQuestions,
-      and(
-        eq(answeredQuestions.questionId, questions.id),
-        eq(answeredQuestions.userId, userId)
-      )
-    )
-    .where(and(eq(questions.rating, "Pass"), ...buildWhereClause(filters)))
-    .orderBy(sql`RANDOM()`)
-    .limit(count);
-
-  return rows.map((r) => r.q);
-}
-
-export async function redirectToQuestion(
-  userId: string,
-  filters: QuestionFilters
-) {
-  const [question] = await db
+  const qs = await db
     .select({ id: questions.id })
     .from(questions)
     .leftJoin(
@@ -171,109 +22,102 @@ export async function redirectToQuestion(
         eq(answeredQuestions.userId, userId)
       )
     )
-    .where(and(eq(questions.rating, "Pass"), ...buildWhereClause(filters)))
-    .orderBy(sql`RANDOM()`)
-    .limit(1);
+    .where(buildWhereClause(focus))
+    .limit(count);
 
-  if (!question) redirect("/practice/no-questions");
+  const questionIds = qs.map((q) => q.id);
+  const answers: (QuestionChoice | null)[] = new Array(questionIds.length).fill(
+    null
+  );
 
-  redirect(`/practice/q/${question.id}`);
+  const [{ id }] = await db
+    .insert(qbankSessions)
+    .values({
+      userId,
+      mode,
+      questionIds,
+      flaggedQuestionIds: [],
+      answers,
+    })
+    .returning({ id: qbankSessions.id });
+
+  return id;
 }
 
-function buildWhereClause({
-  step,
-  type,
-  status,
-  selected,
-  difficulty,
-}: QuestionFilters) {
-  return [
-    step && step !== "Mixed"
-      ? or(eq(questions.step, step), eq(questions.step, "Mixed"))
-      : undefined,
-    type ? eq(questions.type, type) : undefined,
-    // status filter (requires LEFT JOIN to answeredQuestions in queries)
-    status && status.length > 0
-      ? or(
-          status.includes("Correct")
-            ? eq(answeredQuestions.answer, questions.answer)
-            : undefined,
-          status.includes("Incorrect")
-            ? not(eq(answeredQuestions.answer, questions.answer))
-            : undefined,
-          status.includes("Unanswered")
-            ? isNull(answeredQuestions.userId)
-            : undefined,
-          status.includes("Answered")
-            ? isNotNull(answeredQuestions.userId)
-            : undefined
-        )
-      : undefined,
-    selected && selected.subcategories.size > 0
-      ? inArray(questions.subcategory, Array.from(selected.subcategories))
-      : undefined,
-    difficulty ? eq(questions.difficulty, difficulty) : undefined,
-  ].filter((c) => c !== undefined);
+function buildWhereClause(focus: Focus | undefined) {
+  const conditions = [];
+  conditions.push(eq(questions.rating, "Pass"));
+  conditions.push(isNull(answeredQuestions.userId));
+  switch (focus) {
+    case undefined:
+      break;
+    case "high-yield":
+      conditions.push(eq(questions.yield, "High"));
+      break;
+    case "nbme-mix":
+      break;
+    case "step-1":
+      conditions.push(eq(questions.step, "Step 1"));
+      break;
+  }
+  return and(...conditions);
 }
 
-// Counts ---------------------------------------------------------------------
+// Answer Question
 
-export type GroupedCountRow = {
-  system: string;
-  category: string;
-  subcategory: string;
-  count: number;
+type AnswerQuestionArgs = {
+  userId: string;
+  questionId: string;
+  sessionId: string;
+  answer: QuestionChoice;
+  answers: (QuestionChoice | null)[];
 };
 
-// Grouped counts by system/category/subcategory, excluding answered by this user
-export async function getCountsGrouped(
-  userId: string,
-  filters: QuestionFilters
-) {
-  const baseFilters: QuestionFilters = {
-    ...filters,
-    selected: undefined,
-  };
-
-  const rows = await db
-    .select({
-      system: questions.system,
-      category: questions.category,
-      subcategory: questions.subcategory,
-      value: sql<number>`count(*)`,
-    })
-    .from(questions)
-    .leftJoin(
-      answeredQuestions,
-      and(
-        eq(answeredQuestions.questionId, questions.id),
-        eq(answeredQuestions.userId, userId)
-      )
-    )
-    .where(and(eq(questions.rating, "Pass"), ...buildWhereClause(baseFilters)))
-    .groupBy(questions.system, questions.category, questions.subcategory);
-
-  return rows.map((r) => ({
-    system: r.system as string,
-    category: r.category as string,
-    subcategory: r.subcategory as string,
-    count: (r as unknown as { value: number }).value ?? 0,
-  })) satisfies GroupedCountRow[];
+export async function answerQuestion({
+  userId,
+  questionId,
+  sessionId,
+  answer,
+  answers,
+}: AnswerQuestionArgs) {
+  await Promise.all([
+    db.insert(answeredQuestions).values({
+      userId,
+      questionId,
+      answer,
+    }),
+    db
+      .update(qbankSessions)
+      .set({ answers })
+      .where(eq(qbankSessions.id, sessionId)),
+  ]);
 }
 
-// Count available questions (excludes already answered by this user)
-export async function countQuestions(userId: string, filters: QuestionFilters) {
-  const [{ value }] = await db
-    .select({ value: sql<number>`count(*)` })
-    .from(questions)
-    .leftJoin(
-      answeredQuestions,
-      and(
-        eq(answeredQuestions.questionId, questions.id),
-        eq(answeredQuestions.userId, userId)
-      )
-    )
-    .where(and(eq(questions.rating, "Pass"), ...buildWhereClause(filters)));
+// Flag Question
 
-  return value ?? 0;
+export async function updateFlaggedQuestions(
+  sessionId: string,
+  flaggedQuestionIds: string[]
+) {
+  await db
+    .update(qbankSessions)
+    .set({ flaggedQuestionIds: flaggedQuestionIds })
+    .where(eq(qbankSessions.id, sessionId));
+}
+
+// End Session
+
+export async function endSession(sessionId: string) {
+  await db
+    .update(qbankSessions)
+    .set({ inProgress: false })
+    .where(eq(qbankSessions.id, sessionId));
+}
+
+// Rest Questions
+
+export async function resetQuestions(userId: string) {
+  await db
+    .delete(answeredQuestions)
+    .where(eq(answeredQuestions.userId, userId));
 }

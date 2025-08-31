@@ -4,6 +4,7 @@ import { InferSelectModel } from "drizzle-orm";
 export type ReviewQuestion = InferSelectModel<typeof reviewQuestions>;
 
 export type Focus = "step-1" | "high-yield" | "nbme-mix";
+export type QBankMode = "timed" | "tutor";
 
 export type Task =
   | "auto-triage"

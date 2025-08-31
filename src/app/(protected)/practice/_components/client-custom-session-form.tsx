@@ -1,13 +1,12 @@
 "use client";
 
 import GradientTitle from "@/components/gradient-title";
-import { QBankMode } from "@/contexts/qbank-session-provider";
 import { MINS_PER_QUESTION } from "@/lib/constants";
 import { cn } from "@/lib/utils";
-import { Focus } from "@/types";
+import { Focus, QBankMode } from "@/types";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { createQbankSession } from "../actions-new";
+import { createQbankSession } from "../actions";
 import { useSession } from "@/contexts/session-provider";
 
 const DIGITS = "1234567890";

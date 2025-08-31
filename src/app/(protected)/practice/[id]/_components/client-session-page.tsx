@@ -1,10 +1,9 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { QBankMode } from "@/contexts/qbank-session-provider";
 import { MINS_PER_QUESTION } from "@/lib/constants";
 import { cn } from "@/lib/utils";
-import { QBankSession, Question, QuestionChoice } from "@/types";
+import { QBankMode, QBankSession, Question, QuestionChoice } from "@/types";
 import {
   Calculator,
   ChevronLeft,
@@ -18,7 +17,7 @@ import {
   answerQuestion,
   endSession,
   updateFlaggedQuestions,
-} from "../../actions-new";
+} from "../../actions";
 import { useSession } from "@/contexts/session-provider";
 import ChatCard from "./chat-card";
 
