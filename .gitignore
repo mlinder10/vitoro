@@ -48,3 +48,6 @@ questions.json
 dev.db
 tmp.sql
 src/app/api/dev/*
+
+# planning
+todo.txt

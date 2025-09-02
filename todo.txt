@@ -1,1 +1,5 @@
-- show popup if there is a session in progress
+- Foundational page
+- Review page
+- Create review questions
+- Empty history page
+- Protected home page layout redesign
