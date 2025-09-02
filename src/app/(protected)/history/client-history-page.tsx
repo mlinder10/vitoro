@@ -57,8 +57,8 @@ function EmptyHistoryView() {
         </div>
         <p className="font-semibold text-xl">No sessions found</p>
         <p className="max-w-sm text-muted-foreground text-sm">
-          You don’t have any previous or ongoing practice sessions. Start one
-          now to begin tracking your progress.
+          You don&apos;t have any previous or ongoing practice sessions. Start
+          one now to begin tracking your progress.
         </p>
         <Button asChild variant="accent" size="lg" className="mt-2">
           <Link href="/practice">Start a Session</Link>
