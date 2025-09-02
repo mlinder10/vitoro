@@ -1,5 +1,3 @@
-import { Resend } from "resend";
-
 import {
   Html,
   Head,
@@ -13,6 +11,7 @@ import {
   Link,
 } from "@react-email/components";
 import { ACCENT_COLOR, APP_URL } from "@/lib/constants";
+import resend from "./resend";
 
 export default async function RegisterAutoReply() {
   return (
@@ -72,8 +71,8 @@ export default async function RegisterAutoReply() {
 
           <Hr />
           <Text style={{ fontSize: "12px", color: "#888" }}>
-            If you didn’t sign up for Vitoro, you can ignore this message or
-            contact us at
+            If you didn&apos;t sign up for Vitoro, you can ignore this message
+            or contact us at
             <Link href="mailto:teamvitado@gmail.com">
               {"teamvitado@gmail.com"}
             </Link>
@@ -86,14 +85,13 @@ export default async function RegisterAutoReply() {
 }
 
 export async function sendRegisterEmail(email: string) {
-  const resend = new Resend(process.env.RESEND_API_KEY);
   try {
     await resend.emails.send({
       from: process.env.VITORO_EMAIL!,
       to: email,
-      subject: "Welcome to Vitoro — Let’s study ✍️",
+      subject: "Welcome to Vitoro — Let's study ✍️",
       react: <RegisterAutoReply />,
-      text: "Welcome to Vitoro — Let’s study ✍️",
+      text: "Welcome to Vitoro — Let's study ✍️",
     });
   } catch {
     return { error: "Failed to send email" };

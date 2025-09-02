@@ -11,7 +11,6 @@ import {
   FoundationalQuestionBase,
   FoundationalQuestionFollowup,
 } from "./_components/foundational-question-view";
-import { AnsweredFoundational } from "@/types";
 
 async function fetchFoundationalQuestion(userId: string, system: string) {
   const [question] = await db
@@ -73,7 +72,7 @@ export default async function FoundationalSystemPage({
 
   if (data === null) return notFound(); // TODO: replace with "completed all questions" page
 
-  const step = getQuestionStep(data.answer);
+  const step = data.answer?.answers.length ?? "base";
 
   if (step === "base")
     return <FoundationalQuestionBase question={data.question} />;
@@ -83,9 +82,4 @@ export default async function FoundationalSystemPage({
   }
 
   return <FoundationalQuestionFollowup question={data.followups[step]} />;
-}
-
-function getQuestionStep(answer: AnsweredFoundational | null) {
-  if (answer === null) return "base";
-  return answer.answers.length;
 }

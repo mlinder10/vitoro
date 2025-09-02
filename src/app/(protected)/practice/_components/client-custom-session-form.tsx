@@ -49,6 +49,7 @@ export default function ClientCustomSessionForm() {
       toast.error("Please enter a valid number of questions", {
         richColors: true,
       });
+      return;
     }
     const sessionId = await createQbankSession(id, mode, focus, numericSize);
     router.push(`/practice/${sessionId}`);
@@ -56,7 +57,7 @@ export default function ClientCustomSessionForm() {
   }
 
   return (
-    <div className="flex flex-col items-center gap-8 p-16 h-full">
+    <div className="flex flex-col items-center gap-8 p-8 h-full">
       <GradientTitle text="Custom Session" className="font-bold text-4xl" />
       <p className="text-muted-foreground">
         Tailored study sessions that adapt to your goals
