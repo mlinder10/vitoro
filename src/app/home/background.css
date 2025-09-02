@@ -1,6 +1,7 @@
 .bg-curves {
   position: fixed;
   inset: 0;
+  top: 80px; /* Header height */
   pointer-events: none;
   opacity: 0.6;
 }
