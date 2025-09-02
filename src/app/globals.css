@@ -159,6 +159,10 @@
   --red-light: #ff000022;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 button {
   cursor: pointer;
 }

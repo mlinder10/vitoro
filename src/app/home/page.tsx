@@ -4,9 +4,9 @@ import { Session, tryGetSession } from "@/lib/auth";
 import Link from "next/link";
 import HomeBackground from "./background";
 
-const HEADER_HEIGHT = 80;
-const INNER_WIDTH = 1000;
-const SECTION_HEIGHT = `calc(100vh - ${HEADER_HEIGHT}px)`;
+export const HEADER_HEIGHT = 80;
+export const INNER_WIDTH = 1000;
+export const SECTION_HEIGHT = `calc(100vh - ${HEADER_HEIGHT}px)`;
 
 export default async function HomePage() {
   const session = await tryGetSession();
@@ -19,7 +19,6 @@ export default async function HomePage() {
         className="bg-secondary overflow-y-scroll"
       >
         <HomeBackground />
-        {/* background image / svgs */}
         <Hero session={session} />
         <QuestionSection />
         <FeaturesSection />
@@ -29,7 +28,7 @@ export default async function HomePage() {
   );
 }
 
-function Header({ session }: { session: Session | null }) {
+export function Header({ session }: { session: Session | null }) {
   return (
     <header
       style={{ height: HEADER_HEIGHT }}
@@ -39,19 +38,18 @@ function Header({ session }: { session: Session | null }) {
         style={{ maxWidth: INNER_WIDTH }}
         className="grid grid-cols-3 w-full"
       >
-        <Link href="#">
+        <Link href="/home#hero">
           <h1 className="font-bold text-2xl">Vitoro</h1>
         </Link>
         <ul className="flex justify-self-center items-center gap-8 text-muted-foreground">
           <li>
-            <Link href="#features">Features</Link>
+            <Link href="/home#features">Features</Link>
           </li>
           <li>
-            <Link href="#features">About</Link>
+            <Link href="/home#features">About</Link>
           </li>
           <li>
-            {/* TODO: contact page */}
-            <Link href="#">Contact</Link>
+            <Link href="/home/contact">Contact</Link>
           </li>
         </ul>
         <Button asChild variant="accent" className="justify-self-end w-fit">
