@@ -1,16 +1,18 @@
-import { Home, NotebookText, Target } from "lucide-react";
+import { NotebookText, Target } from "lucide-react";
 import Link from "next/link";
 import { ComponentType } from "react";
-import PageTitle from "./_components/page-title";
 import { cn } from "@/lib/utils";
+import GradientTitle from "@/components/gradient-title";
 
 export default function HomePage() {
   return (
-    <div className="h-full">
-      <PageTitle text="Welcome to Vitoro!" icon={Home} />
-      <section>
-        <h2 className="ml-8 font-semibold">Study Materials</h2>
-        <div className="flex gap-4 py-4 pl-8 w-full overflow-x-auto snap-x">
+    <div className="flex flex-col gap-8 p-8 h-full">
+      <GradientTitle text="Vitoro" className="font-bold text-6xl" />
+      <section className="flex flex-col gap-4">
+        <h2 className="ml-8 font-semibold text-muted-foreground">
+          Study Materials
+        </h2>
+        <div className="flex gap-4">
           <RowItem
             icon={Target}
             title="Question Bank"
