@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { createQbankSession } from "../actions";
 import { useSession } from "@/contexts/session-provider";
+import { toast } from "sonner";
 
 const DIGITS = "1234567890";
 
@@ -44,7 +45,11 @@ export default function ClientCustomSessionForm() {
 
   async function handleStartSession() {
     const numericSize = parseInt(size);
-    if (isNaN(numericSize)) return;
+    if (isNaN(numericSize)) {
+      toast.error("Please enter a valid number of questions", {
+        richColors: true,
+      });
+    }
     const sessionId = await createQbankSession(id, mode, focus, numericSize);
     router.push(`/practice/${sessionId}`);
     // TODO: handle errors

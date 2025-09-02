@@ -1,0 +1,62 @@
+.bg-curves {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+.curve-line {
+  position: absolute;
+  stroke: none;
+  fill: none;
+  stroke-width: 2;
+  animation: curve-drift 20s ease-in-out infinite;
+}
+
+.curve-1 {
+  stroke: rgba(255, 255, 255, 0.1);
+  stroke-width: 1.5;
+  animation-delay: 0s;
+}
+
+.curve-2 {
+  stroke: rgba(160, 160, 160, 0.08);
+  stroke-width: 2;
+  animation-delay: -7s;
+}
+
+.curve-3 {
+  stroke: rgba(255, 255, 255, 0.05);
+  stroke-width: 1;
+  animation-delay: -14s;
+}
+
+.curve-4 {
+  stroke: rgba(217, 119, 6, 0.1);
+  stroke-width: 1.5;
+  animation-delay: -10s;
+}
+
+@keyframes curve-drift {
+  0%,
+  100% {
+    translate: 0 0;
+    scale: 1;
+    opacity: 0.6;
+  }
+  25% {
+    translate: 0 -20px;
+    scale: 1.05;
+    opacity: 0.4;
+  }
+  50% {
+    translate: 0 10px;
+    scale: 0.98;
+    opacity: 0.7;
+  }
+  75% {
+    translate: 0 -15px;
+    scale: 1.02;
+    opacity: 0.5;
+  }
+}

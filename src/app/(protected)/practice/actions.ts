@@ -1,6 +1,7 @@
 "use server";
 
 import { answeredQuestions, db, qbankSessions, questions } from "@/db";
+import { generateRandomName } from "@/lib/utils";
 import { Focus, QBankMode, QuestionChoice } from "@/types";
 import { isNull, eq, and } from "drizzle-orm";
 
@@ -38,6 +39,7 @@ export async function createQbankSession(
       questionIds,
       flaggedQuestionIds: [],
       answers,
+      name: generateRandomName(),
     })
     .returning({ id: qbankSessions.id });
 

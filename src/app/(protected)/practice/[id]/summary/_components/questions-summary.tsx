@@ -1,12 +1,12 @@
 import { QBankMode, QBankSession, Question, QuestionChoice } from "@/types";
 import { useEffect, useState } from "react";
 import { SUMMARY_BTN_HEIGHT } from "./client-summary-page";
-import { QuestionNavigator } from "../../_components/client-session-page";
 import { cn } from "@/lib/utils";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { updateFlaggedQuestions } from "../../../actions";
 import ChatCard from "../../_components/chat-card";
+import QuestionNavigator from "../../_components/question-navigator";
 
 type QuestionsSummaryWrapperProps = {
   session: QBankSession;

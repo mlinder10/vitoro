@@ -172,6 +172,7 @@ export const qbankSessions = sqliteTable("qbank_sessions", {
   userId: text("user_id")
     .references(() => users.id, { onDelete: "cascade" })
     .notNull(),
+  name: text("name").notNull(),
   mode: json<QBankMode>("mode").notNull(),
   questionIds: json<string[]>("question_ids").notNull(),
   answers: json<(QuestionChoice | null)[]>("answers").notNull(),

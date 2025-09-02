@@ -5,6 +5,7 @@ import { useSession } from "@/contexts/session-provider";
 import { cn } from "@/lib/utils";
 import {
   ChevronLeft,
+  History,
   Home,
   Layers,
   LogOut,
@@ -82,6 +83,12 @@ export default function SideNav() {
             href="/review"
             icon={NotebookText}
             label="Review"
+            isOpen={isOpen}
+          />
+          <ListLink
+            href="/history"
+            icon={History}
+            label="History"
             isOpen={isOpen}
           />
           {session.isAdmin && (

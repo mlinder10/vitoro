@@ -12,7 +12,6 @@ export default function ReviewPage() {
   );
 }
 
-// TODO: add information about question creator
 function QuestionSection() {
   const { question } = useAdminReview();
 

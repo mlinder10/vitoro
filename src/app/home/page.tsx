@@ -2,6 +2,7 @@ import GradientTitle from "@/components/gradient-title";
 import { Button } from "@/components/ui/button";
 import { Session, tryGetSession } from "@/lib/auth";
 import Link from "next/link";
+import HomeBackground from "./background";
 
 const HEADER_HEIGHT = 80;
 const INNER_WIDTH = 1000;
@@ -17,6 +18,7 @@ export default async function HomePage() {
         style={{ height: SECTION_HEIGHT }}
         className="bg-secondary overflow-y-scroll"
       >
+        <HomeBackground />
         {/* background image / svgs */}
         <Hero session={session} />
         <QuestionSection />
@@ -69,18 +71,18 @@ function Hero({ session }: { session: Session | null }) {
     >
       <div className="flex flex-col items-center gap-4">
         {/* Image */}
-        <p className="font-bold text-4xl">
+        <p className="z-1 font-bold text-4xl">
           The only <span className="text-custom-accent">AI</span> Board Prep{" "}
           <span className="text-custom-accent">Tutor</span>
         </p>
-        <p className="text-muted-foreground">
+        <p className="z-1 text-muted-foreground">
           THIS is how board prep should feel
         </p>
         <div className="flex gap-4">
-          <Button asChild variant="accent">
+          <Button asChild variant="accent" className="z-1">
             <Link href={session ? "/" : "/register"}>Start learning</Link>
           </Button>
-          <Button asChild variant="outline">
+          <Button asChild variant="outline" className="z-1">
             <Link href="#features">See how it works</Link>
           </Button>
         </div>
@@ -95,7 +97,7 @@ function QuestionSection() {
       style={{ height: SECTION_HEIGHT }}
       className="place-items-center grid"
     >
-      <GradientTitle text="HOW?" className="font-black text-9xl" />
+      <GradientTitle text="HOW?" className="z-1 font-black text-9xl" />
     </section>
   );
 }
@@ -115,7 +117,7 @@ function FeaturesSection() {
         className="gap-8 grid grid-cols-2 w-full"
       >
         <div
-          className="flex flex-col gap-4 bg-tertiary p-6 border rounded-md w-full"
+          className="z-1 flex flex-col gap-4 bg-tertiary p-6 border rounded-md w-full"
           style={{ height: CARD_HEIGHT }}
         >
           <span className="place-items-center grid bg-secondary p-2 rounded-md w-fit aspect-square">
@@ -131,7 +133,7 @@ function FeaturesSection() {
           </div>
         </div>
         <div
-          className="flex flex-col gap-4 bg-tertiary p-6 border rounded-md w-full"
+          className="z-1 flex flex-col gap-4 bg-tertiary p-6 border rounded-md w-full"
           style={{ height: CARD_HEIGHT }}
         >
           <span className="place-items-center grid bg-secondary p-2 rounded-md w-fit aspect-square">
@@ -152,7 +154,7 @@ function FeaturesSection() {
       </div>
       <div
         style={{ maxWidth: INNER_WIDTH * 0.6 }}
-        className="flex flex-col gap-8 bg-tertiary p-6 border rounded-md w-full"
+        className="z-1 flex flex-col gap-8 bg-tertiary p-6 border rounded-md w-full"
       >
         <p className="text-center">
           Vitoro&apos;s adaptive approach helped me identify my weak areas
@@ -169,7 +171,7 @@ function FeaturesSection() {
 
 function CallToActionSection({ session }: { session: Session | null }) {
   return (
-    <section className="place-items-center grid bg-background py-24 border-t">
+    <section className="z-1 relative place-items-center grid bg-background py-24 border-t">
       <div
         style={{ maxWidth: INNER_WIDTH * 0.4 }}
         className="flex flex-col items-center gap-8"

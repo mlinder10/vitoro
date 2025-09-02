@@ -73,7 +73,7 @@ export default function ChatCard({ question, choice }: ChatCardProps) {
   return (
     <section
       className={cn(
-        "relative flex flex-col flex-1 bg-tertiary border rounded-md h-full transition-all",
+        "relative flex flex-col flex-1 bg-tertiary border rounded-md h-full overflow-y-auto transition-all",
         isExpanded && "flex-3"
       )}
     >

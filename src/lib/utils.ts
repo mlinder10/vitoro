@@ -150,3 +150,12 @@ export function trimTo(text: string, length: number) {
   }
   return text;
 }
+
+export function generateRandomName() {
+  const adjectives = ["autumn", "hidden", "bitter", "misty", "silent"];
+  const nouns = ["waterfall", "river", "bridge", "lake", "mountain", "flower"];
+  const randomAdjective =
+    adjectives[Math.floor(Math.random() * adjectives.length)];
+  const randomNoun = nouns[Math.floor(Math.random() * nouns.length)];
+  return `${randomAdjective}_${randomNoun}`;
+}
