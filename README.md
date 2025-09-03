@@ -24,3 +24,14 @@ This project defaults to a local SQLite database for development.
    ```
 
 If `DATABASE_URL` is unset, the app and Drizzle config automatically fall back to `dev.db`.
+
+### Environment variables
+
+Authentication requires the following environment variables:
+
+```env
+JWT_SECRET="some random string"
+JWT_KEY="session"
+```
+
+If either variable is missing or empty, the app will throw an error on startup.
