@@ -35,12 +35,12 @@ export async function createQbankSession(
     .insert(qbankSessions)
     .values({
       userId,
+      name: generateRandomName(),
       mode,
       step: "Step 1",
       questionIds,
-      flaggedQuestionIds: [],
       answers,
-      name: generateRandomName(),
+      flaggedQuestionIds: [],
     })
     .returning({ id: qbankSessions.id });
 
