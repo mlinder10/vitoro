@@ -45,6 +45,5 @@ migrations/
 migrations-prod/
 migrations-dev/
 questions.json
-dev.db
 tmp.sql
 src/app/api/dev/*
