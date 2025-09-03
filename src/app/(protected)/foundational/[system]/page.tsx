@@ -126,7 +126,13 @@ export default async function FoundationalSystemPage({
   const answeredCount = getAnsweredCount(data.answer);
 
   if (answeredCount === "base")
-    return <FoundationalQuestionBase key={data.question.id} question={data.question} />;
+    return (
+      <FoundationalQuestionBase
+        key={data.question.id}
+        question={data.question}
+        total={data.followups.length + 1}
+      />
+    );
 
   if (answeredCount >= data.followups.length) {
     // TODO: handle completed follow up access
