@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -14,7 +14,14 @@ import {
   submitFollowupAnswer,
 } from "../actions";
 import QuestionChoiceView from "../../../practice/[id]/_components/question-choice";
-import { useRouter } from "next/navigation";
+import { useRouter as useAppRouter } from "next/navigation";
+import { useRouter as useLegacyRouter } from "next/router";
+
+function sendProgress(questionId: string, completed: number, total: number) {
+  if (typeof navigator === "undefined") return;
+  const payload = JSON.stringify({ questionId, completed, total });
+  navigator.sendBeacon("/api/foundational/progress", payload);
+}
 
 // Utility view ---------------------------------------------------------------
 
@@ -56,18 +63,51 @@ export function FoundationalQuestionView({
 
 type FoundationalQuestionBaseProps = {
   question: FoundationalQuestion;
+  total: number;
 };
 
 export function FoundationalQuestionBase({
   question,
+  total,
 }: FoundationalQuestionBaseProps) {
   const [response, setResponse] = useState("");
   const [showAnswer, setShowAnswer] = useState(false);
-  const router = useRouter();
+  const router = useAppRouter();
+  const legacyRouter = useLegacyRouter();
+  const completed = showAnswer ? 1 : 0;
+
+  useEffect(() => {
+    function handleBeforeUnload(e: BeforeUnloadEvent) {
+      if (completed < total) {
+        e.preventDefault();
+        e.returnValue = "";
+        sendProgress(question.id, completed, total);
+      }
+    }
+
+    const handleRouteChange = () => {
+      if (completed < total && !confirm("Are you sure you want to leave?")) {
+        throw "route change aborted";
+      }
+      if (completed > 0) sendProgress(question.id, completed, total);
+    };
+
+    legacyRouter.events.on("routeChangeStart", handleRouteChange);
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => {
+      legacyRouter.events.off("routeChangeStart", handleRouteChange);
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, [completed, question.id, total, legacyRouter]);
 
   async function handleSubmit() {
     await submitShortResponse(question.id, response);
     setShowAnswer(true);
+  }
+
+  function handleNext() {
+    sendProgress(question.id, completed, total);
+    router.refresh();
   }
 
   if (showAnswer)
@@ -78,7 +118,7 @@ export function FoundationalQuestionBase({
           <p className="font-semibold">Expected Answer</p>
           <p>{question.expectedAnswer}</p>
         </div>
-        <Button onClick={() => router.refresh()}>Next</Button>
+        <Button onClick={handleNext}>Next</Button>
       </div>
     );
 
@@ -114,7 +154,35 @@ export function FoundationalQuestionFollowup({
   const [selected, setSelected] = useState<QuestionChoice | null>(null);
   const [isChecked, setIsChecked] = useState(false);
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
+  const router = useAppRouter();
+  const legacyRouter = useLegacyRouter();
+
+  const completed = 1 + answers.length + (isChecked ? 1 : 0);
+  const totalWithBase = total + 1;
+
+  useEffect(() => {
+    function handleBeforeUnload(e: BeforeUnloadEvent) {
+      if (completed < totalWithBase) {
+        e.preventDefault();
+        e.returnValue = "";
+        sendProgress(questionId, completed, totalWithBase);
+      }
+    }
+
+    const handleRouteChange = () => {
+      if (completed < totalWithBase && !confirm("Are you sure you want to leave?")) {
+        throw "route change aborted";
+      }
+      if (completed > 0) sendProgress(questionId, completed, totalWithBase);
+    };
+
+    legacyRouter.events.on("routeChangeStart", handleRouteChange);
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => {
+      legacyRouter.events.off("routeChangeStart", handleRouteChange);
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, [completed, questionId, totalWithBase, legacyRouter]);
 
   async function handleSubmit() {
     if (!selected) return;
@@ -153,7 +221,14 @@ export function FoundationalQuestionFollowup({
         })}
       </ul>
       {isChecked ? (
-        <Button onClick={() => router.refresh()}>Next</Button>
+        <Button
+          onClick={() => {
+            sendProgress(questionId, completed, totalWithBase);
+            router.refresh();
+          }}
+        >
+          Next
+        </Button>
       ) : (
         <Button onClick={handleSubmit} disabled={selected === null || loading}>
           Submit
