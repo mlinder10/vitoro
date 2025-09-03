@@ -1,6 +1,5 @@
-import { useEffect } from "react";
-import { usePathname } from "next/navigation";
-import legacyRouter from "next/router";
+import { useCallback, useEffect } from "react";
+import { usePathname, useRouter } from "next/navigation";
 
 export function sendProgress(questionId: string, completed: number, total: number) {
   if (typeof navigator === "undefined") return;
@@ -14,12 +13,33 @@ export function useNavigationGuard(
   total: number
 ) {
   const pathname = usePathname();
+  const router = useRouter();
+
+  const confirmNavigation = useCallback(() => {
+    return completed < total ? confirm("Are you sure you want to leave?") : true;
+  }, [completed, total]);
+
+  function navigate(action: () => void) {
+    if (!confirmNavigation()) return;
+    if (completed > 0) {
+      sendProgress(questionId, completed, total);
+    }
+    action();
+  }
+
+  function push(url: string) {
+    navigate(() => router.push(url));
+  }
+
+  function replace(url: string) {
+    navigate(() => router.replace(url));
+  }
+
+  function refresh() {
+    navigate(() => router.refresh());
+  }
 
   useEffect(() => {
-    function confirmNavigation() {
-      return completed < total ? confirm("Are you sure you want to leave?") : true;
-    }
-
     function handleBeforeUnload(e: BeforeUnloadEvent) {
       if (completed < total) {
         e.preventDefault();
@@ -38,25 +58,15 @@ export function useNavigationGuard(
       }
     }
 
-    function handleRouteChangeStart() {
-      if (!confirmNavigation()) {
-        legacyRouter.events.emit("routeChangeError");
-        throw new Error("Route change aborted by user");
-      }
-      if (completed > 0) {
-        sendProgress(questionId, completed, total);
-      }
-    }
-
-    legacyRouter.events.on("routeChangeStart", handleRouteChangeStart);
     window.addEventListener("popstate", handlePopState);
     window.addEventListener("beforeunload", handleBeforeUnload);
 
     return () => {
-      legacyRouter.events.off("routeChangeStart", handleRouteChangeStart);
       window.removeEventListener("popstate", handlePopState);
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
-  }, [completed, questionId, pathname, total]);
+  }, [completed, questionId, pathname, total, confirmNavigation]);
+
+  return { push, replace, refresh };
 }
 
