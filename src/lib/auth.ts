@@ -5,12 +5,12 @@ import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { LOGIN_PATH } from "./constants";
 
-const JWT_SECRET = process.env.JWT_SECRET;
+const JWT_SECRET = process.env.JWT_SECRET?.trim();
 if (!JWT_SECRET) {
   throw new Error("JWT_SECRET must be set in the environment");
 }
 
-const JWT_KEY = process.env.JWT_KEY;
+const JWT_KEY = process.env.JWT_KEY?.trim();
 if (!JWT_KEY) {
   throw new Error("JWT_KEY must be set in the environment");
 }
