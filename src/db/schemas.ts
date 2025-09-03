@@ -175,6 +175,7 @@ export const qbankSessions = sqliteTable("qbank_sessions", {
     .notNull(),
   name: text("name").notNull(),
   mode: json<QBankMode>("mode").notNull(),
+  step: json<NBMEStep>("step").notNull(),
   questionIds: json<string[]>("question_ids").notNull(),
   answers: json<(QuestionChoice | null)[]>("answers").notNull(),
   flaggedQuestionIds: json<string[]>("flagged_questions").notNull(),

@@ -36,6 +36,7 @@ export async function createQbankSession(
     .values({
       userId,
       mode,
+      step: "Step 1",
       questionIds,
       flaggedQuestionIds: [],
       answers,
