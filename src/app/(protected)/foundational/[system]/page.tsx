@@ -5,7 +5,7 @@ import {
   foundationalQuestions,
 } from "@/db";
 import { getSession } from "@/lib/auth";
-import { eq, and, isNull, or } from "drizzle-orm";
+import { eq, and, isNull, or, sql } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import {
   FoundationalQuestionBase,
@@ -21,7 +21,8 @@ import {
 async function fetchFoundationalQuestion(
   userId: string,
   system: string,
-  step: NBMEStep
+  step: NBMEStep,
+  topic?: string
 ) {
   const [question] = await db
     .select()
@@ -30,6 +31,7 @@ async function fetchFoundationalQuestion(
       and(
         eq(foundationalQuestions.system, system),
         eq(foundationalQuestions.step, step),
+        topic ? eq(foundationalQuestions.topic, topic) : sql`1 = 1`,
         or(
           isNull(answeredFoundationals.id),
           eq(answeredFoundationals.isComplete, false)
@@ -69,7 +71,7 @@ async function fetchFoundationalQuestion(
 
 type FoundationalSystemPageProps = {
   params: Promise<{ system: string }>;
-  searchParams: Promise<{ step?: NBMEStep }>;
+  searchParams: Promise<{ step?: NBMEStep; topic?: string }>;
 };
 
 export default async function FoundationalSystemPage({
@@ -78,10 +80,16 @@ export default async function FoundationalSystemPage({
 }: FoundationalSystemPageProps) {
   const { id } = await getSession();
   const { system } = await params;
-  const { step: stepParam } = await searchParams;
+  const { step: stepParam, topic: topicParam } = await searchParams;
   const currentStep: NBMEStep = stepParam ?? "Step 1";
   const decodedSystem = decodeURIComponent(system);
-  const data = await fetchFoundationalQuestion(id, decodedSystem, currentStep);
+  const decodedTopic = topicParam ? decodeURIComponent(topicParam) : undefined;
+  const data = await fetchFoundationalQuestion(
+    id,
+    decodedSystem,
+    currentStep,
+    decodedTopic
+  );
 
   if (data === null) return notFound(); // TODO: replace with "completed all questions" page
 
