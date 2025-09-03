@@ -2,7 +2,7 @@
 
 import { answeredFoundationals, db } from "@/db";
 import { getSession } from "@/lib/auth";
-import { QuestionChoice } from "@/types";
+import { QuestionChoice, FoundationalFollowupAnswer } from "@/types";
 import { and, eq } from "drizzle-orm";
 
 export async function submitShortResponse(questionId: string, shortResponse: string) {
@@ -17,19 +17,21 @@ export async function submitShortResponse(questionId: string, shortResponse: str
 
 type SubmitFollowupAnswerArgs = {
   questionId: string;
-  answers: QuestionChoice[];
+  followupId: string;
+  answers: FoundationalFollowupAnswer[];
   answer: QuestionChoice;
   total: number;
 };
 
 export async function submitFollowupAnswer({
   questionId,
+  followupId,
   answers,
   answer,
   total,
 }: SubmitFollowupAnswerArgs) {
   const { id } = await getSession();
-  const newAnswers = [...answers, answer];
+  const newAnswers = [...answers, { id: followupId, answer }];
   await db
     .update(answeredFoundationals)
     .set({

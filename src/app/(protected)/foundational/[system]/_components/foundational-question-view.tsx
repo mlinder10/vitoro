@@ -7,6 +7,7 @@ import {
   FoundationalFollowup,
   FoundationalQuestion,
   QuestionChoice,
+  FoundationalFollowupAnswer,
 } from "@/types";
 import {
   submitShortResponse,
@@ -64,7 +65,7 @@ export function FoundationalQuestionBase({
 type FoundationalQuestionFollowupProps = {
   question: FoundationalFollowup;
   questionId: string;
-  answers: QuestionChoice[];
+  answers: FoundationalFollowupAnswer[];
   total: number;
 };
 
@@ -84,6 +85,7 @@ export function FoundationalQuestionFollowup({
     setLoading(true);
     await submitFollowupAnswer({
       questionId,
+      followupId: question.id,
       answers,
       answer: selected,
       total,

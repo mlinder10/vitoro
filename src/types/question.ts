@@ -20,6 +20,10 @@ export type AnsweredFoundational = InferSelectModel<
 >;
 
 export type QuestionChoice = "a" | "b" | "c" | "d" | "e";
+export type FoundationalFollowupAnswer = {
+  id: string;
+  answer: QuestionChoice;
+};
 export type NBMEStep = (typeof NBME_STEPS)[number];
 export type QuestionType = (typeof QUESTION_TYPES)[number];
 export type QuestionDifficulty = (typeof QUESTION_DIFFICULTIES)[number];

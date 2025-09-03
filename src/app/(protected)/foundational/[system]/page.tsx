@@ -11,7 +11,12 @@ import {
   FoundationalQuestionBase,
   FoundationalQuestionFollowup,
 } from "./_components/foundational-question-view";
-import { AnsweredFoundational, NBMEStep } from "@/types";
+
+import {
+  AnsweredFoundational,
+  NBMEStep,
+  FoundationalFollowup,
+} from "@/types";
 
 async function fetchFoundationalQuestion(
   userId: string,
@@ -80,18 +85,28 @@ export default async function FoundationalSystemPage({
 
   if (data === null) return notFound(); // TODO: replace with "completed all questions" page
 
-  const questionStep = getQuestionStep(data.answer);
+  const answeredCount = getAnsweredCount(data.answer);
 
-  if (questionStep === "base")
+  if (answeredCount === "base")
     return <FoundationalQuestionBase question={data.question} />;
 
-  if (questionStep >= data.followups.length) {
+  if (answeredCount >= data.followups.length) {
     // TODO: handle completed follow up access
   }
 
+  const answeredIds = new Set(
+    data.answer!.answers.map((a) => a.id)
+  );
+  const remaining = data.followups.filter(
+    (f) => !answeredIds.has(f.id)
+  );
+  const next = remaining[
+    Math.floor(Math.random() * remaining.length)
+  ] as FoundationalFollowup;
+
   return (
     <FoundationalQuestionFollowup
-      question={data.followups[questionStep]}
+      question={next}
       questionId={data.question.id}
       answers={data.answer!.answers}
       total={data.followups.length}
@@ -99,7 +114,7 @@ export default async function FoundationalSystemPage({
   );
 }
 
-function getQuestionStep(answer: AnsweredFoundational | null) {
+function getAnsweredCount(answer: AnsweredFoundational | null) {
   if (answer === null) return "base";
   return answer.answers.length;
 }

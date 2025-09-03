@@ -3,6 +3,7 @@ import {
   AnySubcategory,
   AuditRating,
   Choices,
+  FoundationalFollowupAnswer,
   NBMEStep,
   QBankMode,
   QuestionChoice,
@@ -235,7 +236,7 @@ export const answeredFoundationals = sqliteTable(
       .notNull(),
     createdAt: date("created_at").default(SQL_NOW).notNull(),
     shortResponse: text("short_response").notNull(),
-    answers: json<QuestionChoice[]>("answers").notNull(),
+    answers: json<FoundationalFollowupAnswer[]>("answers").notNull(),
     isComplete: json<boolean>("is_complete").default(false).notNull(),
   },
   (table) => [
