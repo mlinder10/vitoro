@@ -14,8 +14,7 @@ import {
   submitFollowupAnswer,
 } from "../actions";
 import QuestionChoiceView from "../../../practice/[id]/_components/question-choice";
-import { useRouter as useAppRouter } from "next/navigation";
-import { useNavigationGuard, sendProgress } from "@/hooks/use-navigation-guard";
+import { useNavigationGuard } from "@/hooks/use-navigation-guard";
 
 // Utility view ---------------------------------------------------------------
 
@@ -66,9 +65,8 @@ export function FoundationalQuestionBase({
 }: FoundationalQuestionBaseProps) {
   const [response, setResponse] = useState("");
   const [showAnswer, setShowAnswer] = useState(false);
-  const router = useAppRouter();
   const completed = showAnswer ? 1 : 0;
-  useNavigationGuard(question.id, completed, total);
+  const { refresh } = useNavigationGuard(question.id, completed, total);
 
   async function handleSubmit() {
     await submitShortResponse(question.id, response);
@@ -76,8 +74,7 @@ export function FoundationalQuestionBase({
   }
 
   function handleNext() {
-    sendProgress(question.id, completed, total);
-    router.refresh();
+    refresh();
   }
 
   if (showAnswer)
@@ -124,11 +121,10 @@ export function FoundationalQuestionFollowup({
   const [selected, setSelected] = useState<QuestionChoice | null>(null);
   const [isChecked, setIsChecked] = useState(false);
   const [loading, setLoading] = useState(false);
-  const router = useAppRouter();
 
   const completed = 1 + answers.length + (isChecked ? 1 : 0);
   const totalWithBase = total + 1;
-  useNavigationGuard(questionId, completed, totalWithBase);
+  const { refresh } = useNavigationGuard(questionId, completed, totalWithBase);
 
   async function handleSubmit() {
     if (!selected) return;
@@ -167,12 +163,7 @@ export function FoundationalQuestionFollowup({
         })}
       </ul>
       {isChecked ? (
-        <Button
-          onClick={() => {
-            sendProgress(questionId, completed, totalWithBase);
-            router.refresh();
-          }}
-        >
+        <Button onClick={() => refresh()}>
           Next
         </Button>
       ) : (
