@@ -14,7 +14,11 @@ async function fetchSession(id: string) {
     .select()
     .from(nbmeQuestions)
     .where(inArray(nbmeQuestions.id, session.questionIds));
-  return { session, questions: qs as unknown as Question[] };
+  const questions: Question[] = qs.map((q) => ({
+    ...q,
+    system: q.systems[0] ?? "",
+  })) as unknown as Question[];
+  return { session, questions };
 }
 
 type SessionPageProps = {
