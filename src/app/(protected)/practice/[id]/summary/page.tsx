@@ -1,4 +1,5 @@
-import { db, qbankSessions, questions } from "@/db";
+import { db, qbankSessions, nbmeQuestions } from "@/db";
+import type { Question } from "@/types";
 import { eq, and, inArray } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import ClientSummaryPage from "./_components/client-summary-page";
@@ -11,9 +12,9 @@ async function fetchSession(id: string) {
   if (!session) return notFound();
   const qs = await db
     .select()
-    .from(questions)
-    .where(inArray(questions.id, session.questionIds));
-  return { session, questions: qs };
+    .from(nbmeQuestions)
+    .where(inArray(nbmeQuestions.id, session.questionIds));
+  return { session, questions: qs as unknown as Question[] };
 }
 
 type SessionPageProps = {
