@@ -47,8 +47,12 @@ export const STEP2_SYSTEMS: Record<string, string[]> = Object.fromEntries(
 );
 export const STEP2_COUNTS = shelfCounts;
 export const STEP2_SYSTEM_COUNTS: Record<string, Record<string, number>> = systemCounts;
-export const STEP2_SYSTEM_TO_SHELF: Record<string, string> = Object.fromEntries(
-  Object.entries(systemCounts).flatMap(([shelf, systems]) =>
-    Object.keys(systems).map((system) => [system, shelf])
-  )
-);
+const systemToShelves: Record<string, string[]> = {};
+Object.entries(systemCounts).forEach(([shelf, systems]) => {
+  Object.keys(systems).forEach((system) => {
+    if (!systemToShelves[system]) systemToShelves[system] = [];
+    systemToShelves[system].push(shelf);
+  });
+});
+
+export const STEP2_SYSTEM_TO_SHELVES: Record<string, string[]> = systemToShelves;

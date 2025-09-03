@@ -4,7 +4,7 @@ import { ArrowRight } from "lucide-react";
 import { getSession } from "@/lib/auth";
 import { answeredFoundationals, db, foundationalQuestions } from "@/db";
 import { and, eq } from "drizzle-orm";
-import { STEP2_SYSTEM_TO_SHELF } from "@/lib/foundational-data";
+import { STEP2_SYSTEM_TO_SHELVES } from "@/lib/foundational-data";
 
 export default async function FoundationalPage() {
   const { id } = await getSession();
@@ -36,9 +36,9 @@ export default async function FoundationalPage() {
             let href = `/foundational/${encodeURIComponent(item.system)}?step=${encodeURIComponent(String(item.step))}`;
             if (item.topic)
               href += `&topic=${encodeURIComponent(item.topic)}`;
-            const shelf = STEP2_SYSTEM_TO_SHELF[item.system];
-            if (shelf)
-              href += `&shelf=${encodeURIComponent(shelf)}`;
+            const shelves = STEP2_SYSTEM_TO_SHELVES[item.system];
+            if (shelves?.length === 1)
+              href += `&shelf=${encodeURIComponent(shelves[0])}`;
             return (
               <div
                 key={item.questionId}
