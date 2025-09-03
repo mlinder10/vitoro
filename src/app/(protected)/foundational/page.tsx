@@ -2,7 +2,7 @@ import { answeredFoundationals, db, foundationalQuestions } from "@/db";
 import PageTitle from "../_components/page-title";
 import { getSession } from "@/lib/auth";
 import { sql, eq, and } from "drizzle-orm";
-import { SYSTEMS } from "@/types";
+import { SYSTEMS, NBME_STEPS, NBMEStep } from "@/types";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 
@@ -12,13 +12,14 @@ type SystemData = {
   unanswered: number;
 };
 
-async function fetchSystems(userId: string): Promise<SystemData[]> {
+async function fetchSystems(userId: string, step: NBMEStep): Promise<SystemData[]> {
   const totals = await db
     .select({
       system: foundationalQuestions.system,
       total: sql<number>`COUNT(*)`.as("total"),
     })
     .from(foundationalQuestions)
+    .where(eq(foundationalQuestions.step, step))
     .groupBy(foundationalQuestions.system);
 
   const answered = await db
@@ -37,7 +38,8 @@ async function fetchSystems(userId: string): Promise<SystemData[]> {
     .where(
       and(
         eq(answeredFoundationals.userId, userId),
-        eq(answeredFoundationals.isComplete, true)
+        eq(answeredFoundationals.isComplete, true),
+        eq(foundationalQuestions.step, step)
       )
     )
     .groupBy(foundationalQuestions.system);
@@ -57,13 +59,34 @@ async function fetchSystems(userId: string): Promise<SystemData[]> {
   });
 }
 
-export default async function FoundationalQuestionsPage() {
+type FoundationalQuestionsPageProps = {
+  searchParams: Promise<{ step?: NBMEStep }>;
+};
+
+export default async function FoundationalQuestionsPage({
+  searchParams,
+}: FoundationalQuestionsPageProps) {
+  const { step: stepParam } = await searchParams;
+  const step: NBMEStep = stepParam ?? "Step 1";
   const { id } = await getSession();
-  const systems = await fetchSystems(id);
+  const systems = await fetchSystems(id, step);
 
   return (
     <div className="h-full overflow-y-auto">
       <PageTitle text="Foundational Questions" />
+      <div className="flex gap-2 p-4">
+        {NBME_STEPS.filter((s) => s !== "Mixed").map((s) => (
+          <Link
+            key={s}
+            href={`?step=${encodeURIComponent(s)}`}
+            className={`px-3 py-1 border rounded-md ${
+              step === s ? "bg-tertiary" : ""
+            }`}
+          >
+            {s}
+          </Link>
+        ))}
+      </div>
       <div className="space-y-4 p-4">
         {SYSTEMS.map((s) => {
           const data = systems.find((sys) => sys.system === s.name);
@@ -81,7 +104,7 @@ export default async function FoundationalQuestionsPage() {
               </div>
               <ArrowRight size={16} className="text-muted-foreground" />
               <Link
-                href={`/foundational/${s.name}`}
+                href={`/foundational/${s.name}?step=${encodeURIComponent(step)}`}
                 className="absolute inset-0 opacity-0"
               >
                 {s.name}
