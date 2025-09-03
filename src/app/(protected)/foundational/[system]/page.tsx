@@ -160,6 +160,6 @@ export default async function FoundationalSystemPage({
 }
 
 function getAnsweredCount(answer: AnsweredFoundational | null) {
-  if (answer === null) return "base";
+  if (!answer || answer.shortResponse.trim() === "") return "base";
   return answer.answers.length;
 }
