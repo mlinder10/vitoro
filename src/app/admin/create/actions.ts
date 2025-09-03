@@ -136,6 +136,7 @@ async function handleGenerateQuestion(
         type,
         rating: "Flag for Human Review",
         labValues: [],
+        step: "Step 2",
       })
       .returning({ id: stepTwoNbmeQuestions.id });
     if (!savedQuestion)

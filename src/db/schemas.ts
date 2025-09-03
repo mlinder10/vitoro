@@ -171,7 +171,7 @@ export const stepOneNbmeQuestions = sqliteTable("step_one_nbme_questions", {
     .default(JSON.stringify("Medium") as YieldType)
     .notNull(),
   rating: json<AuditRating>("rating").notNull(),
-  step: json<"Step 1">("step").notNull().default("Step 1"),
+  step: json<"Step 1">("step").notNull(),
 });
 
 export const stepTwoNbmeQuestions = sqliteTable("step_two_nbme_questions", {
@@ -196,7 +196,7 @@ export const stepTwoNbmeQuestions = sqliteTable("step_two_nbme_questions", {
     .default(JSON.stringify("Medium") as YieldType)
     .notNull(),
   rating: json<AuditRating>("rating").notNull(),
-  step: json<"Step 2">("step").notNull().default("Step 2"),
+  step: json<"Step 2">("step").notNull(),
 });
 
 export const answeredQuestions = sqliteTable(
