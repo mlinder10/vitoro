@@ -45,7 +45,12 @@ function jsonType<T>() {
       return `TEXT`;
     },
     fromDriver(value: Buffer) {
-      return JSON.parse(value.toString("utf-8"));
+      const text = value.toString("utf-8");
+      try {
+        return JSON.parse(text);
+      } catch {
+        return text as unknown as T;
+      }
     },
     toDriver(value: T) {
       return sql`${JSON.stringify(value)}`;
