@@ -90,12 +90,15 @@ export default async function FoundationalQuestionsPage({
             key={item}
             className="relative flex justify-between items-center px-6 py-4 hover:pr-2 border rounded-md transition-all"
           >
-            <p>
-              {item}
-              <span className="ml-2 text-sm text-muted-foreground">
-                ({count.answered}/{count.total})
-              </span>
-            </p>
+            <div>
+              <p>{item}</p>
+              <p className="text-sm text-muted-foreground">
+                Number available: {count.total - count.answered}/{count.total}
+              </p>
+              <p className="text-sm text-muted-foreground">
+                Number answered: {count.answered}/{count.total}
+              </p>
+            </div>
             <ArrowRight size={16} className="text-muted-foreground" />
             <Link href={hrefBuilder(item)} className="absolute inset-0 opacity-0">
               {item}
