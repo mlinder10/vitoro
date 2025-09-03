@@ -52,6 +52,11 @@ async function fetchFoundationalQuestion(
         eq(answeredFoundationals.userId, userId)
       )
     )
+    .orderBy(
+      sql`CASE WHEN ${answeredFoundationals.id} IS NULL THEN 1 ELSE 0 END`,
+      sql`CASE WHEN ${answeredFoundationals.shortResponse} IS NULL OR ${answeredFoundationals.shortResponse} = '' THEN 0 ELSE 1 END`,
+      sql`${answeredFoundationals.createdAt}`
+    )
     .limit(1);
 
   console.log("fetchFoundationalQuestion", {
@@ -160,6 +165,6 @@ export default async function FoundationalSystemPage({
 }
 
 function getAnsweredCount(answer: AnsweredFoundational | null) {
-  if (answer === null) return "base";
+  if (!answer || answer.shortResponse.trim() === "") return "base";
   return answer.answers.length;
 }
