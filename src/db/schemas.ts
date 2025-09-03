@@ -226,7 +226,7 @@ export const qbankSessions = sqliteTable("qbank_sessions", {
   createdAt: date("created_at").default(SQL_NOW).notNull(),
   name: text("name").notNull(),
   mode: json<QBankMode>("mode").notNull(),
-  step: json<NBMEStep>("step").notNull().default("Step 2"),
+  step: json<NBMEStep>("step").notNull(),
   questionIds: json<string[]>("question_ids").notNull(),
   answers: json<(QuestionChoice | null)[]>("answers").notNull(),
   flaggedQuestionIds: json<string[]>("flagged_questions").notNull(),
