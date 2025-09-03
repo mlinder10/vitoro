@@ -244,3 +244,24 @@ export const answeredFoundationals = sqliteTable(
     index("foundational_answer_question_idx").on(table.foundationalQuestionId),
   ]
 );
+
+// NBME Questions --------------------------------------------------------------
+
+export const nbmeQuestions = sqliteTable("step_one_nbme_questions", {
+  id: text("id").primaryKey().default(SQL_UUID).notNull(),
+  createdAt: date("created_at").default(SQL_NOW).notNull(),
+  systems: json<System[]>("systems").notNull(),
+  categories: json<AnyCategory[]>("categories").notNull(),
+  topic: text("topic").notNull(),
+  competency: text("competency").notNull(),
+  concept: text("concept").notNull(),
+  question: text("question").notNull(),
+  answer: json<QuestionChoice>("answer").notNull(),
+  choices: json<Choices>("choices").notNull(),
+  explanations: json<Choices>("explanations").notNull(),
+  labValues: json<unknown>("lab_values").notNull(),
+  difficulty: json<QuestionDifficulty>("difficulty").notNull(),
+  yield: json<YieldType>("yield").notNull(),
+  rating: json<AuditRating>("rating").notNull(),
+  step: json<NBMEStep>("step").notNull(),
+});

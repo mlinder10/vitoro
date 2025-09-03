@@ -1,6 +1,6 @@
 "use server";
 
-import { answeredQuestions, db, qbankSessions, questions } from "@/db";
+import { answeredQuestions, db, qbankSessions, nbmeQuestions } from "@/db";
 import { generateRandomName } from "@/lib/utils";
 import { Focus, QBankMode, QuestionChoice } from "@/types";
 import { isNull, eq, and } from "drizzle-orm";
@@ -14,12 +14,12 @@ export async function createQbankSession(
   count: number
 ) {
   const qs = await db
-    .select({ id: questions.id })
-    .from(questions)
+    .select({ id: nbmeQuestions.id })
+    .from(nbmeQuestions)
     .leftJoin(
       answeredQuestions,
       and(
-        eq(answeredQuestions.questionId, questions.id),
+        eq(answeredQuestions.questionId, nbmeQuestions.id),
         eq(answeredQuestions.userId, userId)
       )
     )
@@ -48,18 +48,18 @@ export async function createQbankSession(
 
 function buildWhereClause(focus: Focus | undefined) {
   const conditions = [];
-  conditions.push(eq(questions.rating, "Pass"));
+  conditions.push(eq(nbmeQuestions.rating, "Pass"));
   conditions.push(isNull(answeredQuestions.userId));
   switch (focus) {
     case undefined:
       break;
     case "high-yield":
-      conditions.push(eq(questions.yield, "High"));
+      conditions.push(eq(nbmeQuestions.yield, "High"));
       break;
     case "nbme-mix":
       break;
     case "step-1":
-      conditions.push(eq(questions.step, "Step 1"));
+      conditions.push(eq(nbmeQuestions.step, "Step 1"));
       break;
   }
   return and(...conditions);
