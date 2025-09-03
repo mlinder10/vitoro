@@ -11,15 +11,20 @@ import {
   FoundationalQuestionBase,
   FoundationalQuestionFollowup,
 } from "./_components/foundational-question-view";
-import { AnsweredFoundational } from "@/types";
+import { AnsweredFoundational, NBMEStep } from "@/types";
 
-async function fetchFoundationalQuestion(userId: string, system: string) {
+async function fetchFoundationalQuestion(
+  userId: string,
+  system: string,
+  step: NBMEStep
+) {
   const [question] = await db
     .select()
     .from(foundationalQuestions)
     .where(
       and(
         eq(foundationalQuestions.system, system),
+        eq(foundationalQuestions.step, step),
         or(
           isNull(answeredFoundationals.id),
           eq(answeredFoundationals.isComplete, false)
@@ -58,31 +63,40 @@ async function fetchFoundationalQuestion(userId: string, system: string) {
 }
 
 type FoundationalSystemPageProps = {
-  params: Promise<{
-    system: string;
-  }>;
+  params: Promise<{ system: string }>;
+  searchParams: Promise<{ step?: NBMEStep }>;
 };
 
 export default async function FoundationalSystemPage({
   params,
+  searchParams,
 }: FoundationalSystemPageProps) {
   const { id } = await getSession();
   const { system } = await params;
+  const { step: stepParam } = await searchParams;
+  const currentStep: NBMEStep = stepParam ?? "Step 1";
   const decodedSystem = decodeURIComponent(system);
-  const data = await fetchFoundationalQuestion(id, decodedSystem);
+  const data = await fetchFoundationalQuestion(id, decodedSystem, currentStep);
 
   if (data === null) return notFound(); // TODO: replace with "completed all questions" page
 
-  const step = getQuestionStep(data.answer);
+  const questionStep = getQuestionStep(data.answer);
 
-  if (step === "base")
+  if (questionStep === "base")
     return <FoundationalQuestionBase question={data.question} />;
 
-  if (step >= data.followups.length) {
+  if (questionStep >= data.followups.length) {
     // TODO: handle completed follow up access
   }
 
-  return <FoundationalQuestionFollowup question={data.followups[step]} />;
+  return (
+    <FoundationalQuestionFollowup
+      question={data.followups[questionStep]}
+      questionId={data.question.id}
+      answers={data.answer!.answers}
+      total={data.followups.length}
+    />
+  );
 }
 
 function getQuestionStep(answer: AnsweredFoundational | null) {
