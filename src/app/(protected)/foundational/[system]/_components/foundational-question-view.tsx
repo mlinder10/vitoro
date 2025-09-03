@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -15,13 +15,7 @@ import {
 } from "../actions";
 import QuestionChoiceView from "../../../practice/[id]/_components/question-choice";
 import { useRouter as useAppRouter } from "next/navigation";
-import { useRouter as useLegacyRouter } from "next/router";
-
-function sendProgress(questionId: string, completed: number, total: number) {
-  if (typeof navigator === "undefined") return;
-  const payload = JSON.stringify({ questionId, completed, total });
-  navigator.sendBeacon("/api/foundational/progress", payload);
-}
+import { useNavigationGuard, sendProgress } from "@/hooks/use-navigation-guard";
 
 // Utility view ---------------------------------------------------------------
 
@@ -73,32 +67,8 @@ export function FoundationalQuestionBase({
   const [response, setResponse] = useState("");
   const [showAnswer, setShowAnswer] = useState(false);
   const router = useAppRouter();
-  const legacyRouter = useLegacyRouter();
   const completed = showAnswer ? 1 : 0;
-
-  useEffect(() => {
-    function handleBeforeUnload(e: BeforeUnloadEvent) {
-      if (completed < total) {
-        e.preventDefault();
-        e.returnValue = "";
-        sendProgress(question.id, completed, total);
-      }
-    }
-
-    const handleRouteChange = () => {
-      if (completed < total && !confirm("Are you sure you want to leave?")) {
-        throw "route change aborted";
-      }
-      if (completed > 0) sendProgress(question.id, completed, total);
-    };
-
-    legacyRouter.events.on("routeChangeStart", handleRouteChange);
-    window.addEventListener("beforeunload", handleBeforeUnload);
-    return () => {
-      legacyRouter.events.off("routeChangeStart", handleRouteChange);
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-    };
-  }, [completed, question.id, total, legacyRouter]);
+  useNavigationGuard(question.id, completed, total);
 
   async function handleSubmit() {
     await submitShortResponse(question.id, response);
@@ -155,34 +125,10 @@ export function FoundationalQuestionFollowup({
   const [isChecked, setIsChecked] = useState(false);
   const [loading, setLoading] = useState(false);
   const router = useAppRouter();
-  const legacyRouter = useLegacyRouter();
 
   const completed = 1 + answers.length + (isChecked ? 1 : 0);
   const totalWithBase = total + 1;
-
-  useEffect(() => {
-    function handleBeforeUnload(e: BeforeUnloadEvent) {
-      if (completed < totalWithBase) {
-        e.preventDefault();
-        e.returnValue = "";
-        sendProgress(questionId, completed, totalWithBase);
-      }
-    }
-
-    const handleRouteChange = () => {
-      if (completed < totalWithBase && !confirm("Are you sure you want to leave?")) {
-        throw "route change aborted";
-      }
-      if (completed > 0) sendProgress(questionId, completed, totalWithBase);
-    };
-
-    legacyRouter.events.on("routeChangeStart", handleRouteChange);
-    window.addEventListener("beforeunload", handleBeforeUnload);
-    return () => {
-      legacyRouter.events.off("routeChangeStart", handleRouteChange);
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-    };
-  }, [completed, questionId, totalWithBase, legacyRouter]);
+  useNavigationGuard(questionId, completed, totalWithBase);
 
   async function handleSubmit() {
     if (!selected) return;
