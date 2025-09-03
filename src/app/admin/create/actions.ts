@@ -1,13 +1,13 @@
 "use server";
 
-import { db, questions } from "@/db";
+import { db, stepTwoNbmeQuestions } from "@/db";
 import { Gemini, LLM, stripAndParse } from "@/ai";
 import {
   AnyCategory,
   AnySubcategory,
   GeneratedQuestion,
   isValidGeneratedQuestion,
-  Question,
+  StepTwoNBMEQuestion,
   QUESTION_TYPES,
   QuestionType,
   System,
@@ -22,15 +22,13 @@ const DEFAULT_QUESTION = (
   category: AnyCategory,
   subcategory: AnySubcategory,
   topic: string,
-  type: QuestionType,
-  userId: string
-): Question => ({
+  type: QuestionType
+): StepTwoNBMEQuestion => ({
   system,
   category,
   subcategory,
   topic,
   type,
-  creatorId: userId,
   createdAt: new Date(),
   id: crypto.randomUUID(),
   question: "",
@@ -38,9 +36,10 @@ const DEFAULT_QUESTION = (
   answer: getRandomChoice(),
   explanations: { a: "", b: "", c: "", d: "", e: "" },
   difficulty: "Easy",
-  step: "Mixed",
   yield: "Medium",
   rating: "Flag for Human Review",
+  labValues: [],
+  step: "Step 2",
 });
 
 const CHOICES = ["a", "b", "c", "d", "e"] as const;
@@ -69,7 +68,6 @@ type CreateQuestionResult = {
 };
 
 export async function handleCreateQuestion(
-  userId: string,
   _: unknown,
   formData: FormData
 ): Promise<CreateQuestionResult> {
@@ -83,7 +81,6 @@ export async function handleCreateQuestion(
 
   if (action === "create") {
     const res = await handleCreateBlankQuestion(
-      userId,
       system as System,
       category as AnyCategory,
       subcategory as AnySubcategory,
@@ -94,7 +91,6 @@ export async function handleCreateQuestion(
     redirect(`/admin/review/${res.id}`);
   } else if (action === "generate") {
     const res = await handleGenerateQuestion(
-      userId,
       system as System,
       category as AnyCategory,
       subcategory as AnySubcategory,
@@ -110,7 +106,6 @@ export async function handleCreateQuestion(
 // Generate -------------------------------------------------------------------
 
 async function handleGenerateQuestion(
-  userId: string,
   system: System,
   category: AnyCategory,
   subcategory: AnySubcategory,
@@ -131,7 +126,7 @@ async function handleGenerateQuestion(
       return { id: undefined, error: "Failed to generate question" };
 
     const [savedQuestion] = await db
-      .insert(questions)
+      .insert(stepTwoNbmeQuestions)
       .values({
         ...question,
         topic,
@@ -139,11 +134,10 @@ async function handleGenerateQuestion(
         category,
         subcategory,
         type,
-        step: "Step 2",
-        creatorId: userId,
         rating: "Flag for Human Review",
+        labValues: [],
       })
-      .returning({ id: questions.id });
+      .returning({ id: stepTwoNbmeQuestions.id });
     if (!savedQuestion)
       return { id: undefined, error: "Failed to save question" };
 
@@ -275,7 +269,6 @@ async function generateQuestion(
 // Blank ----------------------------------------------------------------------
 
 async function handleCreateBlankQuestion(
-  userId: string,
   system: System,
   category: AnyCategory,
   subcategory: AnySubcategory,
@@ -288,13 +281,12 @@ async function handleCreateBlankQuestion(
       category,
       subcategory,
       topic,
-      type,
-      userId
+      type
     );
     const [savedQuestion] = await db
-      .insert(questions)
+      .insert(stepTwoNbmeQuestions)
       .values(question)
-      .returning({ id: questions.id });
+      .returning({ id: stepTwoNbmeQuestions.id });
     if (!savedQuestion)
       return { id: undefined, error: "Failed to save question" };
 

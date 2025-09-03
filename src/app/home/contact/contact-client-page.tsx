@@ -7,7 +7,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Session } from "@/lib/auth";
 import useContact from "./use-contact";
-import { Header, INNER_WIDTH, SECTION_HEIGHT } from "../page";
+import { Header } from "../header";
+import { INNER_WIDTH, SECTION_HEIGHT } from "../constants";
 
 type ContactClientPageProps = {
   session: Session | null;

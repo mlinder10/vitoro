@@ -1,8 +1,14 @@
 "use server";
 
-import { answeredQuestions, db, qbankSessions, questions } from "@/db";
+import {
+  answeredQuestions,
+  db,
+  qbankSessions,
+  stepOneNbmeQuestions,
+  stepTwoNbmeQuestions,
+} from "@/db";
 import { generateRandomName } from "@/lib/utils";
-import { Focus, QBankMode, QuestionChoice } from "@/types";
+import { Focus, NBMEStep, QBankMode, QuestionChoice } from "@/types";
 import { isNull, eq, and } from "drizzle-orm";
 
 // Create Session
@@ -10,21 +16,11 @@ import { isNull, eq, and } from "drizzle-orm";
 export async function createQbankSession(
   userId: string,
   mode: QBankMode,
+  step: NBMEStep,
   focus: Focus | undefined,
   count: number
 ) {
-  const qs = await db
-    .select({ id: questions.id })
-    .from(questions)
-    .leftJoin(
-      answeredQuestions,
-      and(
-        eq(answeredQuestions.questionId, questions.id),
-        eq(answeredQuestions.userId, userId)
-      )
-    )
-    .where(buildWhereClause(focus))
-    .limit(count);
+  const qs = await fetchQuestions(userId, step, focus, count);
 
   const questionIds = qs.map((q) => q.id);
   const answers: (QuestionChoice | null)[] = new Array(questionIds.length).fill(
@@ -40,29 +36,57 @@ export async function createQbankSession(
       flaggedQuestionIds: [],
       answers,
       name: generateRandomName(),
+      step,
     })
     .returning({ id: qbankSessions.id });
 
   return id;
 }
 
-function buildWhereClause(focus: Focus | undefined) {
-  const conditions = [];
-  conditions.push(eq(questions.rating, "Pass"));
-  conditions.push(isNull(answeredQuestions.userId));
-  switch (focus) {
-    case undefined:
-      break;
-    case "high-yield":
-      conditions.push(eq(questions.yield, "High"));
-      break;
-    case "nbme-mix":
-      break;
-    case "step-1":
-      conditions.push(eq(questions.step, "Step 1"));
-      break;
+async function fetchQuestions(
+  userId: string,
+  step: NBMEStep,
+  focus: Focus | undefined,
+  count: number
+) {
+  switch (step) {
+    case "Step 1":
+      return await db
+        .select({ id: stepOneNbmeQuestions.id })
+        .from(stepOneNbmeQuestions)
+        .leftJoin(
+          answeredQuestions,
+          and(
+            eq(answeredQuestions.questionId, stepOneNbmeQuestions.id),
+            eq(answeredQuestions.userId, userId)
+          )
+        )
+        .where(
+          and(
+            eq(stepOneNbmeQuestions.rating, "Pass"),
+            isNull(answeredQuestions.userId)
+          )
+        )
+        .limit(count);
+    case "Step 2":
+      return await db
+        .select({ id: stepTwoNbmeQuestions.id })
+        .from(stepTwoNbmeQuestions)
+        .leftJoin(
+          answeredQuestions,
+          and(
+            eq(answeredQuestions.questionId, stepTwoNbmeQuestions.id),
+            eq(answeredQuestions.userId, userId)
+          )
+        )
+        .where(
+          and(
+            eq(stepTwoNbmeQuestions.rating, "Pass"),
+            isNull(answeredQuestions.userId)
+          )
+        )
+        .limit(count);
   }
-  return and(...conditions);
 }
 
 // Answer Question

@@ -1,7 +1,7 @@
 "use server";
 
 import { and, count, eq } from "drizzle-orm";
-import { questions } from "@/db";
+import { stepTwoNbmeQuestions } from "@/db";
 import { db } from "@/db";
 import {
   QuestionDifficulty,
@@ -34,12 +34,12 @@ export async function fetchQuestionsWithAudits(
 
   const countResult = await db
     .select({ count: count() })
-    .from(questions)
+    .from(stepTwoNbmeQuestions)
     .where(clauses);
 
   const rows = await db
     .select()
-    .from(questions)
+    .from(stepTwoNbmeQuestions)
     .where(clauses)
     .offset(offset)
     .limit(limit);
@@ -59,16 +59,22 @@ function buildWhereClause(filters: {
   type?: QuestionType;
 }) {
   const clauses = [
-    filters.status ? eq(questions.rating, filters.status) : undefined,
+    filters.status
+      ? eq(stepTwoNbmeQuestions.rating, filters.status)
+      : undefined,
     filters.difficulty
-      ? eq(questions.difficulty, filters.difficulty)
+      ? eq(stepTwoNbmeQuestions.difficulty, filters.difficulty)
       : undefined,
-    filters.system ? eq(questions.system, filters.system) : undefined,
-    filters.category ? eq(questions.category, filters.category) : undefined,
+    filters.system
+      ? eq(stepTwoNbmeQuestions.system, filters.system)
+      : undefined,
+    filters.category
+      ? eq(stepTwoNbmeQuestions.category, filters.category)
+      : undefined,
     filters.subcategory
-      ? eq(questions.subcategory, filters.subcategory)
+      ? eq(stepTwoNbmeQuestions.subcategory, filters.subcategory)
       : undefined,
-    filters.type ? eq(questions.type, filters.type) : undefined,
+    filters.type ? eq(stepTwoNbmeQuestions.type, filters.type) : undefined,
   ].filter((c) => c !== undefined);
 
   return clauses.length > 0 ? and(...clauses) : undefined;
@@ -81,7 +87,7 @@ export async function updateYieldStatus(
   yieldType: YieldType
 ) {
   await db
-    .update(questions)
+    .update(stepTwoNbmeQuestions)
     .set({ yield: yieldType })
-    .where(eq(questions.id, questionId));
+    .where(eq(stepTwoNbmeQuestions.id, questionId));
 }

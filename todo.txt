@@ -1,5 +1,3 @@
 - Foundational page
 - Review page
 - Create review questions
-- Empty history page
-- Protected home page layout redesign

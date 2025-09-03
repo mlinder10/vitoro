@@ -1,4 +1,4 @@
-import { QBankSession, Question, QuestionChoice } from "@/types";
+import { QBankSession, NBMEQuestion, QuestionChoice } from "@/types";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useState, useEffect } from "react";
@@ -7,7 +7,7 @@ import QuestionChoiceView from "./question-choice";
 
 type QuestionCardProps = {
   session: QBankSession;
-  question: Question;
+  question: NBMEQuestion;
   answers: (QuestionChoice | null)[];
   flaggedIds: string[];
   index: number;

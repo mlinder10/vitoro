@@ -3,6 +3,7 @@ import {
   AnySubcategory,
   AuditRating,
   Choices,
+  LabValue,
   NBMEStep,
   QBankMode,
   QuestionChoice,
@@ -109,44 +110,94 @@ export const admins = sqliteTable("admins", {
   createdAt: date("created_at").default(SQL_NOW).notNull(),
 });
 
-export const questions = sqliteTable(
-  "questions",
-  {
-    id: text("id").primaryKey().default(SQL_UUID).notNull(),
-    createdAt: date("created_at").default(SQL_NOW).notNull(),
-    creatorId: text("creator_id")
-      .references(() => users.id, { onDelete: "cascade" })
-      .notNull(),
+// export const questions = sqliteTable(
+//   "questions",
+//   {
+//     id: text("id").primaryKey().default(SQL_UUID).notNull(),
+//     createdAt: date("created_at").default(SQL_NOW).notNull(),
+//     creatorId: text("creator_id")
+//       .references(() => users.id, { onDelete: "cascade" })
+//       .notNull(),
 
-    system: json<System>("system").notNull(),
-    category: json<AnyCategory>("category").notNull(),
-    subcategory: json<AnySubcategory>("subcategory").notNull(),
-    topic: text("topic").notNull(),
-    type: json<QuestionType>("type").notNull(),
-    step: json<NBMEStep>("step").notNull(),
+//     system: json<System>("system").notNull(),
+//     category: json<AnyCategory>("category").notNull(),
+//     subcategory: json<AnySubcategory>("subcategory").notNull(),
+//     topic: text("topic").notNull(),
+//     type: json<QuestionType>("type").notNull(),
+//     step: json<NBMEStep>("step").notNull(),
 
-    question: text("question").notNull(),
-    answer: json<QuestionChoice>("answer").notNull(),
-    choices: json<Choices>("choices").notNull(),
-    explanations: json<Choices>("explanations").notNull(),
+//     question: text("question").notNull(),
+//     answer: json<QuestionChoice>("answer").notNull(),
+//     choices: json<Choices>("choices").notNull(),
+//     explanations: json<Choices>("explanations").notNull(),
 
-    difficulty: json<QuestionDifficulty>("difficulty").notNull(),
+//     difficulty: json<QuestionDifficulty>("difficulty").notNull(),
 
-    yield: json<YieldType>("yield")
-      .default(JSON.stringify("Medium") as YieldType)
-      .notNull(),
-    rating: json<AuditRating>("rating").notNull(),
-  },
-  (table) => [
-    index("question_system_idx").on(table.system),
-    index("question_category_idx").on(table.category),
-    index("question_subcategory_idx").on(table.subcategory),
-    index("question_topic_idx").on(table.topic),
-    index("question_type_idx").on(table.type),
-    index("question_difficulty_idx").on(table.difficulty),
-    index("question_step_idx").on(table.step),
-  ]
-);
+//     yield: json<YieldType>("yield")
+//       .default(JSON.stringify("Medium") as YieldType)
+//       .notNull(),
+//     rating: json<AuditRating>("rating").notNull(),
+//   },
+//   (table) => [
+//     index("question_system_idx").on(table.system),
+//     index("question_category_idx").on(table.category),
+//     index("question_subcategory_idx").on(table.subcategory),
+//     index("question_topic_idx").on(table.topic),
+//     index("question_type_idx").on(table.type),
+//     index("question_difficulty_idx").on(table.difficulty),
+//     index("question_step_idx").on(table.step),
+//   ]
+// );
+
+export const stepOneNbmeQuestions = sqliteTable("step_one_nbme_questions", {
+  id: text("id").primaryKey().default(SQL_UUID).notNull(),
+  createdAt: date("created_at").default(SQL_NOW).notNull(),
+
+  systems: json<System[]>("systems").notNull(),
+  categories: json<AnyCategory[]>("categories").notNull(),
+  topic: text("topic").notNull(),
+  competency: text("competency").notNull(),
+  concept: text("concept").notNull(),
+
+  question: text("question").notNull(),
+  answer: json<QuestionChoice>("answer").notNull(),
+  choices: json<Choices>("choices").notNull(),
+  explanations: json<Choices>("explanations").notNull(),
+  labValues: json<LabValue[]>("lab_values").notNull(),
+
+  difficulty: json<QuestionDifficulty>("difficulty").notNull(),
+
+  yield: json<YieldType>("yield")
+    .default(JSON.stringify("Medium") as YieldType)
+    .notNull(),
+  rating: json<AuditRating>("rating").notNull(),
+  step: json<"Step 1">("step").notNull().default("Step 1"),
+});
+
+export const stepTwoNbmeQuestions = sqliteTable("step_two_nbme_questions", {
+  id: text("id").primaryKey().default(SQL_UUID).notNull(),
+  createdAt: date("created_at").default(SQL_NOW).notNull(),
+
+  system: json<System>("system").notNull(),
+  category: json<AnyCategory>("category").notNull(),
+  subcategory: json<AnySubcategory>("subcategory").notNull(),
+  topic: text("topic").notNull(),
+  type: json<QuestionType>("type").notNull(),
+
+  question: text("question").notNull(),
+  answer: json<QuestionChoice>("answer").notNull(),
+  choices: json<Choices>("choices").notNull(),
+  explanations: json<Choices>("explanations").notNull(),
+  labValues: json<LabValue[]>("lab_values").notNull(),
+
+  difficulty: json<QuestionDifficulty>("difficulty").notNull(),
+
+  yield: json<YieldType>("yield")
+    .default(JSON.stringify("Medium") as YieldType)
+    .notNull(),
+  rating: json<AuditRating>("rating").notNull(),
+  step: json<"Step 2">("step").notNull().default("Step 2"),
+});
 
 export const answeredQuestions = sqliteTable(
   "answered_questions",
@@ -156,7 +207,7 @@ export const answeredQuestions = sqliteTable(
       .references(() => users.id, { onDelete: "cascade" })
       .notNull(),
     questionId: text("question_id")
-      .references(() => questions.id, { onDelete: "cascade" })
+      // .references(() => questions.id, { onDelete: "cascade" })
       .notNull(),
     createdAt: date("created_at").default(SQL_NOW).notNull(),
     answer: json<QuestionChoice>("answer").notNull(),
@@ -172,12 +223,13 @@ export const qbankSessions = sqliteTable("qbank_sessions", {
   userId: text("user_id")
     .references(() => users.id, { onDelete: "cascade" })
     .notNull(),
+  createdAt: date("created_at").default(SQL_NOW).notNull(),
   name: text("name").notNull(),
   mode: json<QBankMode>("mode").notNull(),
+  step: json<NBMEStep>("step").notNull().default("Step 2"),
   questionIds: json<string[]>("question_ids").notNull(),
   answers: json<(QuestionChoice | null)[]>("answers").notNull(),
   flaggedQuestionIds: json<string[]>("flagged_questions").notNull(),
-  createdAt: date("created_at").default(SQL_NOW).notNull(),
   inProgress: json<boolean>("in_progress").default(true).notNull(),
 });
 
@@ -189,7 +241,7 @@ export const reviewQuestions = sqliteTable(
       .references(() => users.id, { onDelete: "cascade" })
       .notNull(),
     questionId: text("question_id")
-      .references(() => questions.id, { onDelete: "cascade" })
+      // .references(() => questions.id, { onDelete: "cascade" })
       .notNull(),
     createdAt: date("created_at").default(SQL_NOW).notNull(),
     question: text("question").notNull(),

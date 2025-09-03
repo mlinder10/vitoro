@@ -1,21 +1,21 @@
 import ProgressCircle from "@/components/progress-circle";
 import {
   QBankSession,
-  Question,
+  NBMEQuestion,
   QuestionChoice,
   QuestionDifficulty,
 } from "@/types";
 import { useMemo } from "react";
 
 export type SplitResult = {
-  correct: Question[];
-  incorrect: Question[];
-  unanswered: Question[];
+  correct: NBMEQuestion[];
+  incorrect: NBMEQuestion[];
+  unanswered: NBMEQuestion[];
 };
 
 export type SessionSummaryProps = {
   session: QBankSession;
-  questions: Question[];
+  questions: NBMEQuestion[];
   onReviewAll?: () => void;
   onRetakeIncorrect?: () => void;
   onReviewTopic?: (system: string) => void;
@@ -30,12 +30,12 @@ function scoreToHex(percentage: number) {
   return `hsl(${hue}, 100%, 50%)`;
 }
 
-function splitQuestions(s: QBankSession, qs: Question[]): SplitResult {
+function splitQuestions(s: QBankSession, qs: NBMEQuestion[]): SplitResult {
   const answerById = new Map<string, QuestionChoice | null>();
   s.questionIds.forEach((qid, i) => answerById.set(qid, s.answers[i] ?? null));
-  const correct: Question[] = [];
-  const incorrect: Question[] = [];
-  const unanswered: Question[] = [];
+  const correct: NBMEQuestion[] = [];
+  const incorrect: NBMEQuestion[] = [];
+  const unanswered: NBMEQuestion[] = [];
   for (const q of qs) {
     const given = answerById.get(q.id);
     if (given == null) {
@@ -114,11 +114,22 @@ export default function SessionSummary({
   for (const q of questions) {
     const given = answerById.get(q.id);
     const isCorrect = given != null && given === q.answer;
-    const sys = String(q.system);
-    const s = systemAgg.get(sys) ?? { total: 0, correct: 0 };
-    s.total += 1;
-    if (isCorrect) s.correct += 1;
-    systemAgg.set(sys, s);
+    switch (q.step) {
+      case "Step 1":
+        for (const s of q.systems) {
+          const sAgg = systemAgg.get(s) ?? { total: 0, correct: 0 };
+          sAgg.total += 1;
+          if (isCorrect) sAgg.correct += 1;
+          systemAgg.set(s, sAgg);
+        }
+        break;
+      case "Step 2":
+        const s = systemAgg.get(q.system) ?? { total: 0, correct: 0 };
+        s.total += 1;
+        if (isCorrect) s.correct += 1;
+        systemAgg.set(q.system, s);
+        break;
+    }
     const d = difficultyAgg.get(q.difficulty) ?? { total: 0, correct: 0 };
     d.total += 1;
     if (isCorrect) d.correct += 1;

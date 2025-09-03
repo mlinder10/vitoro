@@ -1,5 +1,5 @@
 import { capitalize, cn } from "@/lib/utils";
-import { Message, Question, QuestionChoice, Task, TASKS } from "@/types";
+import { Message, NBMEQuestion, QuestionChoice, Task, TASKS } from "@/types";
 import { ArrowLeft, ArrowUp, BotIcon, Loader } from "lucide-react";
 import { RefObject, useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
@@ -7,7 +7,7 @@ import { promptChatWithTask, promptGeneralChat } from "../../chat";
 import { Button } from "@/components/ui/button";
 
 type ChatCardProps = {
-  question: Question;
+  question: NBMEQuestion;
   choice: QuestionChoice;
 };
 

@@ -5,17 +5,12 @@ import { handleCreateQuestion } from "./actions";
 import { useActionState, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { NotebookPen, Sparkles } from "lucide-react";
-import { useSession } from "@/contexts/session-provider";
 import { getSystems, QUESTION_TYPES, System } from "@/types";
 import { Input } from "@/components/ui/input";
 import FormSelect from "@/components/form-select";
 
 export default function CreateQuestionPage() {
-  const { id } = useSession();
-  const [error, action, isPending] = useActionState(
-    handleCreateQuestion.bind(null, id),
-    {}
-  );
+  const [error, action, isPending] = useActionState(handleCreateQuestion, {});
   const [system, setSystem] = useState<string | undefined>();
   const [category, setCategory] = useState<string | undefined>();
   const { systems, categories, subcategories } = getSystems(

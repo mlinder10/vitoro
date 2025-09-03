@@ -1,7 +1,7 @@
 "use server";
 
-import { db, questions } from "@/db";
-import { AuditRating, Question } from "@/types";
+import { db, stepTwoNbmeQuestions } from "@/db";
+import { AuditRating, StepTwoNBMEQuestion } from "@/types";
 import { eq } from "drizzle-orm";
 
 export async function handleUpdateAuditStatus(
@@ -9,11 +9,14 @@ export async function handleUpdateAuditStatus(
   rating: AuditRating
 ) {
   await db
-    .update(questions)
+    .update(stepTwoNbmeQuestions)
     .set({ rating })
-    .where(eq(questions.id, questionId));
+    .where(eq(stepTwoNbmeQuestions.id, questionId));
 }
 
-export async function handleSaveQuestionChanges(question: Question) {
-  await db.update(questions).set(question).where(eq(questions.id, question.id));
+export async function handleSaveQuestionChanges(question: StepTwoNBMEQuestion) {
+  await db
+    .update(stepTwoNbmeQuestions)
+    .set(question)
+    .where(eq(stepTwoNbmeQuestions.id, question.id));
 }

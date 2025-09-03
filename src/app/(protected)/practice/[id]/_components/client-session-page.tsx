@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { QBankSession, Question, QuestionChoice } from "@/types";
+import { NBMEQuestion, QBankSession, QuestionChoice } from "@/types";
 import { Calculator, Clipboard, Menu } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -18,7 +18,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 type ClientSessionPageProps = {
   session: QBankSession;
-  questions: Question[];
+  questions: NBMEQuestion[];
 };
 
 export default function ClientSessionPage({

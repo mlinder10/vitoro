@@ -1,4 +1,4 @@
-import { QBankMode, QBankSession, Question, QuestionChoice } from "@/types";
+import { QBankMode, QBankSession, NBMEQuestion, QuestionChoice } from "@/types";
 import { useEffect, useState } from "react";
 import { SUMMARY_BTN_HEIGHT } from "./client-summary-page";
 import { cn } from "@/lib/utils";
@@ -10,7 +10,7 @@ import QuestionNavigator from "../../_components/question-navigator";
 
 type QuestionsSummaryWrapperProps = {
   session: QBankSession;
-  questions: Question[];
+  questions: NBMEQuestion[];
 };
 
 export default function QuestionsSummary({
@@ -74,7 +74,7 @@ export default function QuestionsSummary({
 
 type QuestionCardProps = {
   session: QBankSession;
-  question: Question;
+  question: NBMEQuestion;
   flaggedIds: string[];
   index: number;
   onBack: () => void;

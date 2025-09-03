@@ -4,11 +4,13 @@ import {
   foundationalFollowUps,
   foundationalQuestions,
   qbankSessions,
-  questions,
+  // questions,
+  stepOneNbmeQuestions,
+  stepTwoNbmeQuestions,
 } from "@/db";
 
 export type QBankSession = InferSelectModel<typeof qbankSessions>;
-export type Question = InferSelectModel<typeof questions>;
+// export type Question = InferSelectModel<typeof questions>;
 export type FoundationalQuestion = InferSelectModel<
   typeof foundationalQuestions
 >;
@@ -18,6 +20,9 @@ export type FoundationalFollowup = InferSelectModel<
 export type AnsweredFoundational = InferSelectModel<
   typeof answeredFoundationals
 >;
+export type StepOneNBMEQuestion = InferSelectModel<typeof stepOneNbmeQuestions>;
+export type StepTwoNBMEQuestion = InferSelectModel<typeof stepTwoNbmeQuestions>;
+export type NBMEQuestion = StepOneNBMEQuestion | StepTwoNBMEQuestion;
 
 export type QuestionChoice = "a" | "b" | "c" | "d" | "e";
 export type NBMEStep = (typeof NBME_STEPS)[number];
@@ -26,7 +31,7 @@ export type QuestionDifficulty = (typeof QUESTION_DIFFICULTIES)[number];
 export type AuditRating = (typeof QUESTION_RATINGS)[number];
 export type YieldType = (typeof YIELD_TYPES)[number];
 
-export const NBME_STEPS = ["Step 1", "Step 2", "Mixed"] as const;
+export const NBME_STEPS = ["Step 1", "Step 2"] as const;
 
 export const QUESTION_TYPES = [
   "Diagnosis",
@@ -46,6 +51,14 @@ export const QUESTION_RATINGS = [
 ] as const;
 
 export const YIELD_TYPES = ["Low", "Medium", "High"] as const;
+
+export type LabValue = {
+  analyte: string;
+  value: number;
+  unit: string;
+  qual: string | null;
+  panel: string;
+};
 
 export type Choices = {
   a: string;

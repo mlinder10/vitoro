@@ -1,11 +1,11 @@
 import { cn } from "@/lib/utils";
-import { Question, QuestionChoice } from "@/types";
+import { NBMEQuestion, QuestionChoice } from "@/types";
 
 type QuestionNavigatorProps = {
-  questions: Question[];
+  questions: NBMEQuestion[];
   answers: (QuestionChoice | null)[];
-  activeQuestion: Question;
-  onSelect: (question: Question, index: number) => void;
+  activeQuestion: NBMEQuestion;
+  onSelect: (question: NBMEQuestion, index: number) => void;
 };
 
 export default function QuestionNavigator({

@@ -1,7 +1,7 @@
 "use client";
 
 import { handleSaveQuestionChanges } from "@/app/admin/review/[id]/actions";
-import { Question } from "@/types";
+import { StepTwoNBMEQuestion } from "@/types";
 import { useRouter } from "next/navigation";
 import {
   createContext,
@@ -13,12 +13,14 @@ import {
 } from "react";
 
 type AdminReviewContextType = {
-  question: Question;
-  editQuestion: Question;
+  question: StepTwoNBMEQuestion;
+  editQuestion: StepTwoNBMEQuestion;
   hasChanges: boolean;
-  updateQuestion: <T extends keyof Question>(
+  updateQuestion: <T extends keyof StepTwoNBMEQuestion>(
     key: T,
-    value: ((prev: Question[T]) => Question[T]) | Question[T]
+    value:
+      | ((prev: StepTwoNBMEQuestion[T]) => StepTwoNBMEQuestion[T])
+      | StepTwoNBMEQuestion[T]
   ) => void;
   pageType: ReviewPageType;
   setPageType: Dispatch<SetStateAction<ReviewPageType>>;
@@ -28,8 +30,8 @@ type AdminReviewContextType = {
 };
 
 const AdminReviewContext = createContext<AdminReviewContextType>({
-  question: {} as Question,
-  editQuestion: {} as Question,
+  question: {} as StepTwoNBMEQuestion,
+  editQuestion: {} as StepTwoNBMEQuestion,
   hasChanges: false,
   updateQuestion: () => {},
   pageType: "review",
@@ -41,7 +43,7 @@ const AdminReviewContext = createContext<AdminReviewContextType>({
 
 type AdminReviewProviderProps = {
   children: ReactNode;
-  question: Question;
+  question: StepTwoNBMEQuestion;
 };
 
 export type ReviewPageType = "review" | "edit";
@@ -56,9 +58,11 @@ export default function AdminReviewProvider({
   const hasChanges = JSON.stringify(question) !== JSON.stringify(editQuestion);
   const router = useRouter();
 
-  function updateQuestion<T extends keyof Question>(
+  function updateQuestion<T extends keyof StepTwoNBMEQuestion>(
     key: T,
-    value: ((prev: Question[T]) => Question[T]) | Question[T]
+    value:
+      | ((prev: StepTwoNBMEQuestion[T]) => StepTwoNBMEQuestion[T])
+      | StepTwoNBMEQuestion[T]
   ) {
     if (typeof value === "function") value = value(editQuestion[key]);
     setEditQuestion((prev) => ({ ...prev, [key]: value }));

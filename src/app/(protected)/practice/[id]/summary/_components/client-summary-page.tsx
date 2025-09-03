@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { QBankSession, Question } from "@/types";
+import { NBMEQuestion, QBankSession } from "@/types";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import SessionSummary from "./session-summary";
@@ -11,7 +11,7 @@ type SummaryPage = "questions" | "session";
 
 type ClientSummaryPageProps = {
   session: QBankSession;
-  questions: Question[];
+  questions: NBMEQuestion[];
 };
 
 export const SUMMARY_BTN_HEIGHT = 40;

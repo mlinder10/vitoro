@@ -5,7 +5,6 @@ import {
   AnyCategory,
   AnySubcategory,
   AuditRating,
-  Question,
   QUESTION_TYPES,
   QuestionDifficulty,
   QuestionType,
@@ -13,6 +12,7 @@ import {
   SYSTEMS,
   YIELD_TYPES,
   YieldType,
+  StepTwoNBMEQuestion,
 } from "@/types";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
@@ -117,7 +117,7 @@ export default function QuestionReviewListPage() {
 // Question Component ---------------------------------------------------------
 
 type QuestionItemProps = {
-  question: Question;
+  question: StepTwoNBMEQuestion;
   isLast?: boolean;
 };
 
@@ -176,7 +176,7 @@ function QuestionItem({ question, isLast = false }: QuestionItemProps) {
 // Yield Select ---------------------------------------------------------------
 
 type YieldSelectProps = {
-  question: Question;
+  question: StepTwoNBMEQuestion;
 };
 
 function YieldSelect({ question }: YieldSelectProps) {

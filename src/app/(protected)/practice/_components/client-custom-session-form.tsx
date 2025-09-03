@@ -3,7 +3,7 @@
 import GradientTitle from "@/components/gradient-title";
 import { MINS_PER_QUESTION } from "@/lib/constants";
 import { cn } from "@/lib/utils";
-import { Focus, QBankMode } from "@/types";
+import { Focus, NBMEStep, QBankMode } from "@/types";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { createQbankSession } from "../actions";
@@ -25,6 +25,7 @@ export default function ClientCustomSessionForm() {
   const [size, setSize] = useState<string>("10");
   const [isSizeCustom, setIsSizeCustom] = useState(false);
   const [mode, setMode] = useState<QBankMode>("timed");
+  const [step, setStep] = useState<NBMEStep>("Step 1");
   const router = useRouter();
 
   function updateFocus(focus: Focus) {
@@ -51,18 +52,41 @@ export default function ClientCustomSessionForm() {
       });
       return;
     }
-    const sessionId = await createQbankSession(id, mode, focus, numericSize);
+    const sessionId = await createQbankSession(
+      id,
+      mode,
+      step,
+      focus,
+      numericSize
+    );
     router.push(`/practice/${sessionId}`);
     // TODO: handle errors
   }
 
+  // TODO: fix no bottom padding
   return (
     <div className="flex flex-col items-center gap-8 p-8 h-full">
       <GradientTitle text="Custom Session" className="font-bold text-4xl" />
       <p className="text-muted-foreground">
         Tailored study sessions that adapt to your goals
       </p>
-      <InputCard title="Focus" number="1">
+      <InputCard title="Step" number="1">
+        <div className="flex gap-4">
+          <OutlineButton
+            label="Step 1"
+            // subheadline="Biochem, Physio, Path basics"
+            isActive={step === "Step 1"}
+            onClick={() => setStep("Step 1")}
+          />
+          <OutlineButton
+            label="Step 2"
+            // subheadline="Cardio, pulm, renal"
+            isActive={step === "Step 2"}
+            onClick={() => setStep("Step 2")}
+          />
+        </div>
+      </InputCard>
+      <InputCard title="Focus" number="2">
         <div className="flex gap-4">
           <OutlineButton
             label="Step 1 Foundations"
@@ -88,7 +112,7 @@ export default function ClientCustomSessionForm() {
           /> */}
         </div>
       </InputCard>
-      <InputCard title="Size" number="2">
+      <InputCard title="Size" number="3">
         <div className="flex gap-4">
           <OutlineButton
             label="10"
@@ -125,7 +149,7 @@ export default function ClientCustomSessionForm() {
           </p>
         )}
       </InputCard>
-      <InputCard title="Mode" number="3">
+      <InputCard title="Mode" number="4">
         <div className="flex gap-4">
           <OutlineButton
             label="Timed Exam Mode"

@@ -1,7 +1,7 @@
 "use server";
 
 import { Gemini } from "@/ai";
-import { Question, QuestionChoice, Task, Message } from "@/types";
+import { NBMEQuestion, QuestionChoice, Task, Message } from "@/types";
 
 function buildTaskPrompts(basePrompt: string) {
   return {
@@ -148,7 +148,7 @@ Use a tone that's firm but fair. You're not being cruel — you're training them
 
 function getTaskSystemPrompt(
   task: Task,
-  question: Question,
+  question: NBMEQuestion,
   choice: QuestionChoice
 ) {
   const isCorrect = choice === question.answer;
@@ -177,7 +177,7 @@ Correct Answer: ${question.answer}
 
 export async function promptChatWithTask(
   task: Task,
-  question: Question,
+  question: NBMEQuestion,
   choice: QuestionChoice
 ) {
   const prompt = getTaskSystemPrompt(task, question, choice);
@@ -193,7 +193,7 @@ export async function promptChatWithTask(
 // General --------------------------------------------------------------------
 
 export async function promptGeneralChat(
-  question: Question,
+  question: NBMEQuestion,
   choice: QuestionChoice,
   messages: Message[]
 ) {

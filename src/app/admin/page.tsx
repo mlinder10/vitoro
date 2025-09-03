@@ -1,4 +1,4 @@
-import { db, questions, users } from "@/db";
+import { db, stepOneNbmeQuestions, stepTwoNbmeQuestions } from "@/db";
 import { subDays, format } from "date-fns";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -10,32 +10,50 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import QuestionChart from "./_components/question-chart";
-import { count, gte, eq } from "drizzle-orm";
+import { count, gte } from "drizzle-orm";
 
 async function fetchQuestionData() {
-  const [{ count: total }] = await db
-    .select({ count: count() })
-    .from(questions);
-
   const startDate = subDays(new Date(), 30);
-
-  const raw = await db
-    .select({
-      createdAt: questions.createdAt,
-      count: count(),
-    })
-    .from(questions)
-    .where(gte(questions.createdAt, startDate))
-    .groupBy(questions.createdAt);
+  const [
+    [{ count: stepOneCount }],
+    [{ count: stepTwoCount }],
+    stepOnePerDay,
+    stepTwoPerDay,
+  ] = await Promise.all([
+    db.select({ count: count() }).from(stepOneNbmeQuestions),
+    db.select({ count: count() }).from(stepTwoNbmeQuestions),
+    db
+      .select({
+        createdAt: stepOneNbmeQuestions.createdAt,
+        count: count(),
+      })
+      .from(stepOneNbmeQuestions)
+      .where(gte(stepOneNbmeQuestions.createdAt, startDate))
+      .groupBy(stepOneNbmeQuestions.createdAt),
+    db
+      .select({
+        createdAt: stepTwoNbmeQuestions.createdAt,
+        count: count(),
+      })
+      .from(stepTwoNbmeQuestions)
+      .where(gte(stepTwoNbmeQuestions.createdAt, startDate))
+      .groupBy(stepTwoNbmeQuestions.createdAt),
+  ]);
 
   const dailyCounts: Record<string, number> = {};
-  raw.forEach(({ createdAt, count }) => {
+
+  stepOnePerDay.forEach(({ createdAt, count }) => {
+    const day = format(createdAt, "yyyy-MM-dd");
+    dailyCounts[day] = (dailyCounts[day] || 0) + count;
+  });
+
+  stepTwoPerDay.forEach(({ createdAt, count }) => {
     const day = format(createdAt, "yyyy-MM-dd");
     dailyCounts[day] = (dailyCounts[day] || 0) + count;
   });
 
   return {
-    totalQuestions: total,
+    totalQuestions: stepOneCount + stepTwoCount,
     dailyCounts,
   };
 }
@@ -43,13 +61,17 @@ async function fetchQuestionData() {
 async function fetchSystemData() {
   const rows = await db
     .select({
-      system: questions.system,
-      category: questions.category,
-      subcategory: questions.subcategory,
+      system: stepTwoNbmeQuestions.system,
+      category: stepTwoNbmeQuestions.category,
+      subcategory: stepTwoNbmeQuestions.subcategory,
       count: count(),
     })
-    .from(questions)
-    .groupBy(questions.system, questions.category, questions.subcategory);
+    .from(stepTwoNbmeQuestions)
+    .groupBy(
+      stepTwoNbmeQuestions.system,
+      stepTwoNbmeQuestions.category,
+      stepTwoNbmeQuestions.subcategory
+    );
 
   return rows.map((row) => ({
     system: row.system,
@@ -59,38 +81,10 @@ async function fetchSystemData() {
   }));
 }
 
-async function fetchAdminData() {
-  const topCreators = await db
-    .select({
-      questionCount: count(),
-      creatorId: questions.creatorId,
-      id: users.id,
-      firstName: users.firstName,
-      lastName: users.lastName,
-      email: users.email,
-    })
-    .from(questions)
-    .innerJoin(users, eq(questions.creatorId, users.id))
-    .groupBy(users.id)
-    .orderBy(count())
-    .limit(5);
-
-  return topCreators.map((row) => ({
-    user: {
-      id: row.id,
-      firstName: row.firstName,
-      lastName: row.lastName,
-      email: row.email,
-    },
-    questionCount: row.questionCount,
-  }));
-}
-
 export default async function AdminPage() {
-  const [questionData, systemData, adminData] = await Promise.all([
+  const [questionData, systemData] = await Promise.all([
     fetchQuestionData(),
     fetchSystemData(),
-    fetchAdminData(),
   ]);
 
   const dailyData = Object.entries(questionData.dailyCounts).map(
@@ -114,24 +108,6 @@ export default async function AdminPage() {
             <p className="font-semibold text-3xl">
               {questionData.totalQuestions}
             </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Top Admins</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ul className="space-y-2">
-              {adminData.map((admin) => (
-                <li key={admin.user.id} className="flex justify-between">
-                  <span>
-                    {admin.user.firstName} {admin.user.lastName}
-                  </span>
-                  <span>{admin.questionCount}</span>
-                </li>
-              ))}
-            </ul>
           </CardContent>
         </Card>
       </div>
