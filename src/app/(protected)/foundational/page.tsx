@@ -13,8 +13,16 @@ export default async function FoundationalQuestionsPage({
   searchParams,
 }: FoundationalQuestionsPageProps) {
   await getSession(); // ensure user authenticated
-  const { step: stepParam, subject, shelf } = await searchParams;
+  const {
+    step: stepParam,
+    subject: subjectParam,
+    shelf: shelfParam,
+  } = await searchParams;
   const step: NBMEStep = stepParam ?? "Step 1";
+  const decodedSubject = subjectParam
+    ? decodeURIComponent(subjectParam)
+    : undefined;
+  const decodedShelf = shelfParam ? decodeURIComponent(shelfParam) : undefined;
 
   const renderList = (items: string[], hrefBuilder: (item: string) => string) => (
     <div className="space-y-4 p-4">
@@ -36,25 +44,31 @@ export default async function FoundationalQuestionsPage({
   let content: JSX.Element;
 
   if (step === "Step 1") {
-    if (!subject) {
-      content = renderList(STEP1_SUBJECTS, (s) => `?step=${encodeURIComponent(step)}&subject=${encodeURIComponent(s)}`);
+    if (!decodedSubject) {
+      content = renderList(
+        STEP1_SUBJECTS,
+        (s) => `?step=${encodeURIComponent(step)}&subject=${encodeURIComponent(s)}`
+      );
     } else {
-      const topics = STEP1_TOPICS[subject] ?? [];
+      const topics = STEP1_TOPICS[decodedSubject] ?? [];
       content = renderList(
         topics,
         (t) =>
-          `/foundational/${encodeURIComponent(subject)}?step=${encodeURIComponent(step)}&topic=${encodeURIComponent(t)}`
+          `/foundational/${encodeURIComponent(decodedSubject)}?step=${encodeURIComponent(step)}&topic=${encodeURIComponent(t)}`
       );
     }
   } else {
-    if (!shelf) {
-      content = renderList(STEP2_SHELVES, (s) => `?step=${encodeURIComponent(step)}&shelf=${encodeURIComponent(s)}`);
+    if (!decodedShelf) {
+      content = renderList(
+        STEP2_SHELVES,
+        (s) => `?step=${encodeURIComponent(step)}&shelf=${encodeURIComponent(s)}`
+      );
     } else {
-      const systems = STEP2_SYSTEMS[shelf] ?? [];
+      const systems = STEP2_SYSTEMS[decodedShelf] ?? [];
       content = renderList(
         systems,
         (sys) =>
-          `/foundational/${encodeURIComponent(sys)}?step=${encodeURIComponent(step)}&shelf=${encodeURIComponent(shelf)}`
+          `/foundational/${encodeURIComponent(sys)}?step=${encodeURIComponent(step)}&shelf=${encodeURIComponent(decodedShelf)}`
       );
     }
   }

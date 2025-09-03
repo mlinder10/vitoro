@@ -6,7 +6,6 @@ import {
 } from "@/db";
 import { getSession } from "@/lib/auth";
 import { eq, and, isNull, or, sql } from "drizzle-orm";
-import { notFound } from "next/navigation";
 import {
   FoundationalQuestionBase,
   FoundationalQuestionFollowup,
@@ -24,14 +23,19 @@ async function fetchFoundationalQuestion(
   step: NBMEStep,
   topic?: string
 ) {
-  const [question] = await db
+  const normalizedSystem = system.trim().toLowerCase();
+  const normalizedTopic = topic?.trim().toLowerCase();
+
+  const results = await db
     .select()
     .from(foundationalQuestions)
     .where(
       and(
-        eq(foundationalQuestions.system, system),
+        sql`lower(${foundationalQuestions.system}) = ${normalizedSystem}`,
         eq(foundationalQuestions.step, step),
-        topic ? eq(foundationalQuestions.topic, topic) : sql`1 = 1`,
+        normalizedTopic
+          ? sql`lower(${foundationalQuestions.topic}) = ${normalizedTopic}`
+          : sql`1 = 1`,
         or(
           isNull(answeredFoundationals.id),
           eq(answeredFoundationals.isComplete, false)
@@ -50,6 +54,13 @@ async function fetchFoundationalQuestion(
     )
     .limit(1);
 
+  console.log("fetchFoundationalQuestion", {
+    system: normalizedSystem,
+    topic: normalizedTopic,
+    length: results.length,
+  });
+
+  const [question] = results;
   if (!question) return null;
 
   const followups = await db
@@ -71,7 +82,7 @@ async function fetchFoundationalQuestion(
 
 type FoundationalSystemPageProps = {
   params: Promise<{ system: string }>;
-  searchParams: Promise<{ step?: NBMEStep; topic?: string }>;
+  searchParams: Promise<{ step?: NBMEStep; topic?: string; shelf?: string }>;
 };
 
 export default async function FoundationalSystemPage({
@@ -80,10 +91,22 @@ export default async function FoundationalSystemPage({
 }: FoundationalSystemPageProps) {
   const { id } = await getSession();
   const { system } = await params;
-  const { step: stepParam, topic: topicParam } = await searchParams;
+  const {
+    step: stepParam,
+    topic: topicParam,
+    shelf: shelfParam,
+  } = await searchParams;
   const currentStep: NBMEStep = stepParam ?? "Step 1";
   const decodedSystem = decodeURIComponent(system);
   const decodedTopic = topicParam ? decodeURIComponent(topicParam) : undefined;
+  const decodedShelf = shelfParam ? decodeURIComponent(shelfParam) : undefined;
+
+  console.log("decoded params", {
+    system: decodedSystem,
+    topic: decodedTopic,
+    shelf: decodedShelf,
+  });
+
   const data = await fetchFoundationalQuestion(
     id,
     decodedSystem,
@@ -91,7 +114,14 @@ export default async function FoundationalSystemPage({
     decodedTopic
   );
 
-  if (data === null) return notFound(); // TODO: replace with "completed all questions" page
+  console.log("filtered result length", data ? 1 : 0);
+
+  if (data === null)
+    return (
+      <div className="p-4">
+        No foundational questions found for the selected parameters.
+      </div>
+    );
 
   const answeredCount = getAnsweredCount(data.answer);
 
