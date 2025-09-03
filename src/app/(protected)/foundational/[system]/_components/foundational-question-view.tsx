@@ -16,6 +16,42 @@ import {
 import QuestionChoiceView from "../../../practice/[id]/_components/question-choice";
 import { useRouter } from "next/navigation";
 
+// Utility view ---------------------------------------------------------------
+
+type FoundationalQuestionViewProps = {
+  /**
+   * Raw JSON questions loaded from disk or API.
+   * The shape is intentionally loose because the structure of the JSON
+   * payload is not enforced by the database at this stage.
+   */
+  questions?: Array<{ mcq_questions?: unknown[] }>;
+};
+
+export function FoundationalQuestionView({
+  questions,
+}: FoundationalQuestionViewProps) {
+  if (!Array.isArray(questions) || questions.length === 0) {
+    console.error("FoundationalQuestionView: questions failed to load or are empty");
+    return <p className="text-destructive">No foundational questions available.</p>;
+  }
+
+  const invalid = questions.find(
+    (q) => !Array.isArray(q.mcq_questions) || q.mcq_questions.length === 0
+  );
+  if (invalid) {
+    console.error(
+      "FoundationalQuestionView: question is missing mcq_questions array",
+      invalid
+    );
+    return (
+      <p className="text-destructive">Incomplete question data. Please try again later.</p>
+    );
+  }
+
+  // Rendering is handled elsewhere – this component only validates the data.
+  return null;
+}
+
 // Base component ------------------------------------------------------------
 
 type FoundationalQuestionBaseProps = {
