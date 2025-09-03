@@ -11,7 +11,7 @@ import {
   STEP1_TOPIC_COUNTS,
   STEP2_COUNTS,
   STEP2_SYSTEM_COUNTS,
-  STEP2_SYSTEM_TO_SHELF,
+  STEP2_SYSTEM_TO_SHELVES,
 } from "@/lib/foundational-data";
 import { getSession } from "@/lib/auth";
 import { answeredFoundationals, db, foundationalQuestions } from "@/db";
@@ -70,8 +70,8 @@ export default async function FoundationalQuestionsPage({
     } else if (row.step === "Step 2") {
       answeredStep2Systems[row.system] =
         (answeredStep2Systems[row.system] ?? 0) + 1;
-      const shelf = STEP2_SYSTEM_TO_SHELF[row.system];
-      if (shelf)
+      const shelves = STEP2_SYSTEM_TO_SHELVES[row.system] ?? [];
+      for (const shelf of shelves)
         answeredStep2Shelves[shelf] =
           (answeredStep2Shelves[shelf] ?? 0) + 1;
     }
