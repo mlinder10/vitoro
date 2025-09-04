@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 
 type AdvancedSettingsDialogProps = {
   step: NBMEStep;
-  onApply?: (
+  onApply: (
     competencies: string[],
     concepts: string[],
     systems: string[],
@@ -23,19 +23,9 @@ type AdvancedSettingsDialogProps = {
   ) => void;
 };
 
-// Filters
-
-// Step 1:
-// - competency
-// - concept
-
-// Step 2:
-// - system
-// - type
-
-// Shared:
-// - difficulty
-// - yield
+// Step 1: competency, concept
+// Step 2: system, type
+// Shared: difficulty, yield
 
 export default function AdvancedSettingsDialog({
   step,
@@ -83,7 +73,7 @@ export default function AdvancedSettingsDialog({
   }
 
   function handleApply() {
-    onApply?.(
+    onApply(
       selectedComps,
       selectedCons,
       selectedSystems,

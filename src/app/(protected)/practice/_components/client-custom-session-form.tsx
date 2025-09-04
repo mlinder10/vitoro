@@ -22,6 +22,15 @@ function isInt(n: string) {
   return true;
 }
 
+export type Filters = {
+  competencies: string[];
+  concepts: string[];
+  systems: string[];
+  types: string[];
+  difficulties: string[];
+  yields: string[];
+};
+
 export default function ClientCustomSessionForm() {
   const { id } = useSession();
   const [focus, setFocus] = useState<Focus>();
@@ -29,6 +38,14 @@ export default function ClientCustomSessionForm() {
   const [isSizeCustom, setIsSizeCustom] = useState(false);
   const [mode, setMode] = useState<QBankMode>("timed");
   const [step, setStep] = useState<NBMEStep>("Step 1");
+  const [filters, setFilters] = useState<Filters>({
+    competencies: [],
+    concepts: [],
+    systems: [],
+    types: [],
+    difficulties: [],
+    yields: [],
+  });
   const router = useRouter();
 
   function updateFocus(focus: Focus) {
@@ -47,6 +64,24 @@ export default function ClientCustomSessionForm() {
     }
   }
 
+  function handleApplyFilters(
+    competencies: string[],
+    concepts: string[],
+    systems: string[],
+    types: string[],
+    difficulties: string[],
+    yields: string[]
+  ) {
+    setFilters({
+      competencies,
+      concepts,
+      systems,
+      types,
+      difficulties,
+      yields,
+    });
+  }
+
   async function handleStartSession() {
     const numericSize = parseInt(size);
     if (isNaN(numericSize)) {
@@ -60,7 +95,8 @@ export default function ClientCustomSessionForm() {
       mode,
       step,
       focus,
-      numericSize
+      numericSize,
+      filters
     );
     router.push(`/practice/${sessionId}`);
     // TODO: handle errors
@@ -181,7 +217,7 @@ export default function ClientCustomSessionForm() {
             <span>Advanced Settings</span>
           </Button>
         </DialogTrigger>
-        <AdvancedSettingsDialog step={step} />
+        <AdvancedSettingsDialog step={step} onApply={handleApplyFilters} />
       </Dialog>
     </div>
   );
