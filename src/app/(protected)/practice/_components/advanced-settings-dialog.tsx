@@ -2,9 +2,25 @@ import { NBMEStep, QUESTION_DIFFICULTIES, YIELD_TYPES } from "@/types";
 import { ReactNode, useEffect, useState } from "react";
 import { fetchStepOneData, fetchStepTwoData } from "../actions";
 import { cn } from "@/lib/utils";
+import { DialogHeader, DialogFooter } from "@/components/ui/dialog";
+import {
+  DialogContent,
+  DialogTitle,
+  DialogDescription,
+  DialogClose,
+} from "@radix-ui/react-dialog";
+import { Button } from "@/components/ui/button";
 
 type AdvancedSettingsDialogProps = {
   step: NBMEStep;
+  onApply?: (
+    competencies: string[],
+    concepts: string[],
+    systems: string[],
+    types: string[],
+    difficulties: string[],
+    yields: string[]
+  ) => void;
 };
 
 // Filters
@@ -23,30 +39,14 @@ type AdvancedSettingsDialogProps = {
 
 export default function AdvancedSettingsDialog({
   step,
+  onApply,
 }: AdvancedSettingsDialogProps) {
-  return (
-    <div>
-      {step === "Step 1" && <StepOneSettings />}
-      {step === "Step 2" && <StepTwoSettings />}
-      <SharedSettings />
-    </div>
-  );
-}
-
-// Step 1
-
-function StepOneSettings() {
-  const [competencies, setCompetencies] = useState<string[]>([]);
-  const [concepts, setConcepts] = useState<string[]>([]);
   const [selectedComps, setSelectedComps] = useState<string[]>([]);
   const [selectedCons, setSelectedCons] = useState<string[]>([]);
-
-  useEffect(() => {
-    fetchStepOneData().then(({ competencies, concepts }) => {
-      setCompetencies(competencies);
-      setConcepts(concepts);
-    });
-  }, []);
+  const [selectedSystems, setSelectedSystems] = useState<string[]>([]);
+  const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
+  const [selectedDiffs, setSelectedDiffs] = useState<string[]>([]);
+  const [selectedYields, setSelectedYields] = useState<string[]>([]);
 
   function toggleCompetency(competency: string, isSelected: boolean) {
     if (isSelected)
@@ -58,6 +58,109 @@ function StepOneSettings() {
     if (isSelected) setSelectedCons(selectedCons.filter((c) => c !== concept));
     else setSelectedCons([...selectedCons, concept]);
   }
+
+  function toggleSystem(system: string, isSelected: boolean) {
+    if (isSelected)
+      setSelectedSystems(selectedSystems.filter((s) => s !== system));
+    else setSelectedSystems([...selectedSystems, system]);
+  }
+
+  function toggleType(type: string, isSelected: boolean) {
+    if (isSelected) setSelectedTypes(selectedTypes.filter((t) => t !== type));
+    else setSelectedTypes([...selectedTypes, type]);
+  }
+
+  function toggleDiff(difficulty: string, isSelected: boolean) {
+    if (isSelected)
+      setSelectedDiffs(selectedDiffs.filter((d) => d !== difficulty));
+    else setSelectedDiffs([...selectedDiffs, difficulty]);
+  }
+
+  function toggleYield(_yield: string, isSelected: boolean) {
+    if (isSelected)
+      setSelectedYields(selectedYields.filter((y) => y !== _yield));
+    else setSelectedYields([...selectedYields, _yield]);
+  }
+
+  function handleApply() {
+    onApply?.(
+      selectedComps,
+      selectedCons,
+      selectedSystems,
+      selectedTypes,
+      selectedDiffs,
+      selectedYields
+    );
+  }
+
+  return (
+    <DialogContent>
+      <DialogHeader>
+        <DialogTitle>Advanced Settings</DialogTitle>
+        <DialogDescription>Description</DialogDescription>
+      </DialogHeader>
+
+      <div className="flex flex-col gap-4">
+        {step === "Step 1" && (
+          <StepOneSettings
+            selectedComps={selectedComps}
+            selectedCons={selectedCons}
+            toggleCompetency={toggleCompetency}
+            toggleConcept={toggleConcept}
+          />
+        )}
+        {step === "Step 2" && (
+          <StepTwoSettings
+            selectedSystems={selectedSystems}
+            selectedTypes={selectedTypes}
+            toggleSystem={toggleSystem}
+            toggleType={toggleType}
+          />
+        )}
+        <SharedSettings
+          selectedDiffs={selectedDiffs}
+          selectedYields={selectedYields}
+          toggleDiff={toggleDiff}
+          toggleYield={toggleYield}
+        />
+      </div>
+
+      <DialogFooter>
+        <DialogClose asChild>
+          <Button variant="outline">Close</Button>
+        </DialogClose>
+        <Button variant="accent" onClick={handleApply}>
+          Apply
+        </Button>
+      </DialogFooter>
+    </DialogContent>
+  );
+}
+
+// Step 1
+
+type StepOneSettingsProps = {
+  selectedComps: string[];
+  selectedCons: string[];
+  toggleCompetency: (competency: string, isSelected: boolean) => void;
+  toggleConcept: (concept: string, isSelected: boolean) => void;
+};
+
+function StepOneSettings({
+  selectedComps,
+  selectedCons,
+  toggleCompetency,
+  toggleConcept,
+}: StepOneSettingsProps) {
+  const [competencies, setCompetencies] = useState<string[]>([]);
+  const [concepts, setConcepts] = useState<string[]>([]);
+
+  useEffect(() => {
+    fetchStepOneData().then(({ competencies, concepts }) => {
+      setCompetencies(competencies);
+      setConcepts(concepts);
+    });
+  }, []);
 
   return (
     <div className="flex flex-col gap-4">
@@ -95,11 +198,21 @@ function StepOneSettings() {
 
 // Step 2
 
-function StepTwoSettings() {
+type StepTwoSettingsProps = {
+  selectedSystems: string[];
+  selectedTypes: string[];
+  toggleSystem: (system: string, isSelected: boolean) => void;
+  toggleType: (type: string, isSelected: boolean) => void;
+};
+
+function StepTwoSettings({
+  selectedSystems,
+  selectedTypes,
+  toggleSystem,
+  toggleType,
+}: StepTwoSettingsProps) {
   const [systems, setSystems] = useState<string[]>([]);
   const [types, setTypes] = useState<string[]>([]);
-  const [selectedSys, setSelectedSys] = useState<string[]>([]);
-  const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
 
   useEffect(() => {
     fetchStepTwoData().then(({ systems, types }) => {
@@ -108,21 +221,11 @@ function StepTwoSettings() {
     });
   }, []);
 
-  function toggleSystem(system: string, isSelected: boolean) {
-    if (isSelected) setSelectedSys(selectedSys.filter((s) => s !== system));
-    else setSelectedSys([...selectedSys, system]);
-  }
-
-  function toggleType(type: string, isSelected: boolean) {
-    if (isSelected) setSelectedTypes(selectedTypes.filter((t) => t !== type));
-    else setSelectedTypes([...selectedTypes, type]);
-  }
-
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap gap-2 bg-tertiary p-4 border rounded-md">
         {systems.map((s) => {
-          const isSelected = selectedSys.includes(s);
+          const isSelected = selectedSystems.includes(s);
           return (
             <SelectPill
               key={s}
@@ -154,25 +257,22 @@ function StepTwoSettings() {
 
 // Common
 
-function SharedSettings() {
-  const [selectedDiffs, setSelectedDiffs] = useState<string[]>([]);
-  const [selectedYields, setSelectedYields] = useState<string[]>([]);
+type SharedSettingsProps = {
+  selectedDiffs: string[];
+  selectedYields: string[];
+  toggleDiff: (difficulty: string, isSelected: boolean) => void;
+  toggleYield: (yield_: string, isSelected: boolean) => void;
+};
 
-  function toggleDiff(difficulty: string, isSelected: boolean) {
-    if (isSelected)
-      setSelectedDiffs(selectedDiffs.filter((d) => d !== difficulty));
-    else setSelectedDiffs([...selectedDiffs, difficulty]);
-  }
-
-  function toggleYield(_yield: string, isSelected: boolean) {
-    if (isSelected)
-      setSelectedYields(selectedYields.filter((y) => y !== _yield));
-    else setSelectedYields([...selectedYields, _yield]);
-  }
-
+function SharedSettings({
+  selectedDiffs,
+  selectedYields,
+  toggleDiff,
+  toggleYield,
+}: SharedSettingsProps) {
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-wrap gap-2 bg-tertiary p-4 border rounded-md">
+      <div className="flex flex-wrap gap-2 bg-tertiary p-2 border rounded-md">
         {QUESTION_DIFFICULTIES.map((d) => {
           const isSelected = selectedDiffs.includes(d);
           return (
@@ -186,7 +286,7 @@ function SharedSettings() {
           );
         })}
       </div>
-      <div className="flex flex-wrap gap-2 bg-tertiary p-4 border rounded-md">
+      <div className="flex flex-wrap gap-2 bg-tertiary p-2 border rounded-md">
         {YIELD_TYPES.map((y) => {
           const isSelected = selectedYields.includes(y);
           return (
@@ -216,8 +316,9 @@ function SelectPill({ children, selected, onClick }: SelectPillProps) {
   return (
     <div
       className={cn(
-        "p-2 border rounded-md text-muted-foreground text-sm",
-        selected && "bg-custom-accent-light border-custom-accent"
+        "bg-background px-2 py-1 border rounded-md text-muted-foreground text-sm transition-all cursor-pointer",
+        selected &&
+          "bg-custom-accent-light border-custom-accent text-custom-accent"
       )}
       onClick={onClick}
     >

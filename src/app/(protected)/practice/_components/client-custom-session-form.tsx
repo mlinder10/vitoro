@@ -9,16 +9,7 @@ import { useState } from "react";
 import { createQbankSession } from "../actions";
 import { useSession } from "@/contexts/session-provider";
 import { toast } from "sonner";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import AdvancedSettingsDialog from "./advanced-settings-dialog";
 
@@ -190,22 +181,7 @@ export default function ClientCustomSessionForm() {
             <span>Advanced Settings</span>
           </Button>
         </DialogTrigger>
-
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Advanced Settings</DialogTitle>
-            <DialogDescription>Description</DialogDescription>
-          </DialogHeader>
-
-          <AdvancedSettingsDialog step={step} />
-
-          <DialogFooter>
-            <DialogClose asChild>
-              <Button variant="outline">Close</Button>
-            </DialogClose>
-            <Button variant="accent">Apply</Button>
-          </DialogFooter>
-        </DialogContent>
+        <AdvancedSettingsDialog step={step} />
       </Dialog>
     </div>
   );

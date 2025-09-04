@@ -133,7 +133,7 @@ export const stepOneNbmeQuestions = sqliteTable("step_one_nbme_questions", {
   difficulty: json<QuestionDifficulty>("difficulty").notNull(),
 
   yield: json<YieldType>("yield")
-    .default(JSON.stringify("Medium") as YieldType)
+    .default('"Medium"' as YieldType)
     .notNull(),
   rating: json<AuditRating>("rating").notNull(),
   step: json<"Step 1">("step")
@@ -160,7 +160,7 @@ export const stepTwoNbmeQuestions = sqliteTable("step_two_nbme_questions", {
   difficulty: json<QuestionDifficulty>("difficulty").notNull(),
 
   yield: json<YieldType>("yield")
-    .default(JSON.stringify("Medium") as YieldType)
+    .default('"Medium"' as YieldType)
     .notNull(),
   rating: json<AuditRating>("rating").notNull(),
   step: json<"Step 2">("step")
