@@ -1,0 +1,118 @@
+[
+    {
+      "topic": "Viridans Endocarditis Treatment",
+      "concept_tested": "Gentamicin, an aminoglycoside, enhances penicillin efficacy by binding to the 30S subunit, accelerating bacterial clearance.",
+      "question": "A 34-year-old man with a history of bicuspid aortic valve presents with 2 weeks of low-grade fevers, malaise, and new-onset fatigue. He reports recent dental work. On exam, he has a new systolic murmur and splinter hemorrhages under his fingernails. Blood cultures grow alpha-hemolytic, optochin-resistant, gram-positive cocci in chains. He is started on intravenous penicillin G. To improve the rate of bacterial eradication, the infectious disease team adds a second antibiotic that binds the 30S ribosomal subunit. Which of the following best explains the rationale for this combination therapy in this patient?",
+      "lab_values": [
+        {
+          "analyte": "White blood cell count",
+          "value": 11.2,
+          "unit": "10^3/μL",
+          "qual": null,
+          "panel": "CBC"
+        },
+        {
+          "analyte": "Hemoglobin",
+          "value": 12.1,
+          "unit": "g/dL",
+          "qual": null,
+          "panel": "CBC"
+        },
+        {
+          "analyte": "Platelets",
+          "value": 220,
+          "unit": "10^3/μL",
+          "qual": null,
+          "panel": "CBC"
+        }
+      ],
+      "choices": {
+        "A": "Inhibits bacterial cell wall synthesis at a different step than penicillin",
+        "B": "Disrupts bacterial DNA gyrase, leading to DNA fragmentation",
+        "C": "Binds to the 30S ribosomal subunit, enhancing bactericidal activity when combined with penicillin",
+        "D": "Blocks folic acid synthesis, preventing nucleotide formation",
+        "E": "Inhibits transpeptidase cross-linking of peptidoglycan"
+      },
+      "correct_answer": "C",
+      "explanation": {
+        "A": "Incorrect. While aminoglycosides and penicillins act on different bacterial targets, aminoglycosides do not inhibit cell wall synthesis. Instead, they inhibit protein synthesis by binding the 30S ribosomal subunit.",
+        "B": "Incorrect. Disruption of DNA gyrase is the mechanism of fluoroquinolones, not aminoglycosides.",
+        "C": "Correct. Gentamicin (an aminoglycoside) binds the 30S ribosomal subunit, inhibiting protein synthesis. When combined with penicillin, which disrupts the cell wall, this allows gentamicin to enter the bacteria more effectively, resulting in synergistic, accelerated bacterial killing—especially important in endocarditis caused by viridans streptococci.",
+        "D": "Incorrect. Blocking folic acid synthesis is the mechanism of sulfonamides and trimethoprim, not aminoglycosides.",
+        "E": "Incorrect. Inhibition of transpeptidase cross-linking is the mechanism of penicillins and other beta-lactams, not aminoglycosides."
+      },
+      "systems": [
+        "Cardiovascular System"
+      ],
+      "category": [
+        "Pharmacology",
+        "Microbiology"
+      ],
+      "Competency": "Medical Knowledge: Applying Foundational Science Concepts"
+    },
+    {
+      "topic": "Gilbert's Syndrome",
+      "concept_tested": "Intermittent hyperbilirubinemia due to decreased UDP glucuronosyltransferase activity in otherwise healthy individuals.",
+      "question": "A 22-year-old man presents to the clinic for evaluation of intermittent yellowing of his eyes, which he first noticed during periods of stress, such as exams or after recovering from a mild viral illness. He denies abdominal pain, pruritus, dark urine, or changes in stool color. He has no significant past medical history and takes no medications. Family history is unremarkable. Physical examination is notable for mild scleral icterus but is otherwise normal. He is afebrile and his vital signs are within normal limits. Which of the following best explains the underlying defect in this patient?",
+      "lab_values": [
+        {
+          "analyte": "Total bilirubin",
+          "value": 2.8,
+          "unit": "mg/dL",
+          "qual": null,
+          "panel": "LFT"
+        },
+        {
+          "analyte": "Direct (conjugated) bilirubin",
+          "value": 0.3,
+          "unit": "mg/dL",
+          "qual": null,
+          "panel": "LFT"
+        },
+        {
+          "analyte": "AST",
+          "value": 22,
+          "unit": "U/L",
+          "qual": null,
+          "panel": "LFT"
+        },
+        {
+          "analyte": "ALT",
+          "value": 18,
+          "unit": "U/L",
+          "qual": null,
+          "panel": "LFT"
+        },
+        {
+          "analyte": "Alkaline phosphatase",
+          "value": 65,
+          "unit": "U/L",
+          "qual": null,
+          "panel": "LFT"
+        }
+      ],
+      "choices": {
+        "A": "Defective canalicular transport of conjugated bilirubin",
+        "B": "Decreased activity of UDP glucuronosyltransferase",
+        "C": "Increased hemolysis due to red blood cell membrane defect",
+        "D": "Autoimmune destruction of intrahepatic bile ducts",
+        "E": "Obstruction of the common bile duct by gallstones"
+      },
+      "correct_answer": "B",
+      "explanation": {
+        "A": "Defective canalicular transport of conjugated bilirubin is seen in Dubin-Johnson syndrome, which causes conjugated (direct) hyperbilirubinemia, not the isolated unconjugated hyperbilirubinemia seen in this patient.",
+        "B": "Decreased activity of UDP glucuronosyltransferase is the hallmark of Gilbert's syndrome, leading to intermittent, mild unconjugated hyperbilirubinemia, especially during stress or illness, in otherwise healthy individuals.",
+        "C": "Increased hemolysis due to red blood cell membrane defect (e.g., hereditary spherocytosis) would present with signs of hemolysis (anemia, reticulocytosis, splenomegaly), which are absent in this patient.",
+        "D": "Autoimmune destruction of intrahepatic bile ducts occurs in primary biliary cholangitis, which presents with cholestatic pattern (elevated alkaline phosphatase, pruritus, and conjugated hyperbilirubinemia), not seen here.",
+        "E": "Obstruction of the common bile duct by gallstones causes conjugated hyperbilirubinemia and typically presents with abdominal pain and elevated liver enzymes, which are not present in this case."
+      },
+      "systems": [
+        "Gastrointestinal System"
+      ],
+      "category": [
+        "Biochemistry & Nutrition",
+        "Physiology"
+      ],
+      "Competency": "Medical Knowledge: Applying Foundational Science Concepts"
+    }
+]
