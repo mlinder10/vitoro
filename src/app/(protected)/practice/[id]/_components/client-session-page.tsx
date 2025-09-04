@@ -67,6 +67,7 @@ export default function ClientSessionPage({
       sessionId: session.id,
       answer: choice,
       answers: copy,
+      step: session.step,
     });
   }
 

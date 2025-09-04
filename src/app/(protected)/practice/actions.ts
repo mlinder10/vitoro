@@ -1,7 +1,8 @@
 "use server";
 
 import {
-  answeredQuestions,
+  answeredStepOneNbmes,
+  answeredStepTwoNbmes,
   db,
   qbankSessions,
   stepOneNbmeQuestions,
@@ -55,16 +56,16 @@ async function fetchQuestions(
         .select({ id: stepOneNbmeQuestions.id })
         .from(stepOneNbmeQuestions)
         .leftJoin(
-          answeredQuestions,
+          answeredStepOneNbmes,
           and(
-            eq(answeredQuestions.questionId, stepOneNbmeQuestions.id),
-            eq(answeredQuestions.userId, userId)
+            eq(answeredStepOneNbmes.questionId, stepOneNbmeQuestions.id),
+            eq(answeredStepOneNbmes.userId, userId)
           )
         )
         .where(
           and(
             eq(stepOneNbmeQuestions.rating, "Pass"),
-            isNull(answeredQuestions.userId)
+            isNull(answeredStepOneNbmes.userId)
           )
         )
         .limit(count);
@@ -73,16 +74,16 @@ async function fetchQuestions(
         .select({ id: stepTwoNbmeQuestions.id })
         .from(stepTwoNbmeQuestions)
         .leftJoin(
-          answeredQuestions,
+          answeredStepTwoNbmes,
           and(
-            eq(answeredQuestions.questionId, stepTwoNbmeQuestions.id),
-            eq(answeredQuestions.userId, userId)
+            eq(answeredStepTwoNbmes.questionId, stepTwoNbmeQuestions.id),
+            eq(answeredStepTwoNbmes.userId, userId)
           )
         )
         .where(
           and(
             eq(stepTwoNbmeQuestions.rating, "Pass"),
-            isNull(answeredQuestions.userId)
+            isNull(answeredStepTwoNbmes.userId)
           )
         )
         .limit(count);
@@ -97,6 +98,7 @@ type AnswerQuestionArgs = {
   sessionId: string;
   answer: QuestionChoice;
   answers: (QuestionChoice | null)[];
+  step: NBMEStep;
 };
 
 export async function answerQuestion({
@@ -105,13 +107,16 @@ export async function answerQuestion({
   sessionId,
   answer,
   answers,
+  step,
 }: AnswerQuestionArgs) {
   await Promise.all([
-    db.insert(answeredQuestions).values({
-      userId,
-      questionId,
-      answer,
-    }),
+    db
+      .insert(step === "Step 1" ? answeredStepOneNbmes : answeredStepTwoNbmes)
+      .values({
+        userId,
+        questionId,
+        answer,
+      }),
     db
       .update(qbankSessions)
       .set({ answers })
@@ -143,7 +148,12 @@ export async function endSession(sessionId: string) {
 // Rest Questions
 
 export async function resetQuestions(userId: string) {
-  await db
-    .delete(answeredQuestions)
-    .where(eq(answeredQuestions.userId, userId));
+  await Promise.all([
+    db
+      .delete(answeredStepOneNbmes)
+      .where(eq(answeredStepOneNbmes.userId, userId)),
+    db
+      .delete(answeredStepTwoNbmes)
+      .where(eq(answeredStepTwoNbmes.userId, userId)),
+  ]);
 }

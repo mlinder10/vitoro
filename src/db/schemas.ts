@@ -78,6 +78,8 @@ const SQL_NOW = sql`(datetime('now'))`;
 
 // Schemas ------------------------------------------------------------------
 
+// users
+
 export const users = sqliteTable("users", {
   id: text("id").primaryKey().default(SQL_UUID).notNull(),
   email: text("email").unique().notNull(),
@@ -110,44 +112,7 @@ export const admins = sqliteTable("admins", {
   createdAt: date("created_at").default(SQL_NOW).notNull(),
 });
 
-// export const questions = sqliteTable(
-//   "questions",
-//   {
-//     id: text("id").primaryKey().default(SQL_UUID).notNull(),
-//     createdAt: date("created_at").default(SQL_NOW).notNull(),
-//     creatorId: text("creator_id")
-//       .references(() => users.id, { onDelete: "cascade" })
-//       .notNull(),
-
-//     system: json<System>("system").notNull(),
-//     category: json<AnyCategory>("category").notNull(),
-//     subcategory: json<AnySubcategory>("subcategory").notNull(),
-//     topic: text("topic").notNull(),
-//     type: json<QuestionType>("type").notNull(),
-//     step: json<NBMEStep>("step").notNull(),
-
-//     question: text("question").notNull(),
-//     answer: json<QuestionChoice>("answer").notNull(),
-//     choices: json<Choices>("choices").notNull(),
-//     explanations: json<Choices>("explanations").notNull(),
-
-//     difficulty: json<QuestionDifficulty>("difficulty").notNull(),
-
-//     yield: json<YieldType>("yield")
-//       .default(JSON.stringify("Medium") as YieldType)
-//       .notNull(),
-//     rating: json<AuditRating>("rating").notNull(),
-//   },
-//   (table) => [
-//     index("question_system_idx").on(table.system),
-//     index("question_category_idx").on(table.category),
-//     index("question_subcategory_idx").on(table.subcategory),
-//     index("question_topic_idx").on(table.topic),
-//     index("question_type_idx").on(table.type),
-//     index("question_difficulty_idx").on(table.difficulty),
-//     index("question_step_idx").on(table.step),
-//   ]
-// );
+// nbme questions
 
 export const stepOneNbmeQuestions = sqliteTable("step_one_nbme_questions", {
   id: text("id").primaryKey().default(SQL_UUID).notNull(),
@@ -171,7 +136,9 @@ export const stepOneNbmeQuestions = sqliteTable("step_one_nbme_questions", {
     .default(JSON.stringify("Medium") as YieldType)
     .notNull(),
   rating: json<AuditRating>("rating").notNull(),
-  step: json<"Step 1">("step").notNull(),
+  step: json<"Step 1">("step")
+    .notNull()
+    .default('"Step 1"' as "Step 1"),
 });
 
 export const stepTwoNbmeQuestions = sqliteTable("step_two_nbme_questions", {
@@ -196,25 +163,46 @@ export const stepTwoNbmeQuestions = sqliteTable("step_two_nbme_questions", {
     .default(JSON.stringify("Medium") as YieldType)
     .notNull(),
   rating: json<AuditRating>("rating").notNull(),
-  step: json<"Step 2">("step").notNull(),
+  step: json<"Step 2">("step")
+    .notNull()
+    .default('"Step 2"' as "Step 2"),
 });
 
-export const answeredQuestions = sqliteTable(
-  "answered_questions",
+export const answeredStepOneNbmes = sqliteTable(
+  "answered_step_one_nbmes",
   {
     id: text("id").primaryKey().default(SQL_UUID).notNull(),
     userId: text("user_id")
       .references(() => users.id, { onDelete: "cascade" })
       .notNull(),
     questionId: text("question_id")
-      // .references(() => questions.id, { onDelete: "cascade" })
+      .references(() => stepOneNbmeQuestions.id, { onDelete: "cascade" })
       .notNull(),
     createdAt: date("created_at").default(SQL_NOW).notNull(),
     answer: json<QuestionChoice>("answer").notNull(),
   },
   (table) => [
-    index("answer_user_idx").on(table.userId),
-    index("answer_question_idx").on(table.questionId),
+    index("step_one_nbme_answer_user_idx").on(table.userId),
+    index("step_one_nbme_answer_question_idx").on(table.questionId),
+  ]
+);
+
+export const answeredStepTwoNbmes = sqliteTable(
+  "answered_step_two_nbmes",
+  {
+    id: text("id").primaryKey().default(SQL_UUID).notNull(),
+    userId: text("user_id")
+      .references(() => users.id, { onDelete: "cascade" })
+      .notNull(),
+    questionId: text("question_id")
+      .references(() => stepTwoNbmeQuestions.id, { onDelete: "cascade" })
+      .notNull(),
+    createdAt: date("created_at").default(SQL_NOW).notNull(),
+    answer: json<QuestionChoice>("answer").notNull(),
+  },
+  (table) => [
+    index("step_two_nbme_answer_user_idx").on(table.userId),
+    index("step_two_nbme_answer_question_idx").on(table.questionId),
   ]
 );
 
@@ -232,6 +220,8 @@ export const qbankSessions = sqliteTable("qbank_sessions", {
   flaggedQuestionIds: json<string[]>("flagged_questions").notNull(),
   inProgress: json<boolean>("in_progress").default(true).notNull(),
 });
+
+// review questions
 
 export const reviewQuestions = sqliteTable(
   "review_questions",
@@ -254,44 +244,116 @@ export const reviewQuestions = sqliteTable(
   ]
 );
 
-export const foundationalQuestions = sqliteTable("foundational_questions", {
-  id: text("id").primaryKey().default(SQL_UUID).notNull(),
-  step: json<NBMEStep>("step").notNull(),
-  system: text("system").notNull(),
-  topic: text("topic").notNull(),
-  question: text("question").notNull(),
-  expectedAnswer: text("expected_answer").notNull(),
-});
+// foundational questions
 
-export const foundationalFollowUps = sqliteTable("foundational_followups", {
-  id: text("id").primaryKey().default(SQL_UUID).notNull(),
-  foundationalQuestionId: text("foundational_question_id")
-    .references(() => foundationalQuestions.id, { onDelete: "cascade" })
-    .notNull(),
-  question: text("question").notNull(),
-  choices: json<Choices>("choices").notNull(),
-  explanations: json<Choices>("explanations").notNull(),
-  answer: json<QuestionChoice>("answer").notNull(),
-  type: json<QuestionType>("type").notNull(),
-});
+export const stepOneFoundationalQuestions = sqliteTable(
+  "step_one_foundational_questions",
+  {
+    id: text("id").primaryKey().default(SQL_UUID).notNull(),
+    system: text("system").notNull(),
+    topic: text("topic").notNull(),
+    question: text("question").notNull(),
+    expectedAnswer: text("expected_answer").notNull(),
+    step: json<"Step 1">("step")
+      .notNull()
+      .default('"Step 1"' as "Step 1"),
+  }
+);
 
-export const answeredFoundationals = sqliteTable(
-  "answered_foundational_questions",
+export const stepOneFoundationalFollowUps = sqliteTable(
+  "step_one_foundational_followups",
+  {
+    id: text("id").primaryKey().default(SQL_UUID).notNull(),
+    foundationalQuestionId: text("foundational_question_id")
+      .references(() => stepOneFoundationalQuestions.id, {
+        onDelete: "cascade",
+      })
+      .notNull(),
+    question: text("question").notNull(),
+    choices: json<Choices>("choices").notNull(),
+    explanations: json<Choices>("explanations").notNull(),
+    answer: json<QuestionChoice>("answer").notNull(),
+    type: json<QuestionType>("type").notNull(),
+    step: json<"Step 1">("step")
+      .notNull()
+      .default('"Step 1"' as "Step 1"),
+  }
+);
+
+export const stepTwoFoundationalQuestions = sqliteTable(
+  "step_two_foundational_questions",
+  {
+    id: text("id").primaryKey().default(SQL_UUID).notNull(),
+    system: text("system").notNull(),
+    topic: text("topic").notNull(),
+    question: text("question").notNull(),
+    expectedAnswer: text("expected_answer").notNull(),
+    step: json<"Step 1">("step")
+      .notNull()
+      .default('"Step 1"' as "Step 1"),
+  }
+);
+
+export const stepTwoFoundationalFollowUps = sqliteTable(
+  "step_two_foundational_followups",
+  {
+    id: text("id").primaryKey().default(SQL_UUID).notNull(),
+    foundationalQuestionId: text("foundational_question_id")
+      .references(() => stepTwoFoundationalQuestions.id, {
+        onDelete: "cascade",
+      })
+      .notNull(),
+    question: text("question").notNull(),
+    choices: json<Choices>("choices").notNull(),
+    explanations: json<Choices>("explanations").notNull(),
+    answer: json<QuestionChoice>("answer").notNull(),
+    type: json<QuestionType>("type").notNull(),
+    step: json<"Step 2">("step")
+      .notNull()
+      .default('"Step 2"' as "Step 2"),
+  }
+);
+
+export const answeredStepOneFoundationals = sqliteTable(
+  "answered_step_one_foundational_questions",
   {
     id: text("id").primaryKey().default(SQL_UUID).notNull(),
     userId: text("user_id")
       .references(() => users.id, { onDelete: "cascade" })
       .notNull(),
     foundationalQuestionId: text("foundational_question_id")
-      .references(() => foundationalQuestions.id, { onDelete: "cascade" })
+      .references(() => stepOneFoundationalQuestions.id, {
+        onDelete: "cascade",
+      })
       .notNull(),
     createdAt: date("created_at").default(SQL_NOW).notNull(),
     shortResponse: text("short_response").notNull(),
     answers: json<QuestionChoice[]>("answers").notNull(),
     isComplete: json<boolean>("is_complete").default(false).notNull(),
-  },
-  (table) => [
-    index("foundational_answer_user_idx").on(table.userId),
-    index("foundational_answer_question_idx").on(table.foundationalQuestionId),
-  ]
+    step: json<"Step 1">("step")
+      .notNull()
+      .default('"Step 1"' as "Step 1"),
+  }
+);
+
+export const answeredStepTwoFoundationals = sqliteTable(
+  "answered_step_two_foundational_questions",
+  {
+    id: text("id").primaryKey().default(SQL_UUID).notNull(),
+    userId: text("user_id")
+      .references(() => users.id, { onDelete: "cascade" })
+      .notNull(),
+    foundationalQuestionId: text("foundational_question_id")
+      .references(() => stepTwoFoundationalQuestions.id, {
+        onDelete: "cascade",
+      })
+      .notNull(),
+    createdAt: date("created_at").default(SQL_NOW).notNull(),
+    shortResponse: text("short_response").notNull(),
+    answers: json<QuestionChoice[]>("answers").notNull(),
+    isComplete: json<boolean>("is_complete").default(false).notNull(),
+    step: json<"Step 2">("step")
+      .notNull()
+      .default('"Step 2"' as "Step 2"),
+  }
 );

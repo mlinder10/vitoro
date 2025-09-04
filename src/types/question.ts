@@ -1,28 +1,28 @@
 import { InferSelectModel } from "drizzle-orm";
 import {
-  answeredFoundationals,
-  foundationalFollowUps,
-  foundationalQuestions,
+  answeredStepOneFoundationals,
+  answeredStepOneNbmes,
+  answeredStepTwoFoundationals,
+  answeredStepTwoNbmes,
   qbankSessions,
-  // questions,
+  stepOneFoundationalFollowUps,
   stepOneNbmeQuestions,
+  stepTwoFoundationalFollowUps,
+  stepTwoFoundationalQuestions,
   stepTwoNbmeQuestions,
 } from "@/db";
 
+// NBME
+
 export type QBankSession = InferSelectModel<typeof qbankSessions>;
-// export type Question = InferSelectModel<typeof questions>;
-export type FoundationalQuestion = InferSelectModel<
-  typeof foundationalQuestions
->;
-export type FoundationalFollowup = InferSelectModel<
-  typeof foundationalFollowUps
->;
-export type AnsweredFoundational = InferSelectModel<
-  typeof answeredFoundationals
->;
+
 export type StepOneNBMEQuestion = InferSelectModel<typeof stepOneNbmeQuestions>;
 export type StepTwoNBMEQuestion = InferSelectModel<typeof stepTwoNbmeQuestions>;
 export type NBMEQuestion = StepOneNBMEQuestion | StepTwoNBMEQuestion;
+
+export type AnsweredStepOneNBME = InferSelectModel<typeof answeredStepOneNbmes>;
+export type AnsweredStepTwoNBME = InferSelectModel<typeof answeredStepTwoNbmes>;
+export type AnsweredNBME = AnsweredStepOneNBME | AnsweredStepTwoNBME;
 
 export type QuestionChoice = "a" | "b" | "c" | "d" | "e";
 export type NBMEStep = (typeof NBME_STEPS)[number];
@@ -99,3 +99,35 @@ export function isValidGeneratedQuestion(question: GeneratedQuestion) {
     ["easy", "moderate", "hard"].includes(question.difficulty)
   );
 }
+
+// Foundational
+
+export type StepOneFoundationalQuestion = InferSelectModel<
+  typeof stepOneNbmeQuestions
+>;
+export type StepTwoFoundationalQuestion = InferSelectModel<
+  typeof stepTwoFoundationalQuestions
+>;
+export type FoundationalQuestion =
+  | StepOneFoundationalQuestion
+  | StepTwoFoundationalQuestion;
+
+export type StepOneFoundationalFollowup = InferSelectModel<
+  typeof stepOneFoundationalFollowUps
+>;
+export type StepTwoFoundationalFollowup = InferSelectModel<
+  typeof stepTwoFoundationalFollowUps
+>;
+export type FoundationalFollowup =
+  | StepOneFoundationalFollowup
+  | StepTwoFoundationalFollowup;
+
+export type AnsweredStepOneFoundational = InferSelectModel<
+  typeof answeredStepOneFoundationals
+>;
+export type AnsweredStepTwoFoundational = InferSelectModel<
+  typeof answeredStepTwoFoundationals
+>;
+export type AnsweredFoundational =
+  | AnsweredStepOneFoundational
+  | AnsweredStepTwoFoundational;
