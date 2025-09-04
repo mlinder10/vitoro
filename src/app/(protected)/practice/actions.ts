@@ -157,3 +157,37 @@ export async function resetQuestions(userId: string) {
       .where(eq(answeredStepTwoNbmes.userId, userId)),
   ]);
 }
+
+// Questions Data
+
+export async function fetchStepOneData() {
+  const [competencies, concepts] = await Promise.all([
+    db
+      .selectDistinct({
+        competency: stepOneNbmeQuestions.competency,
+      })
+      .from(stepOneNbmeQuestions),
+    db
+      .selectDistinct({ concept: stepOneNbmeQuestions.concept })
+      .from(stepOneNbmeQuestions),
+  ]);
+  return {
+    competencies: competencies.map((c) => c.competency),
+    concepts: concepts.map((c) => c.concept),
+  };
+}
+
+export async function fetchStepTwoData() {
+  const [systems, types] = await Promise.all([
+    db
+      .selectDistinct({ system: stepTwoNbmeQuestions.system })
+      .from(stepTwoNbmeQuestions),
+    db
+      .selectDistinct({ type: stepTwoNbmeQuestions.type })
+      .from(stepTwoNbmeQuestions),
+  ]);
+  return {
+    systems: systems.map((s) => s.system),
+    types: types.map((t) => t.type),
+  };
+}
