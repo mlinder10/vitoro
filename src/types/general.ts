@@ -7,23 +7,19 @@ export type Focus = "step-1" | "high-yield" | "nbme-mix";
 export type QBankMode = "timed" | "tutor";
 
 export type Task =
-  | "auto-triage"
   | "breakdown"
   | "distractor"
   | "gap-finder"
   | "strategy"
-  | "timing"
   | "pattern"
   | "memory"
   | "pimp-mode";
 
 export const TASKS: Task[] = [
-  "auto-triage",
   "breakdown",
   "distractor",
   "gap-finder",
   "strategy",
-  "timing",
   "pattern",
   "memory",
   "pimp-mode",

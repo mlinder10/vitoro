@@ -13,6 +13,7 @@ import {
   // NotebookText,
   ShieldUserIcon,
   Target,
+  TestTube,
 } from "lucide-react";
 import Link from "next/link";
 import { ComponentType, useEffect, useState } from "react";
@@ -71,6 +72,12 @@ export default function SideNav() {
             href="/practice"
             icon={Target}
             label="Practice"
+            isOpen={isOpen}
+          />
+          <ListLink
+            href="/playground"
+            icon={TestTube}
+            label="Playground"
             isOpen={isOpen}
           />
           {/* <ListLink
