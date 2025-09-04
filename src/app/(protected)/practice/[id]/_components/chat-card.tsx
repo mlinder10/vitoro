@@ -41,7 +41,11 @@ export default function ChatCard({ question, choice }: ChatCardProps) {
     };
     setMessages((prev) => [...prev, newMessage]);
     inputRef.current.value = "";
-    const res = await promptGeneralChat(question, choice, messages);
+    const res = await promptGeneralChat(
+      question,
+      choice,
+      [...messages, newMessage]
+    );
     while (true) {
       const { value, done } = await res.next();
       if (done) break;
