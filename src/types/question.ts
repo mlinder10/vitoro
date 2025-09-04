@@ -54,8 +54,8 @@ export const YIELD_TYPES = ["Low", "Medium", "High"] as const;
 
 export type LabValue = {
   analyte: string;
-  value: number;
-  unit: string;
+  value: number | null;
+  unit: string | null;
   qual: string | null;
   panel: string;
 };

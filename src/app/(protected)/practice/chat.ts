@@ -5,16 +5,6 @@ import { NBMEQuestion, QuestionChoice, Task, Message } from "@/types";
 
 function buildTaskPrompts(basePrompt: string) {
   return {
-    "auto-triage":
-      basePrompt +
-      `
-## 🔍 Root Cause
-- Classify miss type: [RECALL] [REASONING] [MISREAD] [TESTMANSHIP] [TIMING]
-- Be specific. No vague excuses.
-
-## 💡 Next Step
-- Prescribe the *single most effective* remediation task: schema, rep, contrast table, etc.
-`,
 
     breakdown:
       basePrompt +
@@ -51,22 +41,23 @@ function buildTaskPrompts(basePrompt: string) {
     "gap-finder":
       basePrompt +
       `
-## 📉 What They Didn't Know
-- Teach the 5-point micro-lesson they missed
+## 📉 Bridge the Gap
+- Provide a 5-point micro-lesson to bridge the gap between the student's answer and the correct answer.
 
-## 🧠 Analogy
-- One relatable metaphor to make it stick
+## 🧠 Review
+- Give an easy to digest but detailed explanation of the key concept for this question to help reinforce the student's understanding.
 
-## ❓ Mini-Checks
-1. Quick question to verify understanding
-2. Another to push deeper
+## 🔄 Check Your Understanding
+- ask an open ended question related to the review to help reinforce the student's understanding
+- DO NOT ANSWER THE QUESTION FOR THEM, wait for their response. 
+
 `,
 
     strategy:
       basePrompt +
       `
 ## 🧭 Read Order
-- Best order to process stem + choices
+- Tell them to read the last sentence FIRST, then read the stem, and then walk them through how to build a differential diagnosis for the question.
 
 ## 🔑 Clue Ranking
 - Which findings matter most — and which are noise
@@ -75,27 +66,12 @@ function buildTaskPrompts(basePrompt: string) {
 - What should've been cut instantly
 
 ## 🏁 Final Move
-- One decision-making tip for last-second selection
+- Coach them on how to answer the question in their head first before looking to the answer choices.
 
-## ⏱️ Practice Drill
-- Quick scenario to run the heuristic
+## 🥼 Think like a doctor
+- Explain the process of thinking like a doctor, building a differential diagnosis, and how to apply it to the question.
 `,
 
-    timing:
-      basePrompt +
-      `
-## ⏳ Timebox
-- Ideal pacing target (in seconds)
-
-## 🚩 Mark & Move
-- When to flag and bail
-
-## 🔄 Change Answer Rule
-- When to trust your gut vs override it
-
-## ⏱️ Speed Rep
-- One time-controlled drill to build pacing
-`,
 
     pattern:
       basePrompt +
@@ -109,7 +85,7 @@ function buildTaskPrompts(basePrompt: string) {
 | Clue 3       |           |                |
 
 ## ⚡ Pattern Drill
-- One A vs B decision forced by a key clue
+- One A vs B decision forced by a key clue, DO NOT ANSWER THE QUESTION FOR THEM, wait for their response.
 `,
 
     memory:
@@ -125,7 +101,7 @@ Back: [Answer]
 Front: [Clinical situation]  
 Back: [Critical takeaway]
 
-**Mnemonic (Optional)**  
+**Mnemonic**  
 Keep it clean, short, and testable.
 `,
 
@@ -152,9 +128,11 @@ function getTaskSystemPrompt(
   choice: QuestionChoice
 ) {
   const isCorrect = choice === question.answer;
-  const basePrompt = `You are Plot Bot, a brutal but brilliant USMLE coach trained in the style of Adam Plotkin. 
+  const basePrompt = `You are Vito, an encouraging and brilliant USMLE board prep tutor trained in the style of Adam Plotkin. 
 Your job is to dissect why the student got this question ${isCorrect ? "RIGHT" : "WRONG"} and push them to clinical mastery. 
-Tone: clear, direct, no fluff. Teach them what matters. Skip what doesn't.
+Tone: clear, direct, but snarky and sarcastic. Teach them what matters. Skip what doesn't.
+
+Formatting Rules:\n- Respond using markdown.\n- Use H2 headings (##) for each major section with natural, meaningful titles you choose.\n- No global intro/outro; keep the response organized under headings only.\n- Keep it concise and instructional.
 
 Question:
 ${question.question}
@@ -178,9 +156,19 @@ Correct Answer: ${question.answer}
 export async function promptChatWithTask(
   task: Task,
   question: NBMEQuestion,
-  choice: QuestionChoice
+  choice: QuestionChoice,
+  messages?: Message[]
 ) {
-  const prompt = getTaskSystemPrompt(task, question, choice);
+  let prompt = getTaskSystemPrompt(task, question, choice);
+
+  if (messages && messages.length > 0) {
+    const history = messages.reduce(
+      (acc, m) => acc + `${m.role} message: ${m.content}\n`,
+      ""
+    );
+    prompt += `\nPrevious Conversation:\n${history}`;
+  }
+
   const llm = new Gemini();
   return await llm.promptStreamed([
     {
@@ -197,29 +185,32 @@ export async function promptGeneralChat(
   choice: QuestionChoice,
   messages: Message[]
 ) {
-  const basePrompt = `You are Plot Bot, a brutal but brilliant USMLE coach trained in the style of Adam Plotkin.
-Your job is to push students to clinical mastery. Tone: clear, direct, no fluff. 
+  const basePrompt = `You are Vitoro, an encouraging and brilliant USMLE board prepcoach trained in the style of Adam Plotkin.
+Your job is to push students to clinical mastery by helping them understand how to break down question stems, build a differential diagnosis, and understand the key differences between answer choices. Tone: clear, direct, but snarky and sarcastic.
 
-Question: ${question.question}
+Formatting Rules:\n- Respond using markdown.\n- Use H2 headings (##) for each major section with natural, meaningful titles you choose.\n- No global intro/outro; keep the response organized under headings only.\n- Keep it concise and instructional.
 
-Answer choices:
-a: ${question.choices.a}
-b: ${question.choices.b}
-c: ${question.choices.c}
-d: ${question.choices.d}
-e: ${question.choices.e}
+## Case Stem
+${question.question}
 
-User answer: ${choice}
+## Answer Choices
+- a: ${question.choices.a}
+- b: ${question.choices.b}
+- c: ${question.choices.c}
+- d: ${question.choices.d}
+- e: ${question.choices.e}
 
-Correct answer: ${question.answer}
+## User Answer
+${choice}
 
-Explanation: ${question.explanations[question.answer]}
+## Correct Answer
+${question.answer}
 
-Provide clear, concise educational responses.
+## Key Explanation
+${question.explanations[question.answer]}
 
-Previous Conversation:
-
-`;
+## Previous Conversation
+`; 
 
   const joined =
     basePrompt +
