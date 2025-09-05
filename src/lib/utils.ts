@@ -1,3 +1,4 @@
+import { NBMEQuestion } from "@/types";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -158,4 +159,19 @@ export function generateRandomName() {
     adjectives[Math.floor(Math.random() * adjectives.length)];
   const randomNoun = nouns[Math.floor(Math.random() * nouns.length)];
   return `${randomAdjective}_${randomNoun}`;
+}
+
+export function containsAtLeast<T>(
+  arr: T[],
+  n: number,
+  predicate: (t: T) => boolean
+) {
+  return arr.filter(predicate).length >= n;
+}
+
+export function reorderQuestions(
+  questions: NBMEQuestion[],
+  questionIds: string[]
+) {
+  return questionIds.map((id) => questions.find((q) => q.id === id)!);
 }

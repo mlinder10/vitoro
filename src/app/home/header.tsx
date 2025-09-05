@@ -1,7 +1,7 @@
-import { Link } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Session } from "@/lib/auth";
 import { HEADER_HEIGHT, INNER_WIDTH } from "./constants";
+import Link from "next/link";
 
 export function Header({ session }: { session: Session | null }) {
   return (
