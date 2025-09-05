@@ -129,7 +129,7 @@ export default function ClientSessionPage({
             onFlag={handleFlagQuestion}
             onUnflag={handleUnflagQuestion}
           />
-          {answers[activeIndex] !== null && (
+          {session.mode === "tutor" && answers[activeIndex] !== null && (
             <ChatCard question={activeQuestion} choice={answers[activeIndex]} />
           )}
         </div>

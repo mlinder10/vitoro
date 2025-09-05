@@ -36,7 +36,10 @@ export function useNavigationGuard(
   }
 
   function refresh() {
-    navigate(() => router.refresh());
+    if (completed > 0) {
+      sendProgress(questionId, completed, total);
+    }
+    router.refresh();
   }
 
   useEffect(() => {
@@ -58,12 +61,29 @@ export function useNavigationGuard(
       }
     }
 
+    function handleLinkClick(e: MouseEvent) {
+      const target = e.target as HTMLElement;
+      const anchor = target.closest("a");
+      if (!anchor) return;
+
+      const href = anchor.getAttribute("href");
+      if (!href || href.startsWith("#")) return;
+
+      if (!confirmNavigation()) {
+        e.preventDefault();
+      } else if (completed > 0) {
+        sendProgress(questionId, completed, total);
+      }
+    }
+
     window.addEventListener("popstate", handlePopState);
     window.addEventListener("beforeunload", handleBeforeUnload);
+    document.addEventListener("click", handleLinkClick);
 
     return () => {
       window.removeEventListener("popstate", handlePopState);
       window.removeEventListener("beforeunload", handleBeforeUnload);
+      document.removeEventListener("click", handleLinkClick);
     };
   }, [completed, questionId, pathname, total, confirmNavigation]);
 

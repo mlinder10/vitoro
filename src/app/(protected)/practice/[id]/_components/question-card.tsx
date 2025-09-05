@@ -4,6 +4,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useState, useEffect } from "react";
 import Countdown from "./countdown";
 import QuestionChoiceView from "./question-choice";
+import { cn } from "@/lib/utils";
 
 type QuestionCardProps = {
   session: QBankSession;
@@ -62,7 +63,12 @@ export default function QuestionCard({
   }, [question]);
 
   return (
-    <div className="flex flex-col flex-2 gap-8 bg-tertiary p-8 border rounded-md max-w-[800px] h-full overflow-y-auto">
+    <div
+      className={cn(
+        "flex flex-col gap-8 bg-tertiary p-8 border rounded-md h-full overflow-y-auto",
+        session.mode === "tutor" ? "flex-2 max-w-[800px]" : "flex-1 w-full"
+      )}
+    >
       <div className="flex justify-between items-center">
         <div>
           <p className="font-semibold text-custom-accent text-lg">
@@ -82,9 +88,9 @@ export default function QuestionCard({
       {question.labValues && question.labValues.length > 0 && (
         <div className="bg-secondary p-4 rounded-md">
           <h3 className="mb-2 font-semibold">Laboratory Values:</h3>
-          <div className="gap-2 grid grid-cols-2 text-sm">
+          <div className="grid grid-cols-2 gap-2 text-sm">
             {question.labValues.map((lab, idx) => (
-              <div key={idx} className="flex justify-between">
+              <div key={idx} className="flex items-baseline gap-4">
                 <span>{lab.analyte}:</span>
                 <span>
                   {lab.value} {lab.unit} {lab.qual}

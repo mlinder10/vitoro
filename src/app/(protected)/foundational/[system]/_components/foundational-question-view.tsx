@@ -82,6 +82,10 @@ export function FoundationalQuestionBase({
       <div className="space-y-4">
         <p>{question.question}</p>
         <div>
+          <p className="font-semibold">Your Answer</p>
+          <p>{response}</p>
+        </div>
+        <div>
           <p className="font-semibold">Expected Answer</p>
           <p>{question.expectedAnswer}</p>
         </div>
