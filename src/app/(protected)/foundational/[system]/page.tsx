@@ -5,20 +5,37 @@ import {
   foundationalQuestions,
 } from "@/db";
 import { getSession } from "@/lib/auth";
-import { eq, and, isNull, or } from "drizzle-orm";
-import { notFound } from "next/navigation";
+import { eq, and, isNull, or, sql } from "drizzle-orm";
 import {
   FoundationalQuestionBase,
   FoundationalQuestionFollowup,
 } from "./_components/foundational-question-view";
 
-async function fetchFoundationalQuestion(userId: string, system: string) {
-  const [question] = await db
+import {
+  AnsweredFoundational,
+  NBMEStep,
+  FoundationalFollowup,
+} from "@/types";
+
+async function fetchFoundationalQuestion(
+  userId: string,
+  system: string,
+  step: NBMEStep,
+  topic?: string
+) {
+  const normalizedSystem = system.trim().toLowerCase();
+  const normalizedTopic = topic?.trim().toLowerCase();
+
+  const results = await db
     .select()
     .from(foundationalQuestions)
     .where(
       and(
-        eq(foundationalQuestions.system, system),
+        sql`lower(${foundationalQuestions.system}) = ${normalizedSystem}`,
+        eq(foundationalQuestions.step, step),
+        normalizedTopic
+          ? sql`lower(${foundationalQuestions.topic}) = ${normalizedTopic}`
+          : sql`1 = 1`,
         or(
           isNull(answeredFoundationals.id),
           eq(answeredFoundationals.isComplete, false)
@@ -35,8 +52,20 @@ async function fetchFoundationalQuestion(userId: string, system: string) {
         eq(answeredFoundationals.userId, userId)
       )
     )
+    .orderBy(
+      sql`CASE WHEN ${answeredFoundationals.id} IS NULL THEN 1 ELSE 0 END`,
+      sql`CASE WHEN ${answeredFoundationals.shortResponse} IS NULL OR ${answeredFoundationals.shortResponse} = '' THEN 0 ELSE 1 END`,
+      sql`${answeredFoundationals.createdAt}`
+    )
     .limit(1);
 
+  console.log("fetchFoundationalQuestion", {
+    system: normalizedSystem,
+    topic: normalizedTopic,
+    length: results.length,
+  });
+
+  const [question] = results;
   if (!question) return null;
 
   const followups = await db
@@ -57,29 +86,85 @@ async function fetchFoundationalQuestion(userId: string, system: string) {
 }
 
 type FoundationalSystemPageProps = {
-  params: Promise<{
-    system: string;
-  }>;
+  params: Promise<{ system: string }>;
+  searchParams: Promise<{ step?: NBMEStep; topic?: string; shelf?: string }>;
 };
 
 export default async function FoundationalSystemPage({
   params,
+  searchParams,
 }: FoundationalSystemPageProps) {
   const { id } = await getSession();
   const { system } = await params;
+  const {
+    step: stepParam,
+    topic: topicParam,
+    shelf: shelfParam,
+  } = await searchParams;
+  const currentStep: NBMEStep = stepParam ?? "Step 1";
   const decodedSystem = decodeURIComponent(system);
-  const data = await fetchFoundationalQuestion(id, decodedSystem);
+  const decodedTopic = topicParam ? decodeURIComponent(topicParam) : undefined;
+  const decodedShelf = shelfParam ? decodeURIComponent(shelfParam) : undefined;
 
-  if (data === null) return notFound(); // TODO: replace with "completed all questions" page
+  console.log("decoded params", {
+    system: decodedSystem,
+    topic: decodedTopic,
+    shelf: decodedShelf,
+  });
 
-  const step = data.answer?.answers.length ?? "base";
+  const data = await fetchFoundationalQuestion(
+    id,
+    decodedSystem,
+    currentStep,
+    decodedTopic
+  );
 
-  if (step === "base")
-    return <FoundationalQuestionBase question={data.question} />;
+  console.log("filtered result length", data ? 1 : 0);
 
-  if (step >= data.followups.length) {
+  if (data === null)
+    return (
+      <div className="p-4">
+        No foundational questions found for the selected parameters.
+      </div>
+    );
+
+  const answeredCount = getAnsweredCount(data.answer);
+
+  if (answeredCount === "base")
+    return (
+      <FoundationalQuestionBase
+        key={data.question.id}
+        question={data.question}
+        total={data.followups.length + 1}
+      />
+    );
+
+  if (answeredCount >= data.followups.length) {
     // TODO: handle completed follow up access
   }
 
-  return <FoundationalQuestionFollowup question={data.followups[step]} />;
+  const answeredIds = new Set(
+    data.answer!.answers.map((a) => a.id)
+  );
+  const remaining = data.followups.filter(
+    (f) => !answeredIds.has(f.id)
+  );
+  const next = remaining[
+    Math.floor(Math.random() * remaining.length)
+  ] as FoundationalFollowup;
+
+  return (
+    <FoundationalQuestionFollowup
+      key={next.id}
+      question={next}
+      questionId={data.question.id}
+      answers={data.answer!.answers}
+      total={data.followups.length}
+    />
+  );
+}
+
+function getAnsweredCount(answer: AnsweredFoundational | null) {
+  if (!answer || answer.shortResponse.trim() === "") return "base";
+  return answer.answers.length;
 }

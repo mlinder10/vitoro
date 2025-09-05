@@ -212,12 +212,13 @@ ${question.explanations[question.answer]}
 ## Previous Conversation
 `; 
 
+  const formatted = messages
+    .map((m) => `${m.role.toUpperCase()}: ${m.content}`)
+    .join("\n");
   const joined =
     basePrompt +
-    messages.reduce(
-      (acc, message) => acc + `${message.role} message: ${message.content}`,
-      ""
-    );
+    formatted +
+    "\n\nPlease respond to the user's last message.";
   const llm = new Gemini();
   return await llm.promptStreamed([
     {
