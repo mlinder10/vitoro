@@ -5,17 +5,7 @@ import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { LOGIN_PATH } from "./constants";
 
-const JWT_SECRET = process.env.JWT_SECRET?.trim();
-if (!JWT_SECRET) {
-  throw new Error("JWT_SECRET must be set in the environment");
-}
-
-const JWT_KEY = process.env.JWT_KEY?.trim();
-if (!JWT_KEY) {
-  throw new Error("JWT_KEY must be set in the environment");
-}
-
-const SECRET_KEY = new TextEncoder().encode(JWT_SECRET);
+const SECRET_KEY = new TextEncoder().encode(process.env.JWT_SECRET!);
 
 export type Session = {
   id: string;
@@ -47,7 +37,7 @@ async function verifyToken(token: string) {
 export async function authenticate(session: Session) {
   const token = await signToken(session);
   (await cookies()).set({
-    name: JWT_KEY,
+    name: process.env.JWT_KEY!,
     value: token,
     httpOnly: true,
     secure: true,
@@ -58,7 +48,7 @@ export async function authenticate(session: Session) {
 }
 
 export async function unauthenticate() {
-  (await cookies()).delete(JWT_KEY);
+  (await cookies()).delete(process.env.JWT_KEY!);
 }
 
 export async function hashPassword(password: string) {
@@ -79,7 +69,7 @@ export async function tryGetSession(): Promise<Session | null> {
   const jwt = head
     .get("cookie")
     ?.split("; ")
-    .filter((v) => v.startsWith(JWT_KEY));
+    .filter((v) => v.startsWith(process.env.JWT_KEY!));
   if (jwt === undefined || jwt.length === 0) {
     return null;
   }

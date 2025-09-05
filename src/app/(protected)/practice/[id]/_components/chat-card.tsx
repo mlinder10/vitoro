@@ -281,18 +281,6 @@ export default function ChatCard({ question, choice }: ChatCardProps) {
 
     setMessages((prev) => [...prev, userMessage]);
     inputRef.current.value = "";
-    const res = await promptGeneralChat(
-      question,
-      choice,
-      [...messages, newMessage]
-    );
-    while (true) {
-      const { value, done } = await res.next();
-      if (done) break;
-      streamCompletionHandler(value);
-    }
-    setIsLoading(false);
-  }
 
     // Simulate AI thinking time
     setTimeout(async () => {

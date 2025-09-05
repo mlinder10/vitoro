@@ -1,19 +1,33 @@
-import PageTitle from "../_components/page-title";
-import Link from "next/link";
-import { ArrowRight } from "lucide-react";
-import { getSession } from "@/lib/auth";
 import { answeredFoundationals, db, foundationalQuestions } from "@/db";
-import { and, eq } from "drizzle-orm";
-import { STEP2_SYSTEM_TO_SHELVES } from "@/lib/foundational-data";
+import PageTitle from "../_components/page-title";
+import { getSession } from "@/lib/auth";
+import { sql, eq, and } from "drizzle-orm";
+import { SYSTEMS } from "@/types";
+import { ArrowRight } from "lucide-react";
+import Link from "next/link";
 
-export default async function FoundationalPage() {
-  const { id } = await getSession();
-  const incomplete = await db
+type SystemData = {
+  system: string;
+  answered: number;
+  unanswered: number;
+};
+
+async function fetchSystems(userId: string): Promise<SystemData[]> {
+  const totals = await db
     .select({
-      questionId: answeredFoundationals.foundationalQuestionId,
-      step: foundationalQuestions.step,
       system: foundationalQuestions.system,
-      topic: foundationalQuestions.topic,
+      total: sql<number>`COUNT(*)`.as("total"),
+    })
+    .from(foundationalQuestions)
+    .groupBy(foundationalQuestions.system);
+
+  const answered = await db
+    .select({
+      system: foundationalQuestions.system,
+      answered:
+        sql<number>`COUNT(DISTINCT ${answeredFoundationals.foundationalQuestionId})`.as(
+          "answered"
+        ),
     })
     .from(answeredFoundationals)
     .innerJoin(
@@ -22,54 +36,59 @@ export default async function FoundationalPage() {
     )
     .where(
       and(
-        eq(answeredFoundationals.userId, id),
-        eq(answeredFoundationals.isComplete, false)
+        eq(answeredFoundationals.userId, userId),
+        eq(answeredFoundationals.isComplete, true)
       )
-    );
+    )
+    .groupBy(foundationalQuestions.system);
+
+  const answeredMap = new Map<string, number>(
+    answered.map((r) => [r.system, Number(r.answered ?? 0)])
+  );
+
+  return totals.map((t) => {
+    const a = answeredMap.get(t.system) ?? 0;
+    const total = Number(t.total ?? 0);
+    return {
+      system: t.system,
+      answered: a,
+      unanswered: Math.max(0, total - a),
+    };
+  });
+}
+
+export default async function FoundationalQuestionsPage() {
+  const { id } = await getSession();
+  const systems = await fetchSystems(id);
 
   return (
     <div className="h-full overflow-y-auto">
-      <PageTitle text="Foundational" />
-      {incomplete.length > 0 ? (
-        <div className="space-y-4 p-4">
-          {incomplete.map((item) => {
-            let href = `/foundational/${encodeURIComponent(item.system)}?step=${encodeURIComponent(String(item.step))}`;
-            if (item.topic)
-              href += `&topic=${encodeURIComponent(item.topic)}`;
-            const shelves = STEP2_SYSTEM_TO_SHELVES[item.system];
-            if (shelves?.length === 1)
-              href += `&shelf=${encodeURIComponent(shelves[0])}`;
-            return (
-              <div
-                key={item.questionId}
-                className="relative flex justify-between items-center px-6 py-4 hover:pr-2 border rounded-md transition-all"
-              >
-                <div>
-                  <p>{item.system}</p>
-                  {item.topic && (
-                    <p className="text-sm text-muted-foreground">{item.topic}</p>
-                  )}
+      <PageTitle text="Foundational Questions" />
+      <div className="space-y-4 p-4">
+        {SYSTEMS.map((s) => {
+          const data = systems.find((sys) => sys.system === s.name);
+          return (
+            <div
+              key={s.name}
+              className="relative flex justify-between items-center px-6 py-4 hover:pr-2 border rounded-md transition-all"
+            >
+              <div className="space-y-2">
+                <p>{s.name}</p>
+                <div className="flex gap-4 text-muted-foreground text-sm">
+                  <span>Answered • {data?.answered ?? 0}</span>
+                  <span>Unanswered • {data?.unanswered ?? 0}</span>
                 </div>
-                <ArrowRight size={16} className="text-muted-foreground" />
-                <Link href={href} className="absolute inset-0 opacity-0">
-                  Continue {item.system}
-                </Link>
               </div>
-            );
-          })}
-        </div>
-      ) : (
-        <p className="p-4 text-sm text-muted-foreground">
-          No in-progress sessions.
-        </p>
-      )}
-      <div className="p-4">
-        <Link
-          href="/foundational/new"
-          className="block w-full text-center px-6 py-4 border rounded-md hover:bg-secondary"
-        >
-          Start New Session
-        </Link>
+              <ArrowRight size={16} className="text-muted-foreground" />
+              <Link
+                href={`/foundational/${s.name}`}
+                className="absolute inset-0 opacity-0"
+              >
+                {s.name}
+              </Link>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
