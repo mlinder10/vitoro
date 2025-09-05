@@ -13,6 +13,7 @@ import {
 import {
   submitShortResponse,
   submitFollowupAnswer,
+  completeFoundationalQuestion,
 } from "../actions";
 import QuestionChoiceView from "../../../practice/[id]/_components/question-choice";
 
@@ -26,16 +27,11 @@ type ProgressBarProps = {
 function ProgressBar({ current, total }: ProgressBarProps) {
   const percentage = Math.min((current / total) * 100, 100);
   return (
-    <div className="mb-6 text-center">
-      <div className="w-full h-2 bg-muted rounded-full overflow-hidden mb-2">
-        <div
-          className="h-full bg-gradient-to-r from-indigo-400 to-purple-600 transition-all"
-          style={{ width: `${percentage}%` }}
-        />
-      </div>
-      <p className="text-sm text-muted-foreground">
-        Question {current} of {total}
-      </p>
+    <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
+      <div
+        className="h-full bg-gradient-to-r from-indigo-400 to-purple-600 transition-all"
+        style={{ width: `${percentage}%` }}
+      />
     </div>
   );
 }
@@ -44,15 +40,21 @@ function ProgressBar({ current, total }: ProgressBarProps) {
 
 type FoundationalQuestionBaseProps = {
   question: FoundationalQuestion;
+  index: number;
   total: number;
   onAnswered: (answer: string) => void;
+  onNext: () => void;
+  showNext?: boolean;
   initialResponse?: string;
 };
 
 export function FoundationalQuestionBase({
   question,
+  index,
   total,
   onAnswered,
+  onNext,
+  showNext = false,
   initialResponse,
 }: FoundationalQuestionBaseProps) {
   const [response, setResponse] = useState(initialResponse ?? "");
@@ -67,22 +69,35 @@ export function FoundationalQuestionBase({
   if (showAnswer)
     return (
       <div className="space-y-4 bg-card text-card-foreground p-6 rounded-lg shadow border">
-        <ProgressBar current={1} total={total} />
+        <div className="flex justify-between items-center">
+          <span className="text-sm text-muted-foreground">
+            Question {index} of {total}
+          </span>
+        </div>
         <p className="text-lg font-medium mb-2">{question.question}</p>
-        <div className="space-y-1">
-          <p className="font-semibold">Your Answer</p>
-          <p>{response}</p>
+        <div className="space-y-4">
+          <div className="space-y-1">
+            <p className="font-semibold">Your Answer</p>
+            <div className="bg-muted p-3 rounded-md">{response}</div>
+          </div>
+          <div className="space-y-1">
+            <p className="font-semibold">Expected Answer</p>
+            <div className="p-3 rounded-md text-white text-center bg-gradient-to-r from-blue-400 to-cyan-400">
+              {question.expectedAnswer}
+            </div>
+          </div>
         </div>
-        <div className="space-y-1">
-          <p className="font-semibold">Expected Answer</p>
-          <p>{question.expectedAnswer}</p>
-        </div>
+        {showNext && <Button onClick={onNext}>Next</Button>}
       </div>
     );
 
   return (
     <div className="space-y-4 bg-card text-card-foreground p-6 rounded-lg shadow border">
-      <ProgressBar current={1} total={total} />
+      <div className="flex justify-between items-center">
+        <span className="text-sm text-muted-foreground">
+          Question {index} of {total}
+        </span>
+      </div>
       <p className="text-lg font-medium">{question.question}</p>
       <Textarea value={response} onChange={(e) => setResponse(e.target.value)} />
       <Button onClick={handleSubmit} disabled={!response}>
@@ -98,20 +113,22 @@ type FoundationalQuestionFollowupProps = {
   question: FoundationalFollowup;
   questionId: string;
   answers: FoundationalFollowupAnswer[];
-  current: number;
+  index: number;
   total: number;
   onAnswered: (answer: FoundationalFollowupAnswer) => void;
   onNext: () => void;
+  showNext?: boolean;
 };
 
 export function FoundationalQuestionFollowup({
   question,
   questionId,
   answers,
-  current,
+  index,
   total,
   onAnswered,
   onNext,
+  showNext = true,
 }: FoundationalQuestionFollowupProps) {
   const [selected, setSelected] = useState<QuestionChoice | null>(null);
   const [isChecked, setIsChecked] = useState(false);
@@ -132,10 +149,14 @@ export function FoundationalQuestionFollowup({
     onAnswered({ id: question.id, answer: selected });
   }
 
-  const current = 2 + answers.length; // includes base question
   return (
     <div className="space-y-4 bg-card text-card-foreground p-6 rounded-lg shadow border">
-      <ProgressBar current={current} total={total} />
+      <div className="flex justify-between items-center">
+        <span className="font-semibold">{question.type}</span>
+        <span className="text-sm text-muted-foreground">
+          Question {index} of {total}
+        </span>
+      </div>
       <p className="text-lg font-medium">{question.question}</p>
       <ul className="flex flex-col gap-4">
         {Object.entries(question.choices).map(([l]) => {
@@ -157,7 +178,9 @@ export function FoundationalQuestionFollowup({
         })}
       </ul>
       {isChecked ? (
-        <Button onClick={onNext}>Next</Button>
+        showNext ? (
+          <Button onClick={onNext}>Next</Button>
+        ) : null
       ) : (
         <Button onClick={handleSubmit} disabled={selected === null || loading}>
           Submit
@@ -184,25 +207,35 @@ export function FoundationalQuestionFlow({
   initialAnswer,
 }: FoundationalQuestionFlowProps) {
   const [shortResponse, setShortResponse] = useState(initialAnswer?.shortResponse ?? "");
-  const [showBaseAnswer, setShowBaseAnswer] = useState(Boolean(shortResponse));
   const [answers, setAnswers] = useState<FoundationalFollowupAnswer[]>(
     initialAnswer?.answers ?? []
   );
-  const [visibleFollowups, setVisibleFollowups] = useState<FoundationalFollowup[]>(
-    followups.slice(0, answers.length + (showBaseAnswer ? 1 : 0))
+  const initialVisible = followups.slice(0, answers.length + (shortResponse ? 1 : 0));
+  const [visibleFollowups, setVisibleFollowups] = useState<FoundationalFollowup[]>(initialVisible);
+  const [current, setCurrent] = useState(
+    shortResponse ? Math.min(answers.length + 2, 1 + followups.length) : 1
   );
   const bottomRef = useRef<HTMLDivElement>(null);
   const total = 1 + followups.length;
+  const [isComplete, setIsComplete] = useState(false);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [visibleFollowups.length, showBaseAnswer]);
+  }, [visibleFollowups.length]);
 
   function handleBaseAnswered(ans: string) {
     setShortResponse(ans);
-    setShowBaseAnswer(true);
-    if (visibleFollowups.length === 0 && followups.length > 0) {
+  }
+
+  function handleBaseNext() {
+    if (followups.length > 0) {
+      setCurrent((c) => Math.min(c + 1, total));
       setVisibleFollowups([followups[0]]);
+    } else {
+      setCurrent(total);
+      completeFoundationalQuestion(question.id).then(() => {
+        setIsComplete(true);
+      });
     }
   }
 
@@ -216,32 +249,51 @@ export function FoundationalQuestionFlow({
     const nextIndex = visibleFollowups.length;
     if (nextIndex < followups.length) {
       setVisibleFollowups(followups.slice(0, nextIndex + 1));
+      setCurrent((c) => Math.min(c + 1, total));
     } else {
-      router.refresh();
+      setCurrent(total);
+      completeFoundationalQuestion(question.id).then(() => {
+        setIsComplete(true);
+      });
     }
   }
 
   return (
-    <div className="space-y-6 overflow-y-auto">
-      <FoundationalQuestionBase
-        question={question}
-        total={total}
-        onAnswered={handleBaseAnswered}
-        initialResponse={shortResponse}
-      />
-      {visibleFollowups.map((f, idx) => (
-        <FoundationalQuestionFollowup
-          key={f.id}
-          question={f}
-          questionId={question.id}
-          answers={answers}
-          current={2 + idx}
+    <div className="space-y-6">
+      <div className="sticky top-0 z-10 bg-background p-4">
+        <ProgressBar current={current} total={total} />
+      </div>
+      <div className="space-y-6">
+        <FoundationalQuestionBase
+          question={question}
+          index={1}
           total={total}
-          onAnswered={handleFollowupAnswered}
-          onNext={showNextFollowup}
+          onAnswered={handleBaseAnswered}
+          onNext={handleBaseNext}
+          initialResponse={shortResponse}
+          showNext={!isComplete && (followups.length === 0 || visibleFollowups.length === 0)}
         />
-      ))}
-      <div ref={bottomRef} />
+        {visibleFollowups.map((f, idx) => (
+          <FoundationalQuestionFollowup
+            key={f.id}
+            question={f}
+            questionId={question.id}
+            answers={answers}
+            index={idx + 2}
+            total={total}
+            onAnswered={handleFollowupAnswered}
+            onNext={showNextFollowup}
+            showNext={!isComplete}
+          />
+        ))}
+        {isComplete && (
+          <div className="space-y-4 bg-card text-card-foreground p-6 rounded-lg shadow border text-center">
+            <p className="text-lg font-medium">🎉 Case Complete!</p>
+            <Button onClick={() => router.refresh()}>Next</Button>
+          </div>
+        )}
+        <div ref={bottomRef} />
+      </div>
     </div>
   );
 }

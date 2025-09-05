@@ -38,6 +38,7 @@ export default function ClientSessionPage({
   const activeQuestion = questions[activeIndex];
   const showChat = session.mode === "tutor" && answers[activeIndex] !== null;
   const router = useRouter();
+  const isStandalone = !showSidebar && !showChat;
 
   useEffect(() => {
     if (!showChat) setChatExpanded(false);
@@ -121,8 +122,21 @@ export default function ClientSessionPage({
             </motion.div>
           )}
         </AnimatePresence>
-        <div className="flex flex-1 gap-8 p-8 h-full overflow-hidden">
-          <motion.div layout className={showChat ? "flex-none" : "flex-1"}>
+        <div
+          className={`flex flex-1 gap-8 p-8 h-full overflow-hidden ${
+            isStandalone ? "justify-center" : ""
+          }`}
+        >
+          <motion.div
+            layout
+            className={
+              isStandalone
+                ? "flex-none w-full max-w-[800px]"
+                : showChat
+                  ? "flex-none"
+                  : "flex-1"
+            }
+          >
             <QuestionCard
               session={session}
               question={activeQuestion}
@@ -135,7 +149,7 @@ export default function ClientSessionPage({
               onTimeOut={handleEndSession}
               onFlag={handleFlagQuestion}
               onUnflag={handleUnflagQuestion}
-              fullWidth={!showChat}
+              fullWidth={showSidebar && !showChat}
             />
           </motion.div>
           <AnimatePresence mode="wait">

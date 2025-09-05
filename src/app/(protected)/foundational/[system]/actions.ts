@@ -15,6 +15,19 @@ export async function submitShortResponse(questionId: string, shortResponse: str
   });
 }
 
+export async function completeFoundationalQuestion(questionId: string) {
+  const { id } = await getSession();
+  await db
+    .update(answeredFoundationals)
+    .set({ isComplete: true })
+    .where(
+      and(
+        eq(answeredFoundationals.userId, id),
+        eq(answeredFoundationals.foundationalQuestionId, questionId)
+      )
+    );
+}
+
 type SubmitFollowupAnswerArgs = {
   questionId: string;
   followupId: string;

@@ -123,6 +123,7 @@ export default async function FoundationalSystemPage({
 
   return (
     <FoundationalQuestionFlow
+      key={data.question.id}
       question={data.question}
       followups={data.followups}
       initialAnswer={data.answer}
