@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Case Vignette - Lupus Nephritis</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>Medical Case Vignette</h1>
+            <p class="subtitle">Test your diagnostic and clinical reasoning skills</p>
+        </header>
+
+        <main class="main-content">
+            <!-- Case Vignette Section -->
+            <section class="vignette-section">
+                <h2>Patient Presentation</h2>
+                <div class="vignette-text">
+                    <p id="case-vignette"></p>
+                </div>
+            </section>
+
+            <!-- Diagnosis Input Section -->
+            <section class="diagnosis-section" id="diagnosis-section">
+                <h2>What is the diagnosis for this patient presentation?</h2>
+                <div class="input-group">
+                    <textarea 
+                        id="diagnosis-input" 
+                        placeholder="Enter your diagnosis here..."
+                        rows="3"
+                        class="diagnosis-textarea"
+                    ></textarea>
+                    <button id="submit-diagnosis" class="btn btn-primary">Submit Diagnosis</button>
+                </div>
+                
+                <!-- Revealed Topic -->
+                <div id="revealed-topic" class="revealed-topic hidden">
+                    <h3>Correct Diagnosis:</h3>
+                    <div class="topic-display" id="topic-display"></div>
+                </div>
+            </section>
+
+            <!-- Question Section -->
+            <section id="question-section" class="question-section hidden">
+                <!-- Progress Bar -->
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-fill"></div>
+                    </div>
+                    <div class="progress-text" id="progress-text">Question 1 of 7</div>
+                </div>
+                
+                <!-- Individual questions will be dynamically added here -->
+            </section>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
