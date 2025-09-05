@@ -8,6 +8,7 @@ import { eq, and, inArray } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import ClientSummaryPage from "./_components/client-summary-page";
 import { NBMEStep } from "@/types";
+import { reorderQuestions } from "@/lib/utils";
 
 async function fetchSession(id: string) {
   const [session] = await db
@@ -44,5 +45,10 @@ export default async function SummaryPage({ params }: SessionPageProps) {
   const { id } = await params;
   const { session, questions } = await fetchSession(id);
 
-  return <ClientSummaryPage session={session} questions={questions} />;
+  return (
+    <ClientSummaryPage
+      session={session}
+      questions={reorderQuestions(questions, session.questionIds)}
+    />
+  );
 }

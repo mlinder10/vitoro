@@ -45,9 +45,11 @@ migrations/
 migrations-prod/
 migrations-dev/
 questions.json
-dev.db
+dev*.db
 tmp.sql
 src/app/api/dev/*
 
 # planning
 todo.txt
+step-one-foundational.json
+step-two-foundational.json

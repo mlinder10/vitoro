@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { NBMEQuestion, QBankSession, QuestionChoice } from "@/types";
-import { Calculator, Clipboard, Menu } from "lucide-react";
+import { Calculator, Menu } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import {
@@ -159,10 +159,10 @@ function Header({ canToggleSidebar, onToggleSidebar }: HeaderProps) {
           <Calculator />
           <span>Calculator</span>
         </Button>
-        <Button variant="outline">
+        {/* <Button variant="outline">
           <Clipboard />
           <span>Lab Values</span>
-        </Button>
+        </Button> */}
       </div>
     </header>
   );

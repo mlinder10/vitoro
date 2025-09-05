@@ -118,8 +118,8 @@ export const stepOneNbmeQuestions = sqliteTable("step_one_nbme_questions", {
   id: text("id").primaryKey().default(SQL_UUID).notNull(),
   createdAt: date("created_at").default(SQL_NOW).notNull(),
 
-  systems: json<System[]>("systems").notNull(),
-  categories: json<AnyCategory[]>("categories").notNull(),
+  systems: json<string[]>("systems").notNull(),
+  categories: json<string[]>("categories").notNull(),
   topic: text("topic").notNull(),
   competency: text("competency").notNull(),
   concept: text("concept").notNull(),
@@ -212,12 +212,15 @@ export const qbankSessions = sqliteTable("qbank_sessions", {
     .references(() => users.id, { onDelete: "cascade" })
     .notNull(),
   createdAt: date("created_at").default(SQL_NOW).notNull(),
+
   name: text("name").notNull(),
   mode: json<QBankMode>("mode").notNull(),
   step: json<NBMEStep>("step").notNull(),
+
   questionIds: json<string[]>("question_ids").notNull(),
   answers: json<(QuestionChoice | null)[]>("answers").notNull(),
   flaggedQuestionIds: json<string[]>("flagged_questions").notNull(),
+
   inProgress: json<boolean>("in_progress").default(true).notNull(),
 });
 
@@ -250,10 +253,12 @@ export const stepOneFoundationalQuestions = sqliteTable(
   "step_one_foundational_questions",
   {
     id: text("id").primaryKey().default(SQL_UUID).notNull(),
-    system: text("system").notNull(),
+    subject: text("subject").notNull(),
     topic: text("topic").notNull(),
+    subtopic: text("subtopic").notNull(),
+
     question: text("question").notNull(),
-    expectedAnswer: text("expected_answer").notNull(),
+    diagnosis: text("diagnosis").notNull(),
     step: json<"Step 1">("step")
       .notNull()
       .default('"Step 1"' as "Step 1"),
@@ -269,11 +274,14 @@ export const stepOneFoundationalFollowUps = sqliteTable(
         onDelete: "cascade",
       })
       .notNull(),
+
     question: text("question").notNull(),
     choices: json<Choices>("choices").notNull(),
     explanations: json<Choices>("explanations").notNull(),
     answer: json<QuestionChoice>("answer").notNull(),
-    type: json<QuestionType>("type").notNull(),
+
+    isIntegration: json<boolean>("is_integration").notNull(),
+    axis: text("axis").notNull(),
     step: json<"Step 1">("step")
       .notNull()
       .default('"Step 1"' as "Step 1"),
@@ -284,10 +292,12 @@ export const stepTwoFoundationalQuestions = sqliteTable(
   "step_two_foundational_questions",
   {
     id: text("id").primaryKey().default(SQL_UUID).notNull(),
-    system: text("system").notNull(),
     topic: text("topic").notNull(),
+    shelf: text("shelf").notNull(),
+    system: text("system").notNull(),
+
     question: text("question").notNull(),
-    expectedAnswer: text("expected_answer").notNull(),
+
     step: json<"Step 1">("step")
       .notNull()
       .default('"Step 1"' as "Step 1"),
@@ -307,7 +317,7 @@ export const stepTwoFoundationalFollowUps = sqliteTable(
     choices: json<Choices>("choices").notNull(),
     explanations: json<Choices>("explanations").notNull(),
     answer: json<QuestionChoice>("answer").notNull(),
-    type: json<QuestionType>("type").notNull(),
+    axis: text("axis").notNull(),
     step: json<"Step 2">("step")
       .notNull()
       .default('"Step 2"' as "Step 2"),

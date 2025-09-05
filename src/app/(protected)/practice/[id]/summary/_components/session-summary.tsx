@@ -31,19 +31,22 @@ function scoreToHex(percentage: number) {
 }
 
 function splitQuestions(s: QBankSession, qs: NBMEQuestion[]): SplitResult {
-  const answerById = new Map<string, QuestionChoice | null>();
-  s.questionIds.forEach((qid, i) => answerById.set(qid, s.answers[i] ?? null));
+  const unanswered = s.answers
+    .map((q, i) => ({ q, i }))
+    .filter(({ q }) => q === null)
+    .map(({ i }) => qs[i]);
+  const orderedQuestions = s.questionIds.map(
+    (id) => qs.find((q) => q.id === id)!
+  );
   const correct: NBMEQuestion[] = [];
   const incorrect: NBMEQuestion[] = [];
-  const unanswered: NBMEQuestion[] = [];
-  for (const q of qs) {
-    const given = answerById.get(q.id);
-    if (given == null) {
-      unanswered.push(q);
-    } else if (given === q.answer) {
-      correct.push(q);
+  for (let i = 0; i < orderedQuestions.length; i++) {
+    if (orderedQuestions[i].answer === s.answers[i]) {
+      correct.push(orderedQuestions[i]);
     } else {
-      incorrect.push(q);
+      if (s.answers[i] !== null) {
+        incorrect.push(orderedQuestions[i]);
+      }
     }
   }
   return { correct, incorrect, unanswered };
