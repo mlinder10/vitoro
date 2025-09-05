@@ -1,3 +1,5 @@
+'use client';
+
 import { capitalize, cn } from "@/lib/utils";
 import { NBMEQuestion, QuestionChoice, Task, TASKS } from "@/types";
 import {
@@ -276,52 +278,36 @@ export default function ChatCard({ question, choice }: ChatCardProps) {
       id: Date.now(),
       content: inputValue,
       isUser: true,
-      rawText: inputValue, // Store raw text for server-side context
+      rawText: inputValue,
     };
 
     setMessages((prev) => [...prev, userMessage]);
     inputRef.current.value = "";
-    const res = await promptGeneralChat(
-      question,
-      choice,
-      [...messages, newMessage]
-    );
-    while (true) {
-      const { value, done } = await res.next();
-      if (done) break;
-      streamCompletionHandler(value);
-    }
-    setIsLoading(false);
-  }
 
     // Simulate AI thinking time
     setTimeout(async () => {
       try {
         let fullContent = "";
-        // Convert messages to simple format for server-side processing
-        const serverMessages = messages.map((msg) => ({
+        const serverMessages = [...messages, userMessage].map((msg) => ({
           role: msg.isUser ? ("user" as const) : ("assistant" as const),
           content:
-            msg.rawText || (typeof msg.content === "string" ? msg.content : ""),
+            msg.rawText ||
+            (typeof msg.content === "string" ? msg.content : ""),
         }));
-        const res = await promptGeneralChat(question, choice, [
-          ...serverMessages,
-          { role: "user" as const, content: inputValue },
-        ]);
 
-        // Collect all content first
+        const res = await promptGeneralChat(question, choice, serverMessages);
+
         while (true) {
           const { value, done } = await res.next();
           if (done) break;
           fullContent += value;
         }
 
-        // Add complete AI response with expandable sections
         const aiMessage = {
           id: Date.now() + 1,
           content: createAITutorResponse(fullContent),
           isUser: false,
-          rawText: fullContent, // Store raw text for server-side context
+          rawText: fullContent,
         };
 
         setMessages((prev) => [...prev, aiMessage]);
