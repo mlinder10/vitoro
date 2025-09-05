@@ -3,25 +3,25 @@ import { QBankMode, QuestionChoice } from "@/types";
 import { useState } from "react";
 
 type QuestionChoiceViewProps = {
-  mode: QBankMode;
+  letter: QuestionChoice;
   choice: string;
   explanation: string;
-  letter: QuestionChoice;
-  isChecked: boolean;
-  isSelected: boolean;
   isCorrect: boolean;
+  isSelected: boolean;
+  isChecked: boolean;
+  mode: QBankMode;
   isLoading: boolean;
-  select: (letter: QuestionChoice | null) => void;
+  select: (choice: QuestionChoice | null) => void;
 };
 
 export default function QuestionChoiceView({
-  mode,
+  letter,
   choice,
   explanation,
-  letter,
-  isChecked,
-  isSelected,
   isCorrect,
+  isSelected,
+  isChecked,
+  mode,
   isLoading,
   select,
 }: QuestionChoiceViewProps) {
@@ -41,51 +41,48 @@ export default function QuestionChoiceView({
     if (isSelected) select(null); // unselect
   }
 
+  function getChoiceStyle() {
+    if (!canShowInsights) {
+      return isSelected
+        ? "bg-custom-accent/20 border-custom-accent"
+        : "bg-secondary hover:bg-secondary/80 border-border";
+    }
+
+    if (isCorrect) {
+      return "bg-green-100 border-green-500 dark:bg-green-900/20 dark:border-green-400";
+    }
+
+    if (isSelected && !isCorrect) {
+      return "bg-red-100 border-red-500 dark:bg-red-900/20 dark:border-red-400";
+    }
+
+    return "bg-secondary border-border opacity-60";
+  }
+
   return (
-    <li
-      onClick={handleSelect}
-      onContextMenu={handleDisable}
-      className={cn(
-        "group flex items-center gap-2 bg-background-secondary p-4 border rounded-md transition-all",
-        // disabled
-        !canShowInsights &&
-          isDisabled &&
-          "cursor-not-allowed opacity-50 line-through",
-        // not checked and not selected
-        !isChecked && !isLoading && "cursor-pointer hover:bg-muted",
-        // selected and not checked
-        isSelected &&
-          !isChecked &&
-          "border-custom-accent hover:border-custom-accent bg-custom-accent-light",
-        // checked and incorrect
-        isSelected && canShowInsights && !isCorrect && "border-destructive",
-        // checked and correct
-        canShowInsights && isCorrect && "border-green-500"
-      )}
-    >
+    <div className="space-y-2">
       <div
         className={cn(
-          "flex justify-center items-center mx-1 px-2 border-2 rounded-full aspect-square font-bold text-lg",
-          // not checked and not selected
-          !isChecked && !isLoading && "group-hover:bg-muted",
-          // selected and not checked
-          isSelected &&
-            !isChecked &&
-            "border-custom-accent group-hover:border-custom-accent",
-          // checked and incorrect
-          isSelected && canShowInsights && !isCorrect && "border-destructive",
-          // checked and correct
-          canShowInsights && isCorrect && "border-green-500"
+          "p-4 border-2 rounded-md transition-all cursor-pointer",
+          getChoiceStyle()
         )}
+        onClick={handleSelect}
+        onContextMenu={handleDisable}
       >
-        {letter.toUpperCase()}
+        <div className="flex gap-3">
+          <span className="min-w-[20px] font-semibold text-sm">
+            {letter.toUpperCase()}.
+          </span>
+          <span className="flex-1">{choice}</span>
+        </div>
       </div>
-      <div>
-        <p>{choice}</p>
-        {canShowInsights && (
-          <p className="text-muted-foreground text-sm">{explanation}</p>
-        )}
-      </div>
-    </li>
+
+      {/* Show explanation after answer is checked */}
+      {isChecked && (isCorrect || isSelected) && (
+        <div className="bg-muted ml-7 p-3 rounded-md text-sm">
+          <p className="text-muted-foreground">{explanation}</p>
+        </div>
+      )}
+    </div>
   );
 }

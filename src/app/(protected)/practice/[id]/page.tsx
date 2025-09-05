@@ -4,6 +4,7 @@ import { eq, inArray, and } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import ClientSessionPage from "./_components/client-session-page";
 import { NBMEStep } from "@/types";
+import { reorderQuestions } from "@/lib/utils";
 
 type SessionPageProps = {
   params: Promise<{ id: string }>;
@@ -26,5 +27,10 @@ export default async function SessionPage({ params }: SessionPageProps) {
   const { id } = await params;
   const { session, questions } = await fetchSession(id);
 
-  return <ClientSessionPage session={session} questions={questions} />;
+  return (
+    <ClientSessionPage
+      session={session}
+      questions={reorderQuestions(questions, session.questionIds)}
+    />
+  );
 }

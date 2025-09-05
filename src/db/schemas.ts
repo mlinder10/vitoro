@@ -158,8 +158,8 @@ export const stepOneNbmeQuestions = sqliteTable("step_one_nbme_questions", {
   id: text("id").primaryKey().default(SQL_UUID).notNull(),
   createdAt: date("created_at").default(SQL_NOW).notNull(),
 
-  systems: json<System[]>("systems").notNull(),
-  categories: json<AnyCategory[]>("categories").notNull(),
+  systems: json<string[]>("systems").notNull(),
+  categories: json<string[]>("categories").notNull(),
   topic: text("topic").notNull(),
   competency: text("competency").notNull(),
   concept: text("concept").notNull(),
@@ -259,12 +259,15 @@ export const qbankSessions = sqliteTable("qbank_sessions", {
     .references(() => users.id, { onDelete: "cascade" })
     .notNull(),
   createdAt: date("created_at").default(SQL_NOW).notNull(),
+
   name: text("name").notNull(),
   mode: json<QBankMode>("mode").notNull(),
   step: json<NBMEStep>("step").notNull(),
+
   questionIds: json<string[]>("question_ids").notNull(),
   answers: json<(QuestionChoice | null)[]>("answers").notNull(),
   flaggedQuestionIds: json<string[]>("flagged_questions").notNull(),
+
   inProgress: json<boolean>("in_progress").default(true).notNull(),
 });
 
@@ -288,6 +291,8 @@ export const reviewQuestions = sqliteTable(
     index("review_question_idx").on(table.questionId),
   ]
 );
+
+// TODO: split into steps one and two
 
 export const foundationalQuestions = sqliteTable("foundational_questions", {
   id: text("id").primaryKey().default(SQL_UUID).notNull(),
