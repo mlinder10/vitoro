@@ -4,6 +4,7 @@ import { jwtVerify, SignJWT } from "jose";
 import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { LOGIN_PATH } from "./constants";
+import { NBMEStep } from "@/types";
 
 const SECRET_KEY = new TextEncoder().encode(process.env.JWT_SECRET!);
 
@@ -13,6 +14,7 @@ export type Session = {
   firstName: string;
   lastName: string;
   color: string;
+  exam: NBMEStep;
   isAdmin?: boolean;
 };
 

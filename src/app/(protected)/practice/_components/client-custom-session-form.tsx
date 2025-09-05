@@ -32,12 +32,12 @@ export type Filters = {
 };
 
 export default function ClientCustomSessionForm() {
-  const { id } = useSession();
+  const { id, exam } = useSession();
   const [focus, setFocus] = useState<Focus>();
   const [size, setSize] = useState<string>("10");
   const [isSizeCustom, setIsSizeCustom] = useState(false);
   const [mode, setMode] = useState<QBankMode>("timed");
-  const [step, setStep] = useState<NBMEStep>("Step 1");
+  const [step, setStep] = useState<NBMEStep>(exam);
   const [filters, setFilters] = useState<Filters>({
     competencies: [],
     concepts: [],
