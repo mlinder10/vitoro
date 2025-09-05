@@ -147,7 +147,6 @@ export default function QuestionCard({
                 <span>Mark for Review</span>
               </Button>
             ))}
-          {/* KALEB: Changed button to not have "update answer" */}
           <Button
             variant="accent"
             onClick={handleSubmit}

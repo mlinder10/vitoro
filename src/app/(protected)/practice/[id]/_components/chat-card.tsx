@@ -7,6 +7,7 @@ import {
   Loader,
   ChevronDown,
   ChevronRight,
+  Info,
 } from "lucide-react";
 import { RefObject, useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
@@ -16,6 +17,14 @@ import {
   promptGeneralChat,
 } from "@/app/(protected)/practice/chat";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 // Simple expandable section component matching question-card style
 const ExpandableSection = ({
@@ -379,7 +388,47 @@ export default function ChatCard({ question, choice }: ChatCardProps) {
           className={cn(isExpanded && "rotate-180 transition-all")}
         />
       </button>
+      <Dialog>
+        <DialogTrigger asChild>
+          <button className="top-4 right-4 absolute flex justify-center items-center backdrop-blur-md border rounded-full w-[32px] aspect-square cursor-pointer">
+            <Info size={16} />
+          </button>
+        </DialogTrigger>
+        <DialogContent className="min-w-[60vw] max-w-[1000px] max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Prompt Templates</DialogTitle>
+            <DialogDescription></DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            {/* TODO - Kaleb: add descriptions */}
+            <TaskPromptDescription task="Breakdown" description={``} />
+            <TaskPromptDescription task="Distractor" description={``} />
+            <TaskPromptDescription task="Gap Finder" description={``} />
+            <TaskPromptDescription task="Strategy" description={``} />
+            <TaskPromptDescription task="Pattern" description={``} />
+            <TaskPromptDescription task="Memory" description={``} />
+            <TaskPromptDescription task="Pimp Mode" description={``} />
+          </div>
+        </DialogContent>
+      </Dialog>
     </section>
+  );
+}
+
+type TaskPromptDescriptionProps = {
+  task: string;
+  description: string;
+};
+
+function TaskPromptDescription({
+  task,
+  description,
+}: TaskPromptDescriptionProps) {
+  return (
+    <div className="space-y-2 bg-secondary p-4 border rounded-md">
+      <p className="font-semibold">{task}</p>
+      <p className="text-muted-foreground text-sm">{description}</p>
+    </div>
   );
 }
 
