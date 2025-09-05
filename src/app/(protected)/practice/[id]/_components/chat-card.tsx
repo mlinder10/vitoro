@@ -118,11 +118,17 @@ const MessageComponent = ({
 type ChatCardProps = {
   question: NBMEQuestion;
   choice: QuestionChoice;
+  expanded?: boolean;
+  onToggleExpand?: () => void;
 };
 
 // TODO: read and refactor
-export default function ChatCard({ question, choice }: ChatCardProps) {
-  const [isExpanded, setIsExpanded] = useState(false);
+export default function ChatCard({
+  question,
+  choice,
+  expanded = false,
+  onToggleExpand,
+}: ChatCardProps) {
   const [messages, setMessages] = useState<
     {
       id: number;
@@ -336,12 +342,7 @@ export default function ChatCard({ question, choice }: ChatCardProps) {
   }, [question.id, choice]);
 
   return (
-    <section
-      className={cn(
-        "relative flex flex-col flex-1 bg-tertiary border rounded-md h-full overflow-y-auto transition-all",
-        isExpanded && "flex-3"
-      )}
-    >
+    <section className="relative flex flex-col flex-1 bg-tertiary border rounded-md h-full overflow-y-auto transition-all">
       <MessagesContainer
         messages={messages}
         endRef={endRef}
@@ -368,15 +369,17 @@ export default function ChatCard({ question, choice }: ChatCardProps) {
           </Button>
         </div>
       </div>
-      <button
-        className="top-4 left-4 absolute flex justify-center items-center backdrop-blur-md border rounded-full w-[32px] aspect-square cursor-pointer"
-        onClick={() => setIsExpanded((prev) => !prev)}
-      >
-        <ArrowLeft
-          size={16}
-          className={cn(isExpanded && "rotate-180 transition-all")}
-        />
-      </button>
+      {onToggleExpand && (
+        <button
+          className="top-4 left-4 absolute flex justify-center items-center backdrop-blur-md border rounded-full w-[32px] aspect-square cursor-pointer"
+          onClick={onToggleExpand}
+        >
+          <ArrowLeft
+            size={16}
+            className={cn("transition-all", expanded && "rotate-180")}
+          />
+        </button>
+      )}
     </section>
   );
 }

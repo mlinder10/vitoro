@@ -6,16 +6,9 @@ import {
 } from "@/db";
 import { getSession } from "@/lib/auth";
 import { eq, and, isNull, or, sql } from "drizzle-orm";
-import {
-  FoundationalQuestionBase,
-  FoundationalQuestionFollowup,
-} from "./_components/foundational-question-view";
+import { FoundationalQuestionFlow } from "./_components/foundational-question-view";
 
-import {
-  AnsweredFoundational,
-  NBMEStep,
-  FoundationalFollowup,
-} from "@/types";
+import { NBMEStep } from "@/types";
 
 async function fetchFoundationalQuestion(
   userId: string,
@@ -128,43 +121,11 @@ export default async function FoundationalSystemPage({
       </div>
     );
 
-  const answeredCount = getAnsweredCount(data.answer);
-
-  if (answeredCount === "base")
-    return (
-      <FoundationalQuestionBase
-        key={data.question.id}
-        question={data.question}
-        total={data.followups.length + 1}
-      />
-    );
-
-  if (answeredCount >= data.followups.length) {
-    // TODO: handle completed follow up access
-  }
-
-  const answeredIds = new Set(
-    data.answer!.answers.map((a) => a.id)
-  );
-  const remaining = data.followups.filter(
-    (f) => !answeredIds.has(f.id)
-  );
-  const next = remaining[
-    Math.floor(Math.random() * remaining.length)
-  ] as FoundationalFollowup;
-
   return (
-    <FoundationalQuestionFollowup
-      key={next.id}
-      question={next}
-      questionId={data.question.id}
-      answers={data.answer!.answers}
-      total={data.followups.length}
+    <FoundationalQuestionFlow
+      question={data.question}
+      followups={data.followups}
+      initialAnswer={data.answer}
     />
   );
-}
-
-function getAnsweredCount(answer: AnsweredFoundational | null) {
-  if (!answer || answer.shortResponse.trim() === "") return "base";
-  return answer.answers.length;
 }

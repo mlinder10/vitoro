@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -14,42 +15,29 @@ import {
   submitFollowupAnswer,
 } from "../actions";
 import QuestionChoiceView from "../../../practice/[id]/_components/question-choice";
-import { useNavigationGuard } from "@/hooks/use-navigation-guard";
 
-// Utility view ---------------------------------------------------------------
+// Shared progress bar -------------------------------------------------------
 
-type FoundationalQuestionViewProps = {
-  /**
-   * Raw JSON questions loaded from disk or API.
-   * The shape is intentionally loose because the structure of the JSON
-   * payload is not enforced by the database at this stage.
-   */
-  questions?: Array<{ mcq_questions?: unknown[] }>;
+type ProgressBarProps = {
+  current: number;
+  total: number;
 };
 
-export function FoundationalQuestionView({
-  questions,
-}: FoundationalQuestionViewProps) {
-  if (!Array.isArray(questions) || questions.length === 0) {
-    console.error("FoundationalQuestionView: questions failed to load or are empty");
-    return <p className="text-destructive">No foundational questions available.</p>;
-  }
-
-  const invalid = questions.find(
-    (q) => !Array.isArray(q.mcq_questions) || q.mcq_questions.length === 0
+function ProgressBar({ current, total }: ProgressBarProps) {
+  const percentage = Math.min((current / total) * 100, 100);
+  return (
+    <div className="mb-6 text-center">
+      <div className="w-full h-2 bg-muted rounded-full overflow-hidden mb-2">
+        <div
+          className="h-full bg-gradient-to-r from-indigo-400 to-purple-600 transition-all"
+          style={{ width: `${percentage}%` }}
+        />
+      </div>
+      <p className="text-sm text-muted-foreground">
+        Question {current} of {total}
+      </p>
+    </div>
   );
-  if (invalid) {
-    console.error(
-      "FoundationalQuestionView: question is missing mcq_questions array",
-      invalid
-    );
-    return (
-      <p className="text-destructive">Incomplete question data. Please try again later.</p>
-    );
-  }
-
-  // Rendering is handled elsewhere – this component only validates the data.
-  return null;
 }
 
 // Base component ------------------------------------------------------------
@@ -57,49 +45,46 @@ export function FoundationalQuestionView({
 type FoundationalQuestionBaseProps = {
   question: FoundationalQuestion;
   total: number;
+  onAnswered: (answer: string) => void;
+  initialResponse?: string;
 };
 
 export function FoundationalQuestionBase({
   question,
   total,
+  onAnswered,
+  initialResponse,
 }: FoundationalQuestionBaseProps) {
-  const [response, setResponse] = useState("");
-  const [showAnswer, setShowAnswer] = useState(false);
-  const completed = showAnswer ? 1 : 0;
-  const { refresh } = useNavigationGuard(question.id, completed, total);
+  const [response, setResponse] = useState(initialResponse ?? "");
+  const [showAnswer, setShowAnswer] = useState(Boolean(initialResponse));
 
   async function handleSubmit() {
     await submitShortResponse(question.id, response);
     setShowAnswer(true);
-  }
-
-  function handleNext() {
-    refresh();
+    onAnswered(response);
   }
 
   if (showAnswer)
     return (
-      <div className="space-y-4">
-        <p>{question.question}</p>
-        <div>
+      <div className="space-y-4 bg-card text-card-foreground p-6 rounded-lg shadow border">
+        <ProgressBar current={1} total={total} />
+        <p className="text-lg font-medium mb-2">{question.question}</p>
+        <div className="space-y-1">
           <p className="font-semibold">Your Answer</p>
           <p>{response}</p>
         </div>
-        <div>
+        <div className="space-y-1">
           <p className="font-semibold">Expected Answer</p>
           <p>{question.expectedAnswer}</p>
         </div>
-        <Button onClick={handleNext}>Next</Button>
       </div>
     );
 
   return (
-    <div className="space-y-4">
-      <p>{question.question}</p>
-      <Textarea
-        value={response}
-        onChange={(e) => setResponse(e.target.value)}
-      />
+    <div className="space-y-4 bg-card text-card-foreground p-6 rounded-lg shadow border">
+      <ProgressBar current={1} total={total} />
+      <p className="text-lg font-medium">{question.question}</p>
+      <Textarea value={response} onChange={(e) => setResponse(e.target.value)} />
       <Button onClick={handleSubmit} disabled={!response}>
         Submit
       </Button>
@@ -113,22 +98,24 @@ type FoundationalQuestionFollowupProps = {
   question: FoundationalFollowup;
   questionId: string;
   answers: FoundationalFollowupAnswer[];
+  current: number;
   total: number;
+  onAnswered: (answer: FoundationalFollowupAnswer) => void;
+  onNext: () => void;
 };
 
 export function FoundationalQuestionFollowup({
   question,
   questionId,
   answers,
+  current,
   total,
+  onAnswered,
+  onNext,
 }: FoundationalQuestionFollowupProps) {
   const [selected, setSelected] = useState<QuestionChoice | null>(null);
   const [isChecked, setIsChecked] = useState(false);
   const [loading, setLoading] = useState(false);
-
-  const completed = 1 + answers.length + (isChecked ? 1 : 0);
-  const totalWithBase = total + 1;
-  const { refresh } = useNavigationGuard(questionId, completed, totalWithBase);
 
   async function handleSubmit() {
     if (!selected) return;
@@ -138,15 +125,18 @@ export function FoundationalQuestionFollowup({
       followupId: question.id,
       answers,
       answer: selected,
-      total,
+      total: total - 1,
     });
     setLoading(false);
     setIsChecked(true);
+    onAnswered({ id: question.id, answer: selected });
   }
 
+  const current = 2 + answers.length; // includes base question
   return (
-    <div className="space-y-4">
-      <p>{question.question}</p>
+    <div className="space-y-4 bg-card text-card-foreground p-6 rounded-lg shadow border">
+      <ProgressBar current={current} total={total} />
+      <p className="text-lg font-medium">{question.question}</p>
       <ul className="flex flex-col gap-4">
         {Object.entries(question.choices).map(([l]) => {
           const letter = l as QuestionChoice;
@@ -167,14 +157,91 @@ export function FoundationalQuestionFollowup({
         })}
       </ul>
       {isChecked ? (
-        <Button onClick={() => refresh()}>
-          Next
-        </Button>
+        <Button onClick={onNext}>Next</Button>
       ) : (
         <Button onClick={handleSubmit} disabled={selected === null || loading}>
           Submit
         </Button>
       )}
+    </div>
+  );
+}
+
+// Flow component -------------------------------------------------------------
+
+type FoundationalQuestionFlowProps = {
+  question: FoundationalQuestion;
+  followups: FoundationalFollowup[];
+  initialAnswer?: {
+    shortResponse: string;
+    answers: FoundationalFollowupAnswer[];
+  } | null;
+};
+
+export function FoundationalQuestionFlow({
+  question,
+  followups,
+  initialAnswer,
+}: FoundationalQuestionFlowProps) {
+  const [shortResponse, setShortResponse] = useState(initialAnswer?.shortResponse ?? "");
+  const [showBaseAnswer, setShowBaseAnswer] = useState(Boolean(shortResponse));
+  const [answers, setAnswers] = useState<FoundationalFollowupAnswer[]>(
+    initialAnswer?.answers ?? []
+  );
+  const [visibleFollowups, setVisibleFollowups] = useState<FoundationalFollowup[]>(
+    followups.slice(0, answers.length + (showBaseAnswer ? 1 : 0))
+  );
+  const bottomRef = useRef<HTMLDivElement>(null);
+  const total = 1 + followups.length;
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [visibleFollowups.length, showBaseAnswer]);
+
+  function handleBaseAnswered(ans: string) {
+    setShortResponse(ans);
+    setShowBaseAnswer(true);
+    if (visibleFollowups.length === 0 && followups.length > 0) {
+      setVisibleFollowups([followups[0]]);
+    }
+  }
+
+  function handleFollowupAnswered(ans: FoundationalFollowupAnswer) {
+    setAnswers((prev) => [...prev, ans]);
+  }
+
+  const router = useRouter();
+
+  function showNextFollowup() {
+    const nextIndex = visibleFollowups.length;
+    if (nextIndex < followups.length) {
+      setVisibleFollowups(followups.slice(0, nextIndex + 1));
+    } else {
+      router.refresh();
+    }
+  }
+
+  return (
+    <div className="space-y-6 overflow-y-auto">
+      <FoundationalQuestionBase
+        question={question}
+        total={total}
+        onAnswered={handleBaseAnswered}
+        initialResponse={shortResponse}
+      />
+      {visibleFollowups.map((f, idx) => (
+        <FoundationalQuestionFollowup
+          key={f.id}
+          question={f}
+          questionId={question.id}
+          answers={answers}
+          current={2 + idx}
+          total={total}
+          onAnswered={handleFollowupAnswered}
+          onNext={showNextFollowup}
+        />
+      ))}
+      <div ref={bottomRef} />
     </div>
   );
 }

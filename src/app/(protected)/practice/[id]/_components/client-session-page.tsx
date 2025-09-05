@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { NBMEQuestion, QBankSession, QuestionChoice } from "@/types";
 import { Calculator, Menu } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   answerQuestion,
   endSession,
@@ -34,8 +34,14 @@ export default function ClientSessionPage({
   );
   const [showSidebar, setShowSidebar] = useState(session.mode === "tutor");
   const [activeIndex, setActiveIndex] = useState(0);
+  const [chatExpanded, setChatExpanded] = useState(false);
   const activeQuestion = questions[activeIndex];
+  const showChat = session.mode === "tutor" && answers[activeIndex] !== null;
   const router = useRouter();
+
+  useEffect(() => {
+    if (!showChat) setChatExpanded(false);
+  }, [showChat]);
 
   function handleBack() {
     if (activeIndex < 1) return;
@@ -115,23 +121,43 @@ export default function ClientSessionPage({
             </motion.div>
           )}
         </AnimatePresence>
-        <div className="flex flex-1 gap-8 p-8 h-full">
-          <QuestionCard
-            session={session}
-            question={activeQuestion}
-            answers={answers}
-            flaggedIds={flaggedIds}
-            index={activeIndex}
-            onBack={handleBack}
-            onNext={handleNext}
-            onSubmit={handleSubmit}
-            onTimeOut={handleEndSession}
-            onFlag={handleFlagQuestion}
-            onUnflag={handleUnflagQuestion}
-          />
-          {session.mode === "tutor" && answers[activeIndex] !== null && (
-            <ChatCard question={activeQuestion} choice={answers[activeIndex]} />
-          )}
+        <div className="flex flex-1 gap-8 p-8 h-full overflow-hidden">
+          <motion.div layout className={showChat ? "flex-none" : "flex-1"}>
+            <QuestionCard
+              session={session}
+              question={activeQuestion}
+              answers={answers}
+              flaggedIds={flaggedIds}
+              index={activeIndex}
+              onBack={handleBack}
+              onNext={handleNext}
+              onSubmit={handleSubmit}
+              onTimeOut={handleEndSession}
+              onFlag={handleFlagQuestion}
+              onUnflag={handleUnflagQuestion}
+              fullWidth={!showChat}
+            />
+          </motion.div>
+          <AnimatePresence mode="wait">
+            {showChat && (
+              <motion.div
+                key="chat"
+                layout
+                initial={{ x: 300, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                exit={{ x: 300, opacity: 0 }}
+                transition={{ type: "tween", duration: 0.3 }}
+                className={`${chatExpanded ? "flex-3" : "flex-1"} min-w-0`}
+              >
+                <ChatCard
+                  question={activeQuestion}
+                  choice={answers[activeIndex]}
+                  expanded={chatExpanded}
+                  onToggleExpand={() => setChatExpanded((prev) => !prev)}
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
     </div>

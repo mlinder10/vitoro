@@ -18,6 +18,12 @@ type QuestionCardProps = {
   onTimeOut: () => Promise<void>;
   onFlag: () => Promise<void>;
   onUnflag: () => Promise<void>;
+  /**
+   * When true, the question card stretches to fill available width.
+   * Used in tutor mode before an answer is submitted so the prompt
+   * occupies the full container, similar to timed mode.
+   */
+  fullWidth?: boolean;
 };
 
 export default function QuestionCard({
@@ -32,6 +38,7 @@ export default function QuestionCard({
   onTimeOut,
   onFlag,
   onUnflag,
+  fullWidth = false,
 }: QuestionCardProps) {
   const [selected, setSelected] = useState<QuestionChoice | null>(null);
   const [submissionLoading, setSubmissionLoading] = useState(false);
@@ -66,7 +73,11 @@ export default function QuestionCard({
     <div
       className={cn(
         "flex flex-col gap-8 bg-tertiary p-8 border rounded-md h-full overflow-y-auto",
-        session.mode === "tutor" ? "flex-2 max-w-[800px]" : "flex-1 w-full"
+        session.mode === "tutor"
+          ? fullWidth
+            ? "flex-1 w-full"
+            : "flex-2 max-w-[800px]"
+          : "flex-1 w-full"
       )}
     >
       <div className="flex justify-between items-center">
