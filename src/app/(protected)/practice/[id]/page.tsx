@@ -3,7 +3,6 @@ import type { Question } from "@/types";
 import { eq, inArray, and } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import ClientSessionPage from "./_components/client-session-page";
-import { NBMEStep } from "@/types";
 
 type SessionPageProps = {
   params: Promise<{ id: string }>;

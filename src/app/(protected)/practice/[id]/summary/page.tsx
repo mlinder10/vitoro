@@ -3,7 +3,6 @@ import type { Question } from "@/types";
 import { eq, and, inArray } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import ClientSummaryPage from "./_components/client-summary-page";
-import { NBMEStep } from "@/types";
 
 async function fetchSession(id: string) {
   const [session] = await db
