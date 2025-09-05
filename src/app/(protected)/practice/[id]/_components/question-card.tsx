@@ -2,7 +2,6 @@ import { NBMEQuestion, QBankSession, QuestionChoice } from "@/types";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useState, useEffect } from "react";
-import Countdown from "./countdown";
 import QuestionChoiceView from "./question-choice";
 import { cn } from "@/lib/utils";
 
@@ -15,7 +14,6 @@ type QuestionCardProps = {
   onBack: () => void;
   onNext: (isChecked: boolean) => void;
   onSubmit: (choice: QuestionChoice) => Promise<void>;
-  onTimeOut: () => Promise<void>;
   onFlag: () => Promise<void>;
   onUnflag: () => Promise<void>;
   /**
@@ -35,7 +33,6 @@ export default function QuestionCard({
   onBack,
   onNext,
   onSubmit,
-  onTimeOut,
   onFlag,
   onUnflag,
   fullWidth = false,
@@ -80,20 +77,6 @@ export default function QuestionCard({
           : "flex-1 w-full"
       )}
     >
-      <div className="flex justify-between items-center">
-        <div>
-          <p className="font-semibold text-custom-accent text-lg">
-            Question {index + 1} of {session.questionIds.length}
-          </p>
-          <p className="text-muted-foreground text-sm">
-            Topic: {question.topic}
-          </p>
-        </div>
-        {session.mode === "timed" && (
-          <Countdown session={session} onEnd={onTimeOut} />
-        )}
-      </div>
-
       <p className="leading-relaxed">{question.question}</p>
 
       {question.labValues && question.labValues.length > 0 && (
