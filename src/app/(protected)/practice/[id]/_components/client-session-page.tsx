@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { NBMEQuestion, QBankSession, QuestionChoice } from "@/types";
 import { Calculator, Menu } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   answerQuestion,
   endSession,
@@ -14,6 +14,7 @@ import { useSession } from "@/contexts/session-provider";
 import ChatCard from "./chat-card";
 import QuestionNavigator from "./question-navigator";
 import QuestionCard from "./question-card";
+import Countdown from "./countdown";
 import { motion, AnimatePresence } from "framer-motion";
 
 type ClientSessionPageProps = {
@@ -21,7 +22,7 @@ type ClientSessionPageProps = {
   questions: NBMEQuestion[];
 };
 
-export default function ClientSessionPage({
+function ClientSessionPage({
   session,
   questions,
 }: ClientSessionPageProps) {
@@ -34,8 +35,16 @@ export default function ClientSessionPage({
   );
   const [showSidebar, setShowSidebar] = useState(session.mode === "tutor");
   const [activeIndex, setActiveIndex] = useState(0);
+  const [chatExpanded, setChatExpanded] = useState(false);
   const activeQuestion = questions[activeIndex];
+  const showChat = session.mode === "tutor" && answers[activeIndex] !== null;
   const router = useRouter();
+  const isStandalone = !showSidebar && !showChat;
+
+  useEffect(() => {
+    if (showChat) setShowSidebar(false);
+    if (!showChat) setChatExpanded(false);
+  }, [showChat]);
 
   function handleBack() {
     if (activeIndex < 1) return;
@@ -92,8 +101,13 @@ export default function ClientSessionPage({
   return (
     <div className="flex flex-col h-full">
       <Header
-        canToggleSidebar={session.mode === "tutor"}
         onToggleSidebar={() => setShowSidebar((prev) => !prev)}
+        current={activeIndex + 1}
+        total={questions.length}
+        session={session}
+        onTimeOut={() => {
+          handleEndSession();
+        }}
       />
       <div className="flex flex-1 h-full overflow-hidden">
         <AnimatePresence initial={false}>
@@ -111,57 +125,93 @@ export default function ClientSessionPage({
                 answers={answers}
                 activeQuestion={activeQuestion}
                 onSelect={(_, i) => setActiveIndex(i)}
+                mode={session.mode}
               />
             </motion.div>
           )}
         </AnimatePresence>
-        <div className="flex flex-1 gap-8 p-8 h-full">
-          <QuestionCard
-            session={session}
-            question={activeQuestion}
-            answers={answers}
-            flaggedIds={flaggedIds}
-            index={activeIndex}
-            onBack={handleBack}
-            onNext={handleNext}
-            onSubmit={handleSubmit}
-            onTimeOut={handleEndSession}
-            onFlag={handleFlagQuestion}
-            onUnflag={handleUnflagQuestion}
-          />
-          {answers[activeIndex] !== null && (
-            <ChatCard question={activeQuestion} choice={answers[activeIndex]} />
-          )}
+        <div
+          className={`flex flex-1 gap-8 p-8 h-full overflow-hidden ${
+            isStandalone ? "justify-center" : ""
+          }`}
+        >
+          <motion.div
+            layout
+            className={
+              isStandalone
+                ? "flex-none w-full max-w-[800px]"
+                : showChat
+                  ? "flex-none"
+                  : "flex-1"
+            }
+          >
+            <QuestionCard
+              session={session}
+              question={activeQuestion}
+              answers={answers}
+              flaggedIds={flaggedIds}
+              index={activeIndex}
+              onBack={handleBack}
+              onNext={handleNext}
+              onSubmit={handleSubmit}
+              onFlag={handleFlagQuestion}
+              onUnflag={handleUnflagQuestion}
+              fullWidth={showSidebar && !showChat}
+            />
+          </motion.div>
+          <AnimatePresence mode="wait">
+            {showChat && (
+              <motion.div
+                key="chat"
+                layout
+                initial={{ x: 300, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                exit={{ x: 300, opacity: 0 }}
+                transition={{ type: "tween", duration: 0.3 }}
+                className={`${chatExpanded ? "flex-3" : showSidebar ? "flex-2" : "flex-1"} min-w-0`}
+              >
+                <ChatCard
+                  question={activeQuestion}
+                  choice={answers[activeIndex]}
+                  expanded={chatExpanded}
+                  onToggleExpand={() => setChatExpanded((prev) => !prev)}
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
     </div>
   );
 }
 
+export default ClientSessionPage;
+
 type HeaderProps = {
-  canToggleSidebar: boolean;
   onToggleSidebar: () => void;
+  current: number;
+  total: number;
+  session: QBankSession;
+  onTimeOut: () => void;
 };
 
-function Header({ canToggleSidebar, onToggleSidebar }: HeaderProps) {
+function Header({ onToggleSidebar, current, total, session, onTimeOut }: HeaderProps) {
   return (
-    <header className="flex justify-between p-4 border-b">
-      {canToggleSidebar ? (
-        <Button variant="outline" onClick={onToggleSidebar}>
-          <Menu />
-        </Button>
-      ) : (
-        <div />
-      )}
-      <div className="flex gap-4">
+    <header className="flex items-center p-6 border-b">
+      <Button variant="outline" onClick={onToggleSidebar}>
+        <Menu />
+      </Button>
+      <p className="flex-1 text-center font-semibold text-custom-accent text-lg">
+        Question {current} of {total}
+      </p>
+      <div className="flex items-center gap-4">
+        {session.mode === "timed" && (
+          <Countdown session={session} onEnd={onTimeOut} className="font-semibold" />
+        )}
         <Button variant="outline">
           <Calculator />
           <span>Calculator</span>
         </Button>
-        {/* <Button variant="outline">
-          <Clipboard />
-          <span>Lab Values</span>
-        </Button> */}
       </div>
     </header>
   );

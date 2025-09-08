@@ -7,14 +7,14 @@ import { cn } from "@/lib/utils";
 import SessionSummary from "./session-summary";
 import QuestionsSummary from "./questions-summary";
 
+export const SUMMARY_BTN_HEIGHT = 64;
+
 type SummaryPage = "questions" | "session";
 
 type ClientSummaryPageProps = {
   session: QBankSession;
   questions: NBMEQuestion[];
 };
-
-export const SUMMARY_BTN_HEIGHT = 40;
 
 export default function ClientSummaryPage({
   session,
@@ -24,29 +24,30 @@ export default function ClientSummaryPage({
 
   return (
     <div className="flex flex-col h-full">
-      <div
-        className="flex items-center bg-background border-b"
-        style={{ height: SUMMARY_BTN_HEIGHT }}
-      >
+      <div className="flex items-center bg-background border-b h-16">
         <Button
-          variant="plain"
+          variant="outline"
           onClick={() => setPage("questions")}
           className={cn(
-            "flex-1 border-r font-medium text-muted-foreground",
-            page === "questions" && "text-primary font-semibold"
+            "flex-1 h-full rounded-none text-lg",
+            page === "questions"
+              ? "bg-secondary text-secondary-foreground"
+              : "text-muted-foreground"
           )}
         >
-          <span>Questions</span>
+          Questions
         </Button>
         <Button
-          variant="plain"
+          variant="outline"
           onClick={() => setPage("session")}
           className={cn(
-            "flex-1 font-medium text-muted-foreground",
-            page === "session" && "text-primary font-semibold"
+            "flex-1 h-full rounded-none text-lg",
+            page === "session"
+              ? "bg-secondary text-secondary-foreground"
+              : "text-muted-foreground"
           )}
         >
-          <span>Session</span>
+          Session
         </Button>
       </div>
       {page === "questions" && (

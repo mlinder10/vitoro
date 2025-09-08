@@ -1,4 +1,4 @@
-import { db, reviewQuestions } from "@/db";
+import { getDb, reviewQuestions } from "@/db";
 import { getSession } from "@/lib/auth";
 import { ReviewQuestion } from "@/types";
 import { eq } from "drizzle-orm";
@@ -8,6 +8,7 @@ import { trimTo } from "@/lib/utils";
 import PageTitle from "../_components/page-title";
 
 async function fetchQuestions(userId: string) {
+  const db = await getDb();
   const questions = await db
     .select()
     .from(reviewQuestions)
