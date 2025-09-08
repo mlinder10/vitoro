@@ -2,31 +2,12 @@ import PageTitle from "../_components/page-title";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { getSession } from "@/lib/auth";
-import { answeredFoundationals, getDb, foundationalQuestions } from "@/db";
-import { and, eq } from "drizzle-orm";
 import { STEP2_SYSTEM_TO_SHELVES } from "@/lib/foundational-data";
+import { getIncomplete } from "./actions";
 
-  export default async function FoundationalPage() {
-    const { id } = await getSession();
-    const db = await getDb();
-    const incomplete = await db
-      .select({
-        questionId: answeredFoundationals.foundationalQuestionId,
-        step: foundationalQuestions.step,
-      system: foundationalQuestions.system,
-      topic: foundationalQuestions.topic,
-    })
-    .from(answeredFoundationals)
-    .innerJoin(
-      foundationalQuestions,
-      eq(answeredFoundationals.foundationalQuestionId, foundationalQuestions.id)
-    )
-    .where(
-      and(
-        eq(answeredFoundationals.userId, id),
-        eq(answeredFoundationals.isComplete, false)
-      )
-    );
+export default async function FoundationalPage() {
+  const { id } = await getSession();
+  const incomplete = await getIncomplete(id);
 
   return (
     <div className="h-full overflow-y-auto">

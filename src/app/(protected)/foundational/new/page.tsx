@@ -14,8 +14,7 @@ import {
   STEP2_SYSTEM_TO_SHELVES,
 } from "@/lib/foundational-data";
 import { getSession } from "@/lib/auth";
-  import { answeredFoundationals, getDb, foundationalQuestions } from "@/db";
-import { and, eq } from "drizzle-orm";
+import { getAnswered } from "../actions";
 
 type FoundationalQuestionsPageProps = {
   searchParams: Promise<{ step?: NBMEStep; subject?: string; shelf?: string }>;
@@ -36,24 +35,7 @@ export default async function FoundationalQuestionsPage({
     : undefined;
   const decodedShelf = shelfParam ? decodeURIComponent(shelfParam) : undefined;
 
-    const db = await getDb();
-    const answered = await db
-      .select({
-        step: foundationalQuestions.step,
-        system: foundationalQuestions.system,
-      topic: foundationalQuestions.topic,
-    })
-    .from(answeredFoundationals)
-    .innerJoin(
-      foundationalQuestions,
-      eq(answeredFoundationals.foundationalQuestionId, foundationalQuestions.id)
-    )
-    .where(
-      and(
-        eq(answeredFoundationals.userId, id),
-        eq(answeredFoundationals.isComplete, true)
-      )
-    );
+  const answered = await getAnswered(id);
 
   const answeredStep1Subjects: Record<string, number> = {};
   const answeredStep1Topics: Record<string, Record<string, number>> = {};

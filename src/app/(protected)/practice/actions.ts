@@ -6,10 +6,16 @@ import {
   qbankSessions,
   stepOneNbmeQuestions,
   stepTwoNbmeQuestions,
+  users,
 } from "@/db";
-import { generateRandomName } from "@/lib/utils";
+import {
+  capitalize,
+  generateColor,
+  generateRandomName,
+} from "@/lib/utils";
+import { hashPassword, getSession as getAuthSession } from "@/lib/auth";
 import { Focus, NBMEStep, QBankMode, QuestionChoice } from "@/types";
-import { isNull, eq, and } from "drizzle-orm";
+import { isNull, eq, and, inArray } from "drizzle-orm";
 
 // Create Session
 
@@ -20,6 +26,7 @@ export async function createQbankSession(
   focus: Focus | undefined,
   count: number
 ) {
+  await ensureUser(userId, step);
   const qs = await fetchQuestions(userId, step, focus, count);
 
   const questionIds = qs.map((q) => q.id);
@@ -41,6 +48,27 @@ export async function createQbankSession(
     .returning({ id: qbankSessions.id });
 
   return id;
+}
+
+async function ensureUser(userId: string, exam: NBMEStep) {
+  const [existing] = await db
+    .select({ id: users.id })
+    .from(users)
+    .where(eq(users.id, userId));
+  if (existing) return;
+
+  const name = generateRandomName();
+  const [first, last] = name.split("_").map(capitalize);
+  await db.insert(users).values({
+    id: userId,
+    email: `${name}@example.com`,
+    firstName: first,
+    lastName: last,
+    gradYear: new Date().getFullYear().toString(),
+    exam,
+    color: generateColor(),
+    password: await hashPassword("password"),
+  });
 }
 
 async function fetchQuestions(
@@ -87,6 +115,26 @@ async function fetchQuestions(
         )
         .limit(count);
   }
+}
+
+// Get Session
+
+export async function getSession({ id }: { id: string }) {
+  const { id: userId } = await getAuthSession();
+  const [session] = await db
+    .select()
+    .from(qbankSessions)
+    .where(and(eq(qbankSessions.id, id), eq(qbankSessions.userId, userId)));
+  if (!session) return null;
+
+  const table =
+    session.step === "Step 1" ? stepOneNbmeQuestions : stepTwoNbmeQuestions;
+  const questions = await db
+    .select()
+    .from(table)
+    .where(inArray(table.id, session.questionIds));
+
+  return { session, questions };
 }
 
 // Answer Question
