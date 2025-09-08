@@ -6,6 +6,7 @@ import {
   answeredStepTwoNbmes,
   qbankSessions,
   stepOneFoundationalFollowUps,
+  stepOneFoundationalQuestions,
   stepOneNbmeQuestions,
   stepTwoFoundationalFollowUps,
   stepTwoFoundationalQuestions,
@@ -103,7 +104,7 @@ export function isValidGeneratedQuestion(question: GeneratedQuestion) {
 // Foundational
 
 export type StepOneFoundationalQuestion = InferSelectModel<
-  typeof stepOneNbmeQuestions
+  typeof stepOneFoundationalQuestions
 >;
 export type StepTwoFoundationalQuestion = InferSelectModel<
   typeof stepTwoFoundationalQuestions
