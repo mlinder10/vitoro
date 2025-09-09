@@ -1,3 +1,5 @@
+"use client";
+
 import QuestionChoiceView from "@/app/(protected)/practice/[id]/_components/question-choice";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,6 +20,8 @@ export function ClientStepOneFoundationalPage({
 }: ClientStepOneFoundationalPageProps) {
   const [baseAnswer, setBaseAnswer] = useState("");
   const [followUpAnswers, setFollowUpAnswers] = useState<QuestionChoice[]>([]);
+
+  console.log(baseAnswer, followUpAnswers);
 
   async function handleAnswerBase(answer: string) {
     setBaseAnswer(answer);
