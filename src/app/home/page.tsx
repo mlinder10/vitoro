@@ -14,7 +14,7 @@ export default async function HomePage() {
       <Header session={session} />
       <main
         style={{ height: SECTION_HEIGHT }}
-        className="bg-secondary overflow-y-scroll"
+        className="bg-secondary overflow-y-scroll scroll-smooth"
       >
         <HomeBackground />
         <Hero session={session} />
@@ -46,11 +46,6 @@ function Hero({ session }: { session: Session | null }) {
           <Button asChild variant="accent" className="z-1">
             <Link href={session ? "/" : "/register"}>Start learning</Link>
           </Button>
-          {!session && (
-            <Button asChild variant="accent" className="z-1">
-              <Link href="/login">Log in</Link>
-            </Button>
-          )}
           <Button asChild variant="outline" className="z-1">
             <Link href="#features">See how it works</Link>
           </Button>

@@ -32,12 +32,12 @@ export function Header({ session }: { session: Session | null }) {
             <Link href="/">Get Started</Link>
           </Button>
         ) : (
-          <div className="justify-self-end flex gap-2 w-fit">
-            <Button asChild variant="accent">
-              <Link href="/register">Get Started</Link>
+          <div className="flex justify-self-end gap-2 w-fit">
+            <Button asChild variant="outline">
+              <Link href="/login">Log In</Link>
             </Button>
             <Button asChild variant="accent">
-              <Link href="/login">Log in</Link>
+              <Link href="/register">Register</Link>
             </Button>
           </div>
         )}

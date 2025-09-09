@@ -56,6 +56,8 @@ export default function QuestionChoiceView({
 
   function getChoiceStyle() {
     if (!canShowInsights) {
+      if (isDisabled)
+        return "bg-secondary border-border opacity-60 line-through";
       return isSelected
         ? "bg-custom-accent/20 border-custom-accent"
         : "bg-secondary hover:bg-secondary/80 border-border";

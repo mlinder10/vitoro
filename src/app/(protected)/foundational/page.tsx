@@ -7,7 +7,8 @@ import {
   stepTwoFoundationalQuestions,
 } from "@/db";
 import { and, count, eq } from "drizzle-orm";
-import { ChevronRight } from "lucide-react";
+import { getSession } from "@/lib/auth";
+import CategoryRow from "./_components/category-row";
 
 async function fetchQuestionCategories(userId: string) {
   const [stepOne, stepTwo, stepOneAnswered, stepTwoAnswered] =
@@ -81,7 +82,8 @@ async function fetchQuestionCategories(userId: string) {
 }
 
 export default async function FoundationalQuestionsPage() {
-  const { stepOne, stepTwo } = await fetchQuestionCategories("1");
+  const { id } = await getSession();
+  const { stepOne, stepTwo } = await fetchQuestionCategories(id);
 
   return (
     <div className="flex flex-col h-full">
@@ -98,6 +100,8 @@ export default async function FoundationalQuestionsPage() {
               category={q.subject}
               answered={q.answered}
               total={q.count}
+              step="Step 1"
+              userId={id}
             />
           ))}
         </section>
@@ -110,30 +114,12 @@ export default async function FoundationalQuestionsPage() {
               category={q.shelf}
               answered={q.answered}
               total={q.count}
+              step="Step 2"
+              userId={id}
             />
           ))}
         </section>
       </div>
-    </div>
-  );
-}
-
-type CategoryRowProps = {
-  category: string;
-  answered: number;
-  total: number;
-};
-
-function CategoryRow({ category, answered, total }: CategoryRowProps) {
-  return (
-    <div className="flex justify-between items-center bg-tertiary p-4 border rounded-md">
-      <div>
-        <p className="font-semibold text-lg">{category}</p>
-        <p className="text-muted-foreground">
-          Answered {answered} / {total}
-        </p>
-      </div>
-      <ChevronRight className="text-muted-foreground" size={16} />
     </div>
   );
 }
