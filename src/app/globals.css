@@ -167,13 +167,15 @@ button {
   cursor: pointer;
 }
 
+
+/* Adjusted highlight color for better contrast in light mode */
 .highlight {
-  background-color: #fef9c3;
+  background-color: #fde047;
   border-bottom: 1px dashed #eab308;
   cursor: pointer;
 }
 
 .dark .highlight {
-  background-color: #facc1533;
-  border-bottom: 1px dashed #facc15;
+  background-color: #fde04733;
+  border-bottom: 1px dashed #fde047;
 }

@@ -1,27 +1,14 @@
-import { db, reviewQuestions } from "@/db";
 import { getSession } from "@/lib/auth";
 import { ReviewQuestion } from "@/types";
-import { eq } from "drizzle-orm";
 import Link from "next/link";
 import { ArrowRight, NotebookText } from "lucide-react";
 import { trimTo } from "@/lib/utils";
 import PageTitle from "../_components/page-title";
-
-async function fetchQuestions(userId: string) {
-  const questions = await db
-    .select()
-    .from(reviewQuestions)
-    .where(eq(reviewQuestions.userId, userId));
-
-  return {
-    answered: questions.filter((q) => q.passed),
-    unanswered: questions.filter((q) => !q.passed),
-  };
-}
+import { getQuestions } from "./actions";
 
 export default async function ReviewPage() {
   const { id } = await getSession();
-  const { answered, unanswered } = await fetchQuestions(id);
+  const { answered, unanswered } = await getQuestions(id);
 
   return (
     <div className="flex flex-col h-screen">

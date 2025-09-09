@@ -39,16 +39,20 @@ function jsonType<T>() {
   return customType<{
     data: T;
     configRequired: false;
-    driverData: Buffer;
+    driverData: string;
   }>({
     dataType() {
       return `TEXT`;
     },
-    fromDriver(value: Buffer) {
-      return JSON.parse(value.toString("utf-8"));
+    fromDriver(value: string) {
+      try {
+        return JSON.parse(value);
+      } catch {
+        return value as T;
+      }
     },
     toDriver(value: T) {
-      return sql`${JSON.stringify(value)}`;
+      return JSON.stringify(value);
     },
   });
 }

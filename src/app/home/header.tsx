@@ -27,9 +27,20 @@ export function Header({ session }: { session: Session | null }) {
             <Link href="/home/contact">Contact</Link>
           </li>
         </ul>
-        <Button asChild variant="accent" className="justify-self-end w-fit">
-          <Link href={session ? "/" : "/register"}>Get Started</Link>
-        </Button>
+        {session ? (
+          <Button asChild variant="accent" className="justify-self-end w-fit">
+            <Link href="/">Get Started</Link>
+          </Button>
+        ) : (
+          <div className="justify-self-end flex gap-2 w-fit">
+            <Button asChild variant="accent">
+              <Link href="/register">Get Started</Link>
+            </Button>
+            <Button asChild variant="accent">
+              <Link href="/login">Log in</Link>
+            </Button>
+          </div>
+        )}
       </nav>
     </header>
   );

@@ -10,7 +10,7 @@ import {
 } from "@/db";
 import { generateRandomName } from "@/lib/utils";
 import { Focus, NBMEStep, QBankMode, QuestionChoice } from "@/types";
-import { isNull, eq, and } from "drizzle-orm";
+import { isNull, eq, and, inArray } from "drizzle-orm";
 import { Filters } from "./_components/client-custom-session-form";
 
 // Create Session
@@ -92,6 +92,26 @@ async function fetchQuestions(
         )
         .limit(count);
   }
+}
+
+// Get Session
+
+// TODO: maybe check if session belongs to user
+export async function getSummary(id: string) {
+  const [session] = await db
+    .select()
+    .from(qbankSessions)
+    .where(eq(qbankSessions.id, id));
+  if (!session) return null;
+
+  const table =
+    session.step === "Step 1" ? stepOneNbmeQuestions : stepTwoNbmeQuestions;
+  const questions = await db
+    .select()
+    .from(table)
+    .where(inArray(table.id, session.questionIds));
+
+  return { session, questions };
 }
 
 // Answer Question

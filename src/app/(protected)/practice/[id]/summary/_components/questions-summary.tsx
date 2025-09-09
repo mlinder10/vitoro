@@ -1,12 +1,13 @@
-import { QBankMode, QBankSession, NBMEQuestion, QuestionChoice } from "@/types";
+import { QBankSession, NBMEQuestion, QuestionChoice } from "@/types";
 import { useEffect, useState } from "react";
 import { SUMMARY_BTN_HEIGHT } from "./client-summary-page";
-import { cn } from "@/lib/utils";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { updateFlaggedQuestions } from "../../../actions";
 import ChatCard from "../../_components/chat-card";
 import QuestionNavigator from "../../_components/question-navigator";
+import HighlightableText from "@/components/highlightable-text";
+import QuestionChoiceView from "../../_components/question-choice";
 
 type QuestionsSummaryWrapperProps = {
   session: QBankSession;
@@ -52,6 +53,7 @@ export default function QuestionsSummary({
         activeQuestion={question}
         answers={session.answers}
         onSelect={(q, i) => setIndex(i)}
+        mode="tutor"
       />
       <div className="flex flex-1 gap-8 p-8 h-full">
         <QuestionCard
@@ -110,7 +112,10 @@ function QuestionCard({
         </p>
       </div>
 
-      <p>{question.question}</p>
+      <HighlightableText
+        text={question.question}
+        storageKey={`nbme-${question.id}`}
+      />
 
       <div className="flex flex-col gap-4">
         {Object.entries(question.choices).map(([l]) => {
@@ -118,12 +123,15 @@ function QuestionCard({
           return (
             <QuestionChoiceView
               key={letter}
-              mode={session.mode}
+              mode="tutor"
               letter={letter}
               choice={question.choices[letter]}
               explanation={question.explanations[letter]}
               isCorrect={question.answer === letter}
               isSelected={selected === letter}
+              isChecked={true}
+              isLoading={false}
+              select={() => {}}
             />
           );
         })}
@@ -153,52 +161,5 @@ function QuestionCard({
         )}
       </div>
     </div>
-  );
-}
-
-// Question Choice
-
-type QuestionChoiceViewProps = {
-  mode: QBankMode;
-  choice: string;
-  explanation: string;
-  letter: QuestionChoice;
-  isSelected: boolean;
-  isCorrect: boolean;
-};
-
-function QuestionChoiceView({
-  choice,
-  explanation,
-  letter,
-  isSelected,
-  isCorrect,
-}: QuestionChoiceViewProps) {
-  return (
-    <li
-      className={cn(
-        "group flex items-center gap-2 bg-background-secondary p-4 border rounded-md transition-all",
-        // checked and incorrect
-        isSelected && !isCorrect && "border-destructive",
-        // checked and correct
-        isCorrect && "border-green-500"
-      )}
-    >
-      <div
-        className={cn(
-          "flex justify-center items-center mx-1 px-2 border-2 rounded-full aspect-square font-bold text-lg",
-          // checked and incorrect
-          isSelected && !isCorrect && "border-destructive",
-          // checked and correct
-          isCorrect && "border-green-500"
-        )}
-      >
-        {letter.toUpperCase()}
-      </div>
-      <div>
-        <p>{choice}</p>
-        <p className="text-muted-foreground text-sm">{explanation}</p>
-      </div>
-    </li>
   );
 }

@@ -1,4 +1,4 @@
-import { NotebookText, Target } from "lucide-react";
+import { Target, Layers } from "lucide-react";
 import Link from "next/link";
 import { ComponentType } from "react";
 import { cn } from "@/lib/utils";
@@ -16,14 +16,14 @@ export default function HomePage() {
           <RowItem
             icon={Target}
             title="Question Bank"
-            description="Prepare for your exams with our carefully curated question bank of MBME-style questions."
+            description="Prepare for your exams with our carefully curated question bank of NBME-style questions."
             link="/practice"
           />
           <RowItem
-            icon={NotebookText}
-            title="Review Questions"
-            description="Target your weak areas with your custom review questions."
-            link="/review"
+            icon={Layers}
+            title="Foundational"
+            description="Master core concepts with our foundational question sets."
+            link="/foundational"
           />
         </div>
       </section>

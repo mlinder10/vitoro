@@ -1,3 +1,5 @@
+"use client";
+
 import { capitalize, cn } from "@/lib/utils";
 import { NBMEQuestion, QuestionChoice, Task, TASKS } from "@/types";
 import {
@@ -7,7 +9,6 @@ import {
   Loader,
   ChevronDown,
   ChevronRight,
-  Info,
 } from "lucide-react";
 import { RefObject, useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
@@ -17,14 +18,6 @@ import {
   promptGeneralChat,
 } from "@/app/(protected)/practice/chat";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 
 // Simple expandable section component matching question-card style
 const ExpandableSection = ({
@@ -124,12 +117,18 @@ const MessageComponent = ({
 
 type ChatCardProps = {
   question: NBMEQuestion;
-  choice: QuestionChoice;
+  choice: QuestionChoice | null;
+  expanded?: boolean;
+  onToggleExpand?: () => void;
 };
 
 // TODO: read and refactor
-export default function ChatCard({ question, choice }: ChatCardProps) {
-  const [isExpanded, setIsExpanded] = useState(false);
+export default function ChatCard({
+  question,
+  choice,
+  expanded = false,
+  onToggleExpand,
+}: ChatCardProps) {
   const [messages, setMessages] = useState<
     {
       id: number;
@@ -285,7 +284,7 @@ export default function ChatCard({ question, choice }: ChatCardProps) {
       id: Date.now(),
       content: inputValue,
       isUser: true,
-      rawText: inputValue, // Store raw text for server-side context
+      rawText: inputValue,
     };
 
     setMessages((prev) => [...prev, userMessage]);
@@ -295,30 +294,25 @@ export default function ChatCard({ question, choice }: ChatCardProps) {
     setTimeout(async () => {
       try {
         let fullContent = "";
-        // Convert messages to simple format for server-side processing
-        const serverMessages = messages.map((msg) => ({
+        const serverMessages = [...messages, userMessage].map((msg) => ({
           role: msg.isUser ? ("user" as const) : ("assistant" as const),
           content:
             msg.rawText || (typeof msg.content === "string" ? msg.content : ""),
         }));
-        const res = await promptGeneralChat(question, choice, [
-          ...serverMessages,
-          { role: "user" as const, content: inputValue },
-        ]);
 
-        // Collect all content first
+        const res = await promptGeneralChat(question, choice, serverMessages);
+
         while (true) {
           const { value, done } = await res.next();
           if (done) break;
           fullContent += value;
         }
 
-        // Add complete AI response with expandable sections
         const aiMessage = {
           id: Date.now() + 1,
           content: createAITutorResponse(fullContent),
           isUser: false,
-          rawText: fullContent, // Store raw text for server-side context
+          rawText: fullContent,
         };
 
         setMessages((prev) => [...prev, aiMessage]);
@@ -347,12 +341,7 @@ export default function ChatCard({ question, choice }: ChatCardProps) {
   }, [question.id, choice]);
 
   return (
-    <section
-      className={cn(
-        "relative flex flex-col flex-1 bg-tertiary border rounded-md h-full overflow-y-auto transition-all",
-        isExpanded && "flex-3"
-      )}
-    >
+    <section className="relative flex flex-col flex-1 bg-tertiary border rounded-md h-full overflow-y-auto transition-all">
       <MessagesContainer
         messages={messages}
         endRef={endRef}
@@ -379,56 +368,18 @@ export default function ChatCard({ question, choice }: ChatCardProps) {
           </Button>
         </div>
       </div>
-      <button
-        className="top-4 left-4 absolute flex justify-center items-center backdrop-blur-md border rounded-full w-[32px] aspect-square cursor-pointer"
-        onClick={() => setIsExpanded((prev) => !prev)}
-      >
-        <ArrowLeft
-          size={16}
-          className={cn(isExpanded && "rotate-180 transition-all")}
-        />
-      </button>
-      <Dialog>
-        <DialogTrigger asChild>
-          <button className="top-4 right-4 absolute flex justify-center items-center backdrop-blur-md border rounded-full w-[32px] aspect-square cursor-pointer">
-            <Info size={16} />
-          </button>
-        </DialogTrigger>
-        <DialogContent className="min-w-[60vw] max-w-[1000px] max-h-[80vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Prompt Templates</DialogTitle>
-            <DialogDescription></DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4">
-            {/* TODO - Kaleb: add descriptions */}
-            <TaskPromptDescription task="Breakdown" description={``} />
-            <TaskPromptDescription task="Distractor" description={``} />
-            <TaskPromptDescription task="Gap Finder" description={``} />
-            <TaskPromptDescription task="Strategy" description={``} />
-            <TaskPromptDescription task="Pattern" description={``} />
-            <TaskPromptDescription task="Memory" description={``} />
-            <TaskPromptDescription task="Pimp Mode" description={``} />
-          </div>
-        </DialogContent>
-      </Dialog>
+      {onToggleExpand && (
+        <button
+          className="top-4 left-4 absolute flex justify-center items-center backdrop-blur-md border rounded-full w-[32px] aspect-square cursor-pointer"
+          onClick={onToggleExpand}
+        >
+          <ArrowLeft
+            size={16}
+            className={cn("transition-all", expanded && "rotate-180")}
+          />
+        </button>
+      )}
     </section>
-  );
-}
-
-type TaskPromptDescriptionProps = {
-  task: string;
-  description: string;
-};
-
-function TaskPromptDescription({
-  task,
-  description,
-}: TaskPromptDescriptionProps) {
-  return (
-    <div className="space-y-2 bg-secondary p-4 border rounded-md">
-      <p className="font-semibold">{task}</p>
-      <p className="text-muted-foreground text-sm">{description}</p>
-    </div>
   );
 }
 

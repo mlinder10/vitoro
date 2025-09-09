@@ -7,11 +7,9 @@ import {
   ChevronLeft,
   History,
   Home,
-  Layers,
   LogOut,
   Menu,
-  // Layers,
-  // NotebookText,
+  Layers,
   ShieldUserIcon,
   Target,
 } from "lucide-react";
@@ -71,7 +69,7 @@ export default function SideNav() {
           <ListLink
             href="/practice"
             icon={Target}
-            label="Practice"
+            label="Question Bank"
             isOpen={isOpen}
           />
           <ListLink
