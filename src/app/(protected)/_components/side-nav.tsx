@@ -7,6 +7,7 @@ import {
   ChevronLeft,
   History,
   Home,
+  Layers,
   LogOut,
   Menu,
   // Layers,
@@ -73,13 +74,13 @@ export default function SideNav() {
             label="Practice"
             isOpen={isOpen}
           />
-          {/* <ListLink
+          <ListLink
             href="/foundational"
             icon={Layers}
             label="Foundational"
             isOpen={isOpen}
           />
-          <ListLink
+          {/* <ListLink
             href="/review"
             icon={NotebookText}
             label="Review"
