@@ -301,7 +301,7 @@ export const stepTwoFoundationalQuestions = sqliteTable(
     system: text("system").notNull(),
 
     question: text("question").notNull(),
-
+    expectedAnswer: text("expected_answer").notNull(),
     step: json<"Step 1">("step")
       .notNull()
       .default('"Step 1"' as "Step 1"),

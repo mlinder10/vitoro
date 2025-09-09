@@ -1,9 +1,0 @@
-export const STEP1_SUBJECTS: string[] = [];
-export const STEP1_TOPICS: Record<string, string[]> = {};
-export const STEP2_SHELVES: string[] = [];
-export const STEP2_SYSTEMS: Record<string, string[]> = {};
-export const STEP1_COUNTS: Record<string, number> = {};
-export const STEP1_TOPIC_COUNTS: Record<string, Record<string, number>> = {};
-export const STEP2_COUNTS: Record<string, number> = {};
-export const STEP2_SYSTEM_COUNTS: Record<string, Record<string, number>> = {};
-export const STEP2_SYSTEM_TO_SHELVES: Record<string, string[]> = {};
