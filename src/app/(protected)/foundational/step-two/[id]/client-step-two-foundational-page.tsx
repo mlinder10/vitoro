@@ -1,32 +1,32 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import {
-  AnsweredStepOneFoundational,
+  StepTwoFoundationalQuestion,
+  StepTwoFoundationalFollowup,
+  AnsweredStepTwoFoundational,
   QuestionChoice,
-  StepOneFoundationalFollowup,
-  StepOneFoundationalQuestion,
 } from "@/types";
 import { useEffect, useRef, useState } from "react";
 import ProgressBar from "../../_components/progress-bar";
-import HighlightableText from "@/components/highlightable-text";
 import FollowUpQuestionView from "../../_components/followup-question";
-import { answerStepOneQuestion } from "../../actions";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import HighlightableText from "@/components/highlightable-text";
+import { answerStepTwoQuestion } from "../../actions";
 
-type ClientStepOneFoundationalPageProps = {
+type ClientStepTwoFoundationalPageProps = {
   userId: string;
-  question: StepOneFoundationalQuestion;
-  followUps: StepOneFoundationalFollowup[];
-  answer: AnsweredStepOneFoundational | null;
+  question: StepTwoFoundationalQuestion;
+  followUps: StepTwoFoundationalFollowup[];
+  answer: AnsweredStepTwoFoundational | null;
 };
 
-export function ClientStepOneFoundationalPage({
+export function ClientStepTwoFoundationalPage({
   userId,
   question,
   followUps,
   answer: originalAnswer,
-}: ClientStepOneFoundationalPageProps) {
+}: ClientStepTwoFoundationalPageProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [answer, setAnswer] = useState(originalAnswer);
   const [isLoading, setIsLoading] = useState(false);
@@ -36,11 +36,11 @@ export function ClientStepOneFoundationalPage({
   );
 
   async function handleAnswerBase(ans: string) {
-    const copy: AnsweredStepOneFoundational = answer
+    const copy: AnsweredStepTwoFoundational = answer
       ? { ...answer }
       : {
           id: crypto.randomUUID(),
-          step: "Step 1",
+          step: "Step 2",
           foundationalQuestionId: question.id,
           createdAt: new Date(),
           userId,
@@ -53,7 +53,7 @@ export function ClientStepOneFoundationalPage({
     setAnswer(copy);
 
     setIsLoading(true);
-    await answerStepOneQuestion(copy, answer !== null);
+    await answerStepTwoQuestion(copy, answer !== null);
     setIsLoading(false);
   }
 
@@ -66,7 +66,7 @@ export function ClientStepOneFoundationalPage({
     setAnswer(copy);
 
     setIsLoading(true);
-    await answerStepOneQuestion(copy, true);
+    await answerStepTwoQuestion(copy, true);
     setIsLoading(false);
   }
 
@@ -125,7 +125,7 @@ export function ClientStepOneFoundationalPage({
 
 type BaseQuestionViewProps = {
   total: number;
-  question: StepOneFoundationalQuestion;
+  question: StepTwoFoundationalQuestion;
   finalAnswer: string | null;
   isLoading: boolean;
   onNext: (answer: string) => Promise<void>;
@@ -165,12 +165,6 @@ function BaseQuestionView({
           text={question.question}
           storageKey={`foundational-${question.id}`}
         />
-        {finalAnswer && (
-          <div>
-            <p className="text-muted-foreground text-sm">Expected Answer:</p>
-            <p>{question.diagnosis}</p>
-          </div>
-        )}
         {isChecked ? (
           <div>
             <p className="text-muted-foreground text-sm">Your Answer:</p>
