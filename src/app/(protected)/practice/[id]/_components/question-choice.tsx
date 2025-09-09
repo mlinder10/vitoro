@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 import { QBankMode, QuestionChoice } from "@/types";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type QuestionChoiceViewProps = {
   letter: QuestionChoice;
@@ -26,11 +26,24 @@ export default function QuestionChoiceView({
   select,
 }: QuestionChoiceViewProps) {
   const [isDisabled, setIsDisabled] = useState(false);
+  const [showExplanation, setShowExplanation] = useState(false);
   const canShowInsights = isChecked && mode === "tutor";
+
+  useEffect(() => {
+    if (isChecked) {
+      setShowExplanation(isCorrect || isSelected);
+    } else {
+      setShowExplanation(false);
+    }
+  }, [isChecked, isCorrect, isSelected]);
 
   function handleSelect() {
     if (isDisabled) return;
-    if (!isChecked && !isLoading) select(letter);
+    if (isChecked) {
+      setShowExplanation((prev) => !prev);
+      return;
+    }
+    if (!isLoading) select(letter);
   }
 
   function handleDisable(e: React.MouseEvent) {
@@ -78,7 +91,7 @@ export default function QuestionChoiceView({
       </div>
 
       {/* Show explanation after answer is checked */}
-      {isChecked && (isCorrect || isSelected) && (
+      {isChecked && showExplanation && (
         <div className="bg-muted ml-7 p-3 rounded-md text-sm">
           <p className="text-muted-foreground">{explanation}</p>
         </div>

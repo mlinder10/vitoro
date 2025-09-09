@@ -70,7 +70,7 @@ export default function SideNav() {
           <ListLink
             href="/practice"
             icon={Target}
-            label="Practice"
+            label="Question Bank"
             isOpen={isOpen}
           />
           <ListLink

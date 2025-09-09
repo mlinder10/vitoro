@@ -4,6 +4,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useState, useEffect } from "react";
 import QuestionChoiceView from "./question-choice";
 import { cn } from "@/lib/utils";
+import HighlightableText from "@/components/highlightable-text";
 
 type QuestionCardProps = {
   session: QBankSession;
@@ -54,18 +55,21 @@ export default function QuestionCard({
     if (!selected) return;
     setSubmissionLoading(true);
     await onSubmit(selected);
-    if (session.mode === "tutor" && isAtEnd) onNext(true);
     setSubmissionLoading(false);
-    setIsChecked(true);
-    if (session.mode === "timed") onNext(true);
+    if (session.mode === "timed") {
+      onNext(true);
+    } else {
+      if (isAtEnd) onNext(true);
+      setIsChecked(true);
+    }
   }
 
   useEffect(() => {
     const existing = answers[index];
     setSelected(existing);
     setSubmissionLoading(false);
-    setIsChecked(existing !== null);
-  }, [question, answers, index]);
+    setIsChecked(session.mode === "tutor" && existing !== null);
+  }, [question, answers, index, session.mode]);
 
   return (
     <div
@@ -78,7 +82,11 @@ export default function QuestionCard({
           : "flex-1 w-full"
       )}
     >
-      <p className="leading-relaxed">{question.question}</p>
+      <HighlightableText
+        text={question.question}
+        storageKey={`nbme-${question.id}`}
+        className="leading-relaxed"
+      />
 
       {question.labValues && question.labValues.length > 0 && (
         <div className="bg-secondary p-4 rounded-md">

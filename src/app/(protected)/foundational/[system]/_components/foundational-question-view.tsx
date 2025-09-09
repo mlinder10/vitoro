@@ -16,6 +16,7 @@ import {
   completeFoundationalQuestion,
 } from "../actions";
 import QuestionChoiceView from "../../../practice/[id]/_components/question-choice";
+import HighlightableText from "@/components/highlightable-text";
 
 // Shared progress bar -------------------------------------------------------
 
@@ -74,7 +75,11 @@ export function FoundationalQuestionBase({
             Question {index} of {total}
           </span>
         </div>
-        <p className="text-lg font-medium mb-2">{question.question}</p>
+        <HighlightableText
+          text={question.question}
+          storageKey={`found-${question.id}`}
+          className="text-lg font-medium mb-2"
+        />
         <div className="space-y-4">
           <div className="space-y-1">
             <p className="font-semibold">Your Answer</p>
@@ -98,7 +103,11 @@ export function FoundationalQuestionBase({
           Question {index} of {total}
         </span>
       </div>
-      <p className="text-lg font-medium">{question.question}</p>
+      <HighlightableText
+        text={question.question}
+        storageKey={`found-${question.id}`}
+        className="text-lg font-medium"
+      />
       <Textarea value={response} onChange={(e) => setResponse(e.target.value)} />
       <Button onClick={handleSubmit} disabled={!response}>
         Submit
@@ -159,7 +168,11 @@ export function FoundationalQuestionFollowup({
           Question {index} of {total}
         </span>
       </div>
-      <p className="text-lg font-medium">{question.question}</p>
+      <HighlightableText
+        text={question.question}
+        storageKey={`found-${questionId}-${question.id}`}
+        className="text-lg font-medium"
+      />
       <ul className="flex flex-col gap-4">
         {Object.entries(question.choices).map(([l]) => {
           const letter = l as QuestionChoice;
