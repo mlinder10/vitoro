@@ -3,12 +3,7 @@ import Link from "next/link";
 import { ComponentType } from "react";
 import GradientTitle from "@/components/gradient-title";
 import ProgressCircle from "@/components/progress-circle";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   answeredStepOneNbmes,
   answeredStepTwoNbmes,
@@ -26,7 +21,12 @@ function scoreToHex(percentage: number) {
   return `hsl(${hue}, 100%, 50%)`;
 }
 
-type WeakArea = { system: string; total: number; correct: number; pct: number };
+type WeakArea = {
+  system: string;
+  total: number;
+  correct: number;
+  pct: number;
+};
 
 async function getStats(userId: string) {
   const [stepOne, stepTwo] = await Promise.all([
@@ -108,7 +108,7 @@ export default async function HomePage() {
 
       <section className="flex flex-col gap-4">
         <h2 className="font-semibold text-muted-foreground">Study Materials</h2>
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="gap-4 grid md:grid-cols-2">
           <RowItem
             icon={Target}
             title="Question Bank"
@@ -126,7 +126,7 @@ export default async function HomePage() {
 
       <section className="flex flex-col gap-4">
         <h2 className="font-semibold text-muted-foreground">Your Progress</h2>
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="gap-4 grid md:grid-cols-2">
           <Card className="text-center">
             <CardHeader className="items-center text-center">
               <CardTitle className="text-xl">Overall Accuracy</CardTitle>
@@ -141,7 +141,7 @@ export default async function HomePage() {
                   {`${formatPercent(stats.pct)} correct`}
                 </span>
               </ProgressCircle>
-              <p className="text-muted-foreground text-sm max-w-[10rem]">
+              <p className="max-w-[10rem] text-muted-foreground text-sm">
                 {stats.correct} out of {stats.total} correct
               </p>
             </CardContent>
@@ -161,7 +161,7 @@ export default async function HomePage() {
                   {stats.weakest.map((w) => (
                     <div
                       key={w.system}
-                      className="flex justify-between rounded border p-2"
+                      className="flex justify-between p-2 border rounded"
                     >
                       <span>{w.system}</span>
                       <span className="text-muted-foreground">
@@ -189,7 +189,7 @@ type RowItemProps = {
 function RowItem({ title, description, link, icon: Icon }: RowItemProps) {
   return (
     <Link href={link} className="block">
-      <Card className="h-full text-center transition-all hover:ring-2 hover:ring-custom-accent">
+      <Card className="hover:ring-2 hover:ring-custom-accent h-full text-center transition-all">
         <CardContent className="flex flex-col items-center gap-2 p-6">
           <Icon size={32} />
           <p className="font-bold text-lg">{title}</p>
