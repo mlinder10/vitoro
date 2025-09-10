@@ -89,18 +89,30 @@ export default function QuestionCard({
       />
 
       {question.labValues && question.labValues.length > 0 && (
-        <div className="bg-secondary p-4 rounded-md">
+        <div className="bg-secondary p-4 rounded-md w-fit mx-auto">
           <h3 className="mb-2 font-semibold">Laboratory Values:</h3>
-          <div className="grid grid-cols-2 gap-2 text-sm">
-            {question.labValues.map((lab, idx) => (
-              <div key={idx} className="flex items-baseline gap-4">
-                <span>{lab.analyte}:</span>
-                <span>
-                  {lab.value} {lab.unit} {lab.qual}
-                </span>
-              </div>
-            ))}
-          </div>
+          <table className="mx-auto w-fit text-sm border border-border border-collapse">
+            <thead className="bg-muted">
+              <tr>
+                <th className="px-3 py-2 border border-border font-medium">
+                  Analyte
+                </th>
+                <th className="px-3 py-2 border border-border text-center font-medium">
+                  Value
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {question.labValues.map((lab, idx) => (
+                <tr key={idx}>
+                  <td className="px-3 py-2 border border-border">{lab.analyte}</td>
+                  <td className="px-3 py-2 border border-border text-right">
+                    {lab.value} {lab.unit} {lab.qual}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
 
