@@ -1,3 +1,0 @@
-- Foundational page
-- Session name generation
-- Session row in history
