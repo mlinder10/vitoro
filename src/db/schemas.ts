@@ -342,7 +342,7 @@ export const answeredStepOneFoundationals = sqliteTable(
       .notNull(),
     createdAt: date("created_at").default(SQL_NOW).notNull(),
     shortResponse: text("short_response").notNull(),
-    answers: json<QuestionChoice[]>("answers").notNull(),
+    answers: json<(QuestionChoice | null)[]>("answers").notNull(),
     isComplete: json<boolean>("is_complete").default(false).notNull(),
     step: json<"Step 1">("step")
       .notNull()
@@ -364,7 +364,7 @@ export const answeredStepTwoFoundationals = sqliteTable(
       .notNull(),
     createdAt: date("created_at").default(SQL_NOW).notNull(),
     shortResponse: text("short_response").notNull(),
-    answers: json<QuestionChoice[]>("answers").notNull(),
+    answers: json<(QuestionChoice | null)[]>("answers").notNull(),
     isComplete: json<boolean>("is_complete").default(false).notNull(),
     step: json<"Step 2">("step")
       .notNull()

@@ -34,9 +34,9 @@ export function ClientStepOneFoundationalPage({
   const [baseAnswer, setBaseAnswer] = useState<string | null>(
     originalAnswer?.shortResponse ?? null
   );
-  const [followUpAnswers, setFollowUpAnswers] = useState<QuestionChoice[]>(
-    originalAnswer?.answers ?? Array(followUps.length).fill(null)
-  );
+  const [followUpAnswers, setFollowUpAnswers] = useState<
+    (QuestionChoice | null)[]
+  >(originalAnswer?.answers ?? Array(followUps.length).fill(null));
 
   async function handleAnswerBase(ans: string) {
     const copy: AnsweredStepOneFoundational = answer
