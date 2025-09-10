@@ -10,7 +10,11 @@ export default function FoundationalLandingPage() {
         <Button asChild variant="accent">
           <Link href="/foundational/new">Start New Session</Link>
         </Button>
-        <Button asChild variant="secondary">
+        <Button
+          asChild
+          variant="secondary"
+          className="border-2 border-black dark:border-white"
+        >
           <Link href="/foundational/previous">Continue Previous Session</Link>
         </Button>
       </div>

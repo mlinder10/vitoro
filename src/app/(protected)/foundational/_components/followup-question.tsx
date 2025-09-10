@@ -58,7 +58,7 @@ export default function FollowUpQuestionView({
             const letter = l as QuestionChoice;
             return (
               <QuestionChoiceView
-                key={letter}
+                key={`${followUp.id}-${letter}`}
                 mode={"tutor"}
                 letter={letter}
                 choice={followUp.choices[letter]}
