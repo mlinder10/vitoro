@@ -39,6 +39,10 @@ export async function fetchUnansweredStepOne(userId: string, subject: string) {
         )
       )
     )
+    .orderBy(
+      stepOneFoundationalQuestions.topic,
+      stepOneFoundationalQuestions.subtopic
+    )
     .limit(1);
 
   return row?.id ?? null;
@@ -67,6 +71,10 @@ export async function fetchUnansweredStepTwo(userId: string, shelf: string) {
             )
         )
       )
+    )
+    .orderBy(
+      stepTwoFoundationalQuestions.system,
+      stepTwoFoundationalQuestions.topic
     )
     .limit(1);
 

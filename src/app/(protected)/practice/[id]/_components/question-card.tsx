@@ -1,4 +1,4 @@
-import { NBMEQuestion, QBankSession, QuestionChoice } from "@/types";
+import { NBMEQuestion, QBankSession, QuestionChoice, LabValue } from "@/types";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useState, useEffect } from "react";
@@ -41,6 +41,12 @@ export default function QuestionCard({
   const [selected, setSelected] = useState<QuestionChoice | null>(null);
   const [submissionLoading, setSubmissionLoading] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
+  const labsByPanel = question.labValues
+    ? question.labValues.reduce<Record<string, LabValue[]>>((acc, lab) => {
+        (acc[lab.panel] ||= []).push(lab);
+        return acc;
+      }, {})
+    : {};
   const canGoBack = index > 1;
   const canGoNext =
     index < session.questionIds.length - 1 &&
@@ -91,16 +97,28 @@ export default function QuestionCard({
       {question.labValues && question.labValues.length > 0 && (
         <div className="bg-secondary p-4 rounded-md">
           <h3 className="mb-2 font-semibold">Laboratory Values:</h3>
-          <div className="grid grid-cols-2 gap-2 text-sm">
-            {question.labValues.map((lab, idx) => (
-              <div key={idx} className="flex items-baseline gap-4">
-                <span>{lab.analyte}:</span>
-                <span>
-                  {lab.value} {lab.unit} {lab.qual}
-                </span>
-              </div>
-            ))}
-          </div>
+          <table className="w-full text-sm border border-border border-collapse">
+            <thead className="bg-muted">
+              <tr>
+                <th className="px-3 py-2 border border-border font-medium">
+                  Analyte
+                </th>
+                <th className="px-3 py-2 border border-border text-right font-medium">
+                  Value
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {question.labValues.map((lab, idx) => (
+                <tr key={idx}>
+                  <td className="px-3 py-2 border border-border">{lab.analyte}</td>
+                  <td className="px-3 py-2 border border-border text-right">
+                    {lab.value} {lab.unit} {lab.qual}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
 

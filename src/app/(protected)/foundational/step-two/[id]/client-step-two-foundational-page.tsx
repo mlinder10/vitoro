@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import HighlightableText from "@/components/highlightable-text";
 import { answerStepTwoQuestion } from "../../actions";
+import CaseComplete from "../../_components/case-complete";
 
 type ClientStepTwoFoundationalPageProps = {
   userId: string;
@@ -30,9 +31,11 @@ export function ClientStepTwoFoundationalPage({
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [answer, setAnswer] = useState(originalAnswer);
   const [isLoading, setIsLoading] = useState(false);
-  const [baseAnswer, setBaseAnswer] = useState<string | null>(null);
+  const [baseAnswer, setBaseAnswer] = useState<string | null>(
+    originalAnswer?.shortResponse ?? null
+  );
   const [followUpAnswers, setFollowUpAnswers] = useState<QuestionChoice[]>(
-    Array(followUps.length).fill(null)
+    originalAnswer?.answers ?? Array(followUps.length).fill(null)
   );
 
   async function handleAnswerBase(ans: string) {
@@ -68,16 +71,38 @@ export function ClientStepTwoFoundationalPage({
     setIsLoading(true);
     await answerStepTwoQuestion(copy, true);
     setIsLoading(false);
+    scrollToBottom();
   }
 
   function scrollToBottom() {
     containerRef.current?.scrollTo(0, containerRef.current.scrollHeight);
   }
 
-  const answersDep = followUpAnswers.join("");
   useEffect(() => {
-    scrollToBottom();
-  }, [baseAnswer, answersDep]);
+    function handleUnload() {
+      if (!baseAnswer && followUpAnswers.every((a) => a === null)) return;
+      const copy: AnsweredStepTwoFoundational = answer
+        ? { ...answer }
+        : {
+            id: crypto.randomUUID(),
+            step: "Step 2",
+            foundationalQuestionId: question.id,
+            createdAt: new Date(),
+            userId,
+            shortResponse: baseAnswer ?? "",
+            answers: followUpAnswers,
+            isComplete: false,
+          };
+      copy.shortResponse = baseAnswer ?? "";
+      copy.answers = followUpAnswers;
+      void answerStepTwoQuestion(copy, answer !== null);
+    }
+    window.addEventListener("beforeunload", handleUnload);
+    return () => {
+      handleUnload();
+      window.removeEventListener("beforeunload", handleUnload);
+    };
+  }, [answer, baseAnswer, followUpAnswers, question.id, userId]);
 
   return (
     <div className="flex flex-col h-[100vh]">
@@ -97,7 +122,9 @@ export function ClientStepTwoFoundationalPage({
           question={question}
           finalAnswer={baseAnswer}
           isLoading={isLoading}
-          onNext={handleAnswerBase}
+          hasFollowUps={followUps.length > 0}
+          onSubmit={handleAnswerBase}
+          onContinue={scrollToBottom}
         />
         {baseAnswer &&
           followUps.map((f, i) => {
@@ -116,6 +143,13 @@ export function ClientStepTwoFoundationalPage({
               )
             );
           })}
+        {answer?.isComplete && (
+          <CaseComplete
+            step="Step 2"
+            category={question.shelf}
+            userId={userId}
+          />
+        )}
       </div>
     </div>
   );
@@ -128,7 +162,9 @@ type BaseQuestionViewProps = {
   question: StepTwoFoundationalQuestion;
   finalAnswer: string | null;
   isLoading: boolean;
-  onNext: (answer: string) => Promise<void>;
+  hasFollowUps: boolean;
+  onSubmit: (answer: string) => Promise<void>;
+  onContinue: () => void;
 };
 
 function BaseQuestionView({
@@ -136,17 +172,14 @@ function BaseQuestionView({
   question,
   finalAnswer,
   isLoading,
-  onNext,
+  hasFollowUps,
+  onSubmit,
+  onContinue,
 }: BaseQuestionViewProps) {
   const [answer, setAnswer] = useState(finalAnswer ?? "");
-  const [isChecked, setIsChecked] = useState(finalAnswer !== null);
 
   async function handleAnswer() {
-    setIsChecked(true);
-  }
-
-  async function handleNext() {
-    await onNext(answer);
+    await onSubmit(answer);
   }
 
   function handleKeydown(e: React.KeyboardEvent) {
@@ -165,11 +198,26 @@ function BaseQuestionView({
           text={question.question}
           storageKey={`foundational-${question.id}`}
         />
-        {isChecked ? (
-          <div>
-            <p className="text-muted-foreground text-sm">Your Answer:</p>
-            <p>{answer}</p>
-          </div>
+        {finalAnswer ? (
+          <>
+            <div>
+              <p className="text-muted-foreground text-sm">Your Answer:</p>
+              <p>{finalAnswer}</p>
+            </div>
+            <div className="mt-4">
+              <p className="text-muted-foreground text-sm">Expected Answer:</p>
+              <div className="p-3 rounded-md text-white text-center bg-gradient-to-r from-blue-400 to-cyan-400 mt-1">
+                {question.expectedAnswer}
+              </div>
+            </div>
+            {hasFollowUps && (
+              <div className="flex justify-end mt-4">
+                <Button variant="accent" onClick={onContinue}>
+                  Next
+                </Button>
+              </div>
+            )}
+          </>
         ) : (
           <>
             <div className="mt-auto">
@@ -183,25 +231,15 @@ function BaseQuestionView({
             </div>
             <div className="flex justify-between">
               <div />
-
               <Button
                 variant="accent"
                 onClick={handleAnswer}
-                disabled={!answer || isLoading || finalAnswer !== null}
+                disabled={!answer || isLoading}
               >
                 Submit
               </Button>
             </div>
           </>
-        )}
-
-        {isChecked && !finalAnswer && (
-          <div className="flex justify-between mt-auto">
-            <div />
-            <Button variant="accent" onClick={handleNext} disabled={isLoading}>
-              Next
-            </Button>
-          </div>
         )}
       </div>
     </section>

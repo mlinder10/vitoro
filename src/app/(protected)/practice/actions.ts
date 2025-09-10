@@ -10,7 +10,7 @@ import {
 } from "@/db";
 import { generateRandomName } from "@/lib/utils";
 import { Focus, NBMEStep, QBankMode, QuestionChoice } from "@/types";
-import { isNull, eq, and, inArray } from "drizzle-orm";
+import { isNull, eq, and, inArray, sql } from "drizzle-orm";
 import { Filters } from "./_components/client-custom-session-form";
 
 // Create Session
@@ -72,6 +72,7 @@ async function fetchQuestions(
             isNull(answeredStepOneNbmes.userId)
           )
         )
+        .orderBy(sql`RANDOM()`)
         .limit(count);
     case "Step 2":
       return await db
@@ -90,6 +91,7 @@ async function fetchQuestions(
             isNull(answeredStepTwoNbmes.userId)
           )
         )
+        .orderBy(sql`RANDOM()`)
         .limit(count);
   }
 }
