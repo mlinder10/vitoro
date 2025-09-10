@@ -65,6 +65,15 @@ export default function FollowUpQuestionView({
           })}
         </div>
 
+        {isChecked && (
+          <div className="p-3 rounded-md bg-muted">
+            <p className="text-muted-foreground text-sm">Correct Answer:</p>
+            <p>
+              {followUp.answer.toUpperCase()}. {followUp.choices[followUp.answer]}
+            </p>
+          </div>
+        )}
+
         <div className="flex justify-between">
           <div />
 
