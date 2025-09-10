@@ -8,7 +8,7 @@ import {
   Preview,
   Text,
 } from "@react-email/components";
-import resend from "./resend";
+import getResend from "./resend";
 
 type ContactPageEmailProps = {
   email: string;
@@ -51,6 +51,7 @@ export async function sendContactPageEmail(
   message: string
 ) {
   try {
+    const resend = getResend();
     await resend.emails.send({
       from: process.env.VITORO_EMAIL!,
       to: process.env.VITORO_EMAIL!,
