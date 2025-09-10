@@ -1,6 +1,6 @@
 import HighlightableText from "@/components/highlightable-text";
 import { FoundationalFollowup, QuestionChoice } from "@/types";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import QuestionChoiceView from "../../practice/[id]/_components/question-choice";
 import { Button } from "@/components/ui/button";
 
@@ -23,6 +23,14 @@ export default function FollowUpQuestionView({
 }: FollowUpQuestionViewProps) {
   const [selected, setSelected] = useState<QuestionChoice | null>(finalAnswer);
   const [isChecked, setIsChecked] = useState(finalAnswer !== null);
+  const correctAnswer = (
+    followUp.answer.toLowerCase() as QuestionChoice
+  );
+
+  useEffect(() => {
+    setSelected(finalAnswer);
+    setIsChecked(finalAnswer !== null);
+  }, [finalAnswer, followUp]);
 
   function handleAnswer() {
     setIsChecked(true);
@@ -55,24 +63,16 @@ export default function FollowUpQuestionView({
                 letter={letter}
                 choice={followUp.choices[letter]}
                 explanation={followUp.explanations[letter]}
-                isCorrect={followUp.answer === letter}
+                isCorrect={correctAnswer === letter}
                 isSelected={selected === letter}
                 select={setSelected}
                 isLoading={isLoading}
                 isChecked={isChecked}
+                showSelectionExplanation={selected !== correctAnswer}
               />
             );
           })}
         </div>
-
-        {isChecked && (
-          <div className="p-3 rounded-md bg-muted">
-            <p className="text-muted-foreground text-sm">Correct Answer:</p>
-            <p>
-              {followUp.answer.toUpperCase()}. {followUp.choices[followUp.answer]}
-            </p>
-          </div>
-        )}
 
         <div className="flex justify-between">
           <div />

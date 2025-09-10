@@ -12,6 +12,12 @@ type QuestionChoiceViewProps = {
   mode: QBankMode;
   isLoading: boolean;
   select: (choice: QuestionChoice | null) => void;
+  /**
+   * When true, the explanation for a selected choice is automatically
+   * shown after the answer is checked. When false, only the correct
+   * choice's explanation is displayed by default.
+   */
+  showSelectionExplanation?: boolean;
 };
 
 export default function QuestionChoiceView({
@@ -24,6 +30,7 @@ export default function QuestionChoiceView({
   mode,
   isLoading,
   select,
+  showSelectionExplanation = true,
 }: QuestionChoiceViewProps) {
   const [isDisabled, setIsDisabled] = useState(false);
   const [showExplanation, setShowExplanation] = useState(false);
@@ -31,11 +38,11 @@ export default function QuestionChoiceView({
 
   useEffect(() => {
     if (isChecked) {
-      setShowExplanation(isCorrect || isSelected);
+      setShowExplanation(isCorrect || (showSelectionExplanation && isSelected));
     } else {
       setShowExplanation(false);
     }
-  }, [isChecked, isCorrect, isSelected]);
+  }, [isChecked, isCorrect, isSelected, showSelectionExplanation]);
 
   function handleSelect() {
     if (isDisabled) return;
