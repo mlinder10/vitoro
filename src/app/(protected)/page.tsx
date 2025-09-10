@@ -13,13 +13,7 @@ import {
 } from "@/db";
 import { getSession } from "@/lib/auth";
 import { eq } from "drizzle-orm";
-
-const clamp01 = (n: number) => Math.max(0, Math.min(1, n));
-const formatPercent = (ratio: number) => `${Math.round(clamp01(ratio) * 100)}%`;
-function scoreToHex(percentage: number) {
-  const hue = Math.round(clamp01(percentage) * 120);
-  return `hsl(${hue}, 100%, 50%)`;
-}
+import { formatPercent, scoreToHex } from "@/lib/utils";
 
 type WeakArea = {
   system: string;

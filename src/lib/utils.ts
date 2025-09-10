@@ -6,6 +6,8 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+// Color
+
 const HEX_BASE = 16;
 const SHIFT_MAGNITUDE = 0.2;
 
@@ -120,10 +122,6 @@ export function isColorDark(color: string) {
   return r * 0.299 + g * 0.587 + b * 0.114 < 128;
 }
 
-export function capitalize(str: string) {
-  return str.charAt(0).toUpperCase() + str.slice(1);
-}
-
 export function generateColor() {
   const letters = "0123456789ABCDEF";
   let color = "#";
@@ -133,10 +131,19 @@ export function generateColor() {
   return color;
 }
 
-export async function wait(ms: number) {
-  return new Promise((resolve) => {
-    setTimeout(resolve, ms);
-  });
+const clamp01 = (n: number) => Math.max(0, Math.min(1, n));
+export const formatPercent = (ratio: number) =>
+  `${Math.round(clamp01(ratio) * 100)}%`;
+
+export function scoreToHex(percentage: number) {
+  const hue = Math.round(clamp01(percentage) * 120);
+  return `hsl(${hue}, 100%, 50%)`;
+}
+
+// String
+
+export function capitalize(str: string) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
 export function trimTo(text: string, length: number) {
@@ -161,6 +168,16 @@ export function generateRandomName() {
   return `${randomAdjective}_${randomNoun}`;
 }
 
+// Time
+
+export async function wait(ms: number) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
+
+// Array
+
 export function containsAtLeast<T>(
   arr: T[],
   n: number,
@@ -168,6 +185,8 @@ export function containsAtLeast<T>(
 ) {
   return arr.filter(predicate).length >= n;
 }
+
+// Application
 
 export function reorderQuestions(
   questions: NBMEQuestion[],
