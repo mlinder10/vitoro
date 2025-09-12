@@ -26,15 +26,6 @@ function isInt(n: string) {
   return true;
 }
 
-export type Filters = {
-  competencies: string[];
-  concepts: string[];
-  systems: string[];
-  types: string[];
-  difficulties: string[];
-  yields: string[];
-};
-
 export default function ClientCustomSessionForm() {
   const { id, exam } = useSession();
   const [size, setSize] = useState<string>("10");
@@ -68,14 +59,15 @@ export default function ClientCustomSessionForm() {
       });
       return;
     }
-    const sessionId = await createQbankSession(id, mode, step, numericSize, {
+    const sessionId = await createQbankSession(
+      id,
+      mode,
+      step,
+      numericSize,
       systems,
-      competencies: [],
-      concepts: [],
-      types: [],
-      difficulties: [],
-      yields: [],
-    });
+      categories,
+      types
+    );
     router.push(`/practice/${sessionId}`);
     // TODO: handle errors
   }

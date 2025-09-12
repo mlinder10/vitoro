@@ -58,6 +58,7 @@ export function ClientStepOneFoundationalPage({
     setIsLoading(true);
     await answerStepOneQuestion(copy, answer !== null);
     setIsLoading(false);
+    scrollToBottom();
   }
 
   async function handleAnswerFollowUp(index: number, choice: QuestionChoice) {

@@ -52,12 +52,14 @@ export function ClientStepTwoFoundationalPage({
           isComplete: false,
         };
     copy.shortResponse = ans;
-    setBaseAnswer(copy.shortResponse);
-    setAnswer(copy);
 
     setIsLoading(true);
     await answerStepTwoQuestion(copy, answer !== null);
     setIsLoading(false);
+
+    setBaseAnswer(copy.shortResponse);
+    setAnswer(copy);
+    scrollToBottom();
   }
 
   async function handleAnswerFollowUp(index: number, choice: QuestionChoice) {

@@ -11,7 +11,6 @@ import {
 import { generateRandomName } from "@/lib/utils";
 import { NBMEStep, QBankMode, QuestionChoice } from "@/types";
 import { isNull, eq, and, inArray, sql } from "drizzle-orm";
-import { Filters } from "./_components/client-custom-session-form";
 
 // Create Session
 
@@ -20,9 +19,18 @@ export async function createQbankSession(
   mode: QBankMode,
   step: NBMEStep,
   count: number,
-  filters: Filters
+  systems: string[],
+  categories: string[],
+  types: string[]
 ) {
-  const qs = await fetchQuestions(userId, step, count, filters);
+  const qs = await fetchQuestions(
+    userId,
+    step,
+    count,
+    systems,
+    categories,
+    types
+  );
 
   const questionIds = qs.map((q) => q.id);
   const answers: (QuestionChoice | null)[] = new Array(questionIds.length).fill(
@@ -49,9 +57,11 @@ async function fetchQuestions(
   userId: string,
   step: NBMEStep,
   count: number,
-  filters: Filters
+  systems: string[],
+  categories: string[],
+  types: string[]
 ) {
-  console.log(focus, filters); // TODO: apply focus and filters
+  console.log(systems, categories, types);
   switch (step) {
     case "Step 1":
       return await db
