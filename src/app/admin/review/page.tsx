@@ -273,7 +273,7 @@ function SelectInputs({
       <SimpleSelect
         value={system}
         updateValue={(value) => setSystem(value as System)}
-        options={SYSTEMS.map((s) => ({ value: s.name, label: s.name }))}
+        options={SYSTEMS.map((s) => ({ value: s.system, label: s.system }))}
         placeholder="System"
       />
       {system && (
@@ -281,9 +281,9 @@ function SelectInputs({
           value={category}
           updateValue={(value) => setCategory(value as AnyCategory)}
           options={
-            SYSTEMS.find((s) => s.name === system)?.categories.map((c) => ({
-              value: c.name,
-              label: c.name,
+            SYSTEMS.find((s) => s.system === system)?.categories.map((c) => ({
+              value: c,
+              label: c,
             })) ?? []
           }
           placeholder="Category"
@@ -293,11 +293,7 @@ function SelectInputs({
         <SimpleSelect
           value={subcategory}
           updateValue={(value) => setSubcategory(value as AnySubcategory)}
-          options={
-            SYSTEMS.find((s) => s.name === system)
-              ?.categories.find((c) => c.name === category)
-              ?.subcategories.map((s) => ({ value: s, label: s })) ?? []
-          }
+          options={[]}
           placeholder="Subcategory"
         />
       )}

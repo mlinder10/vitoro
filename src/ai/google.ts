@@ -1,3 +1,4 @@
+import { db, prompts } from "@/db";
 import { LLM, Prompt } from "./llm";
 import { GoogleGenAI } from "@google/genai";
 
@@ -39,6 +40,18 @@ export class Gemini implements LLM {
     });
   }
 
+  private async logPrompt(
+    prompt: string,
+    inputTokens: number,
+    outputTokens: number
+  ) {
+    await db.insert(prompts).values({
+      prompt,
+      inputTokens,
+      outputTokens,
+    });
+  }
+
   async prompt(prompt: Prompt[]) {
     const input = this.createInput(prompt);
     const res = await this.ai.models.generateContent({
@@ -46,6 +59,15 @@ export class Gemini implements LLM {
       contents: input,
     });
     if (res.text === undefined) throw new Error("Failed to generate text");
+
+    const inputTokens = res.usageMetadata?.promptTokenCount ?? 0;
+    const outputTokens = res.usageMetadata?.toolUsePromptTokenCount ?? 0;
+
+    const promptString = prompt
+      .map((p) => (p.type === "text" ? p.content : ""))
+      .join(", ");
+    await this.logPrompt(promptString, inputTokens, outputTokens);
+
     return res.text;
   }
 
@@ -56,9 +78,19 @@ export class Gemini implements LLM {
       contents: input,
     });
 
+    let inputTokens = 0;
+    let outputTokens = 0;
+
     for await (const chunk of stream) {
       if (chunk.text === undefined) throw new Error("Failed to generate text");
+      inputTokens += chunk.usageMetadata?.promptTokenCount ?? 0;
+      outputTokens += chunk.usageMetadata?.toolUsePromptTokenCount ?? 0;
       yield chunk.text;
     }
+
+    const promptString = prompt
+      .map((p) => (p.type === "text" ? p.content : ""))
+      .join(", ");
+    await this.logPrompt(promptString, inputTokens, outputTokens);
   }
 }
