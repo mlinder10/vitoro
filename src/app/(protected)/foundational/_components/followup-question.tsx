@@ -40,7 +40,7 @@ export default function FollowUpQuestionView({
   }
 
   return (
-    <section className="flex flex-col py-8 h-full">
+    <section className="flex flex-col py-8 min-h-full">
       <div className="flex flex-col flex-1 gap-8 bg-tertiary mx-auto p-8 border rounded-md max-w-[800px]">
         <p className="font-semibold text-custom-accent text-lg">
           Question {index + 2} of {total}
