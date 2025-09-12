@@ -4,7 +4,7 @@ import { Session, tryGetSession } from "@/lib/auth";
 import Link from "next/link";
 import HomeBackground from "./background";
 import { Header } from "./header";
-import { SECTION_HEIGHT, INNER_WIDTH } from "./constants";
+import { HEADER_HEIGHT, INNER_WIDTH } from "./constants";
 import VitoAnimation from "@/components/icon/vito-animation";
 
 export default async function HomePage() {
@@ -13,7 +13,7 @@ export default async function HomePage() {
   return (
     <>
       <Header session={session} />
-      <main className="bg-secondary">
+      <main className="bg-secondary h-full overflow-y-auto scroll-smooth">
         <HomeBackground />
         <Hero session={session} />
         <QuestionSection />
@@ -26,12 +26,11 @@ export default async function HomePage() {
 
 function Hero({ session }: { session: Session | null }) {
   return (
-    <section
-      id="hero"
-      style={{ height: SECTION_HEIGHT }}
-      className="z-10 relative place-items-center grid"
-    >
-      <div className="flex flex-col items-center gap-6">
+    <section id="hero" className="z-10 relative place-items-center grid h-full">
+      <div
+        className="flex flex-col items-center gap-6"
+        style={{ paddingTop: HEADER_HEIGHT }}
+      >
         {/* Vito Animation */}
         <VitoAnimation width={250} height={172} className="z-1 mb-2" />
         <h1 className="z-1 font-bold text-4xl text-center">
@@ -57,10 +56,7 @@ function Hero({ session }: { session: Session | null }) {
 
 function QuestionSection() {
   return (
-    <section
-      style={{ height: SECTION_HEIGHT }}
-      className="z-10 relative place-items-center grid"
-    >
+    <section className="z-10 relative place-items-center grid h-full">
       <GradientTitle text="HOW?" className="z-1 font-black text-9xl" />
     </section>
   );
@@ -70,8 +66,7 @@ function FeaturesSection() {
   return (
     <section
       id="features"
-      style={{ height: SECTION_HEIGHT }}
-      className="z-10 relative flex flex-col justify-center items-center gap-8"
+      className="z-10 relative flex flex-col justify-center items-center gap-8 h-full"
     >
       <h2 className="mb-4 font-bold text-white text-4xl text-center">
         See for yourself...

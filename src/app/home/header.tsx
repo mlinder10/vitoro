@@ -7,7 +7,7 @@ export function Header({ session }: { session: Session | null }) {
   return (
     <header
       style={{ height: HEADER_HEIGHT }}
-      className="flex justify-center items-center border-b bg-background/95 backdrop-blur-sm sticky top-0 z-50"
+      className="top-0 z-50 fixed flex justify-center items-center bg-background/95 border-b w-full"
     >
       <nav
         style={{ maxWidth: INNER_WIDTH }}
