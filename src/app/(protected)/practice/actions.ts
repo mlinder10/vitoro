@@ -10,7 +10,7 @@ import {
 } from "@/db";
 import { generateRandomName } from "@/lib/utils";
 import { NBMEStep, QBankMode, QuestionChoice } from "@/types";
-import { isNull, eq, and, inArray, sql } from "drizzle-orm";
+import { isNull, eq, and, inArray } from "drizzle-orm";
 
 // Create Session
 
@@ -53,7 +53,75 @@ export async function createQbankSession(
   return id;
 }
 
-async function fetchQuestions(
+// async function fetchQuestions(
+//   userId: string,
+//   step: NBMEStep,
+//   count: number,
+//   systems: string[],
+//   categories: string[],
+//   types: string[]
+// ) {
+//   switch (step) {
+//     case "Step 1":
+//       return await db
+//         .select({ id: stepOneNbmeQuestions.id })
+//         .from(stepOneNbmeQuestions)
+//         .leftJoin(
+//           answeredStepOneNbmes,
+//           and(
+//             eq(answeredStepOneNbmes.questionId, stepOneNbmeQuestions.id),
+//             eq(answeredStepOneNbmes.userId, userId)
+//           )
+//         )
+//         .where(
+//           and(
+//             // TODO: find a way to add systems and categories
+//             eq(stepOneNbmeQuestions.rating, "Pass"),
+//             isNull(answeredStepOneNbmes.userId)
+//           )
+//         )
+//         .orderBy(sql`RANDOM()`)
+//         .limit(count);
+//     case "Step 2":
+//       return await db
+//         .select({ id: stepTwoNbmeQuestions.id })
+//         .from(stepTwoNbmeQuestions)
+//         .leftJoin(
+//           answeredStepTwoNbmes,
+//           and(
+//             eq(answeredStepTwoNbmes.questionId, stepTwoNbmeQuestions.id),
+//             eq(answeredStepTwoNbmes.userId, userId)
+//           )
+//         )
+//         .where(
+//           and(
+//             systems.length > 0
+//               ? inArray(stepTwoNbmeQuestions.system, systems)
+//               : undefined,
+//             categories.length > 0
+//               ? inArray(stepTwoNbmeQuestions.category, categories)
+//               : undefined,
+//             types.length > 0
+//               ? inArray(stepTwoNbmeQuestions.type, types)
+//               : undefined,
+//             eq(stepTwoNbmeQuestions.rating, "Pass"),
+//             isNull(answeredStepTwoNbmes.userId)
+//           )
+//         )
+//         .orderBy(sql`RANDOM()`)
+//         .limit(count);
+//   }
+// }
+
+function shuffle<T>(array: T[]): T[] {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
+export async function fetchQuestions(
   userId: string,
   step: NBMEStep,
   count: number,
@@ -61,47 +129,41 @@ async function fetchQuestions(
   categories: string[],
   types: string[]
 ) {
-  console.log(systems, categories, types);
-  switch (step) {
-    case "Step 1":
-      return await db
-        .select({ id: stepOneNbmeQuestions.id })
-        .from(stepOneNbmeQuestions)
-        .leftJoin(
-          answeredStepOneNbmes,
-          and(
-            eq(answeredStepOneNbmes.questionId, stepOneNbmeQuestions.id),
-            eq(answeredStepOneNbmes.userId, userId)
-          )
-        )
-        .where(
-          and(
-            eq(stepOneNbmeQuestions.rating, "Pass"),
-            isNull(answeredStepOneNbmes.userId)
-          )
-        )
-        .orderBy(sql`RANDOM()`)
-        .limit(count);
-    case "Step 2":
-      return await db
-        .select({ id: stepTwoNbmeQuestions.id })
-        .from(stepTwoNbmeQuestions)
-        .leftJoin(
-          answeredStepTwoNbmes,
-          and(
-            eq(answeredStepTwoNbmes.questionId, stepTwoNbmeQuestions.id),
-            eq(answeredStepTwoNbmes.userId, userId)
-          )
-        )
-        .where(
-          and(
-            eq(stepTwoNbmeQuestions.rating, "Pass"),
-            isNull(answeredStepTwoNbmes.userId)
-          )
-        )
-        .orderBy(sql`RANDOM()`)
-        .limit(count);
+  const { questions, answered } =
+    step === "Step 1"
+      ? { questions: stepOneNbmeQuestions, answered: answeredStepOneNbmes }
+      : { questions: stepTwoNbmeQuestions, answered: answeredStepTwoNbmes };
+
+  const conditions = [eq(questions.rating, "Pass"), isNull(answered.userId)];
+
+  if (questions === stepTwoNbmeQuestions) {
+    if (systems.length) conditions.push(inArray(questions.system, systems));
+    if (categories.length)
+      conditions.push(inArray(questions.category, categories));
+    if (types.length) conditions.push(inArray(questions.type, types));
   }
+
+  const whereClause = and(...conditions);
+
+  const ids = await db
+    .select({ id: questions.id })
+    .from(questions)
+    .leftJoin(
+      answered,
+      and(eq(answered.questionId, questions.id), eq(answered.userId, userId))
+    )
+    .where(whereClause);
+
+  if (!ids.length) return [];
+
+  const randomIds = shuffle(ids.map((row) => row.id)).slice(0, count);
+
+  const selectedQuestions = await db
+    .select()
+    .from(questions)
+    .where(inArray(questions.id, randomIds));
+
+  return selectedQuestions;
 }
 
 // Get Session

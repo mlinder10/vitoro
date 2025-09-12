@@ -50,7 +50,7 @@ export default function DropdownSelect({
         {title}
       </p>
       <button
-        className="top-0 right-4 absolute bg-tertiary hover:bg-destructive px-2 py-1 border rounded-md text-destructive hover:text-primary text-sm transition-all translate-[-50%]"
+        className="top-0 right-4 absolute bg-tertiary hover:bg-destructive px-2 py-1 border rounded-md text-destructive hover:text-primary text-sm transition-all translate-y-[-50%]"
         onClick={handleRemoveAll}
       >
         <span>Clear All</span>
