@@ -61,7 +61,7 @@ export class Gemini implements LLM {
     if (res.text === undefined) throw new Error("Failed to generate text");
 
     const inputTokens = res.usageMetadata?.promptTokenCount ?? 0;
-    const outputTokens = res.usageMetadata?.toolUsePromptTokenCount ?? 0;
+    const outputTokens = res.usageMetadata?.candidatesTokenCount ?? 0;
 
     const promptString = prompt
       .map((p) => (p.type === "text" ? p.content : ""))
@@ -84,7 +84,7 @@ export class Gemini implements LLM {
     for await (const chunk of stream) {
       if (chunk.text === undefined) throw new Error("Failed to generate text");
       inputTokens += chunk.usageMetadata?.promptTokenCount ?? 0;
-      outputTokens += chunk.usageMetadata?.toolUsePromptTokenCount ?? 0;
+      outputTokens += chunk.usageMetadata?.candidatesTokenCount ?? 0;
       yield chunk.text;
     }
 
