@@ -1,6 +1,4 @@
 import {
-  AnyCategory,
-  AnySubcategory,
   AuditRating,
   Choices,
   LabValue,
@@ -8,8 +6,6 @@ import {
   QBankMode,
   QuestionChoice,
   QuestionDifficulty,
-  QuestionType,
-  System,
   YieldType,
 } from "@/types";
 import { sql } from "drizzle-orm";
@@ -155,11 +151,11 @@ export const stepTwoNbmeQuestions = sqliteTable("step_two_nbme_questions", {
   id: text("id").primaryKey().default(SQL_UUID).notNull(),
   createdAt: date("created_at").default(SQL_NOW).notNull(),
 
-  system: json<System>("system").notNull(),
-  category: json<AnyCategory>("category").notNull(),
-  subcategory: json<AnySubcategory>("subcategory").notNull(),
+  system: text("system").notNull(),
+  category: text("category").notNull(),
+  subcategory: text("subcategory").notNull(),
   topic: text("topic").notNull(),
-  type: json<QuestionType>("type").notNull(),
+  type: text("type").notNull(),
 
   question: text("question").notNull(),
   answer: json<QuestionChoice>("answer").notNull(),
