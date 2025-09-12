@@ -89,6 +89,11 @@ export const SYSTEMS = [
   },
 ] as const;
 
+export const t = {
+  "Foundational Sciences": [],
+  "Clinical Application": [],
+};
+
 export type System = (typeof SYSTEMS)[number]["system"];
 
 export type AnyCategory = (typeof SYSTEMS)[number]["categories"][number];
