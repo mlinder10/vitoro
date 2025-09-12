@@ -13,7 +13,13 @@ import {
   YieldType,
 } from "@/types";
 import { sql } from "drizzle-orm";
-import { customType, index, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import {
+  customType,
+  index,
+  integer,
+  sqliteTable,
+  text,
+} from "drizzle-orm/sqlite-core";
 
 // Extensions ---------------------------------------------------------------
 
@@ -371,3 +377,11 @@ export const answeredStepTwoFoundationals = sqliteTable(
       .default('"Step 2"' as "Step 2"),
   }
 );
+
+export const prompts = sqliteTable("prompts", {
+  id: text("id").primaryKey().default(SQL_UUID).notNull(),
+  createdAt: date("created_at").default(SQL_NOW).notNull(),
+  prompt: text("prompt").notNull(),
+  inputTokens: integer("input_tokens").notNull(),
+  outputTokens: integer("output_tokens").notNull(),
+});

@@ -5,7 +5,7 @@ import { handleCreateQuestion } from "./actions";
 import { useActionState, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { NotebookPen, Sparkles } from "lucide-react";
-import { getSystems, QUESTION_TYPES, System } from "@/types";
+import { getCategories, QUESTION_TYPES, SYSTEMS } from "@/types";
 import { Input } from "@/components/ui/input";
 import FormSelect from "@/components/form-select";
 
@@ -13,10 +13,8 @@ export default function CreateQuestionPage() {
   const [error, action, isPending] = useActionState(handleCreateQuestion, {});
   const [system, setSystem] = useState<string | undefined>();
   const [category, setCategory] = useState<string | undefined>();
-  const { systems, categories, subcategories } = getSystems(
-    system as System,
-    category
-  );
+  const systems = SYSTEMS.map((s) => s.system);
+  const categories = getCategories(system ? [system] : []);
 
   return (
     <main className="items-center grid py-8 h-page">
@@ -47,12 +45,16 @@ export default function CreateQuestionPage() {
           updateValue={setCategory}
           error={error?.category}
         />
-        <FormSelect
-          label="Subcategory"
-          options={subcategories}
-          name="subcategory"
-          error={error?.subcategory}
-        />
+        <div className="space-y-2">
+          <Label htmlFor="topic">Subcategory</Label>
+          <Input
+            type="text"
+            name="subcategory"
+            id="subcategory"
+            placeholder="Subcategory"
+            required
+          />
+        </div>
         <div className="space-y-2">
           <Label htmlFor="topic">Topic</Label>
           <Input

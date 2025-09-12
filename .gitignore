@@ -48,6 +48,7 @@ questions.json
 dev*.db
 tmp.sql
 src/app/api/dev/*
+src/app/dev/*
 
 # planning
 todo.txt
