@@ -7,9 +7,6 @@ import {
   QuestionDifficulty,
   QuestionType,
   AuditRating,
-  System,
-  AnyCategory,
-  AnySubcategory,
   YieldType,
 } from "@/types";
 
@@ -18,9 +15,9 @@ export async function fetchQuestionsWithAudits(
   limit: number,
   status?: AuditRating,
   difficulty?: QuestionDifficulty,
-  system?: System,
-  category?: AnyCategory,
-  subcategory?: AnySubcategory,
+  system?: string,
+  category?: string,
+  subcategory?: string,
   type?: QuestionType
 ) {
   const clauses = buildWhereClause({
@@ -53,9 +50,9 @@ export async function fetchQuestionsWithAudits(
 function buildWhereClause(filters: {
   status?: AuditRating;
   difficulty?: QuestionDifficulty;
-  system?: System;
-  category?: AnyCategory;
-  subcategory?: AnySubcategory;
+  system?: string;
+  category?: string;
+  subcategory?: string;
   type?: QuestionType;
 }) {
   const clauses = [

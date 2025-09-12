@@ -1,10 +1,4 @@
-import { admins, reviewQuestions, users } from "@/db";
-import { InferSelectModel } from "drizzle-orm";
-
-export type User = InferSelectModel<typeof users>;
-export type Admin = InferSelectModel<typeof admins>;
-
-export type ReviewQuestion = InferSelectModel<typeof reviewQuestions>;
+// QBank
 
 export type Focus = "step-1" | "high-yield" | "nbme-mix";
 export type QBankMode = "timed" | "tutor";
@@ -28,10 +22,37 @@ export const TASKS: Task[] = [
   "pimp-mode",
 ];
 
+// Chat
+
 export type Message = {
   role: "user" | "assistant";
   content: string;
 };
+
+export type SectionType =
+  | "concept"
+  | "example"
+  | "equation"
+  | "practice"
+  | "summary";
+
+export type Section = {
+  id: string;
+  title: string;
+  content: string;
+  type: SectionType;
+  defaultExpanded?: boolean;
+  icon?: string;
+};
+
+export type AIResponse = {
+  id: string;
+  sections: Section[];
+  timestamp: Date;
+  hasExpandableSections: boolean;
+};
+
+// Review
 
 export type GeneratedReviewQuestion = {
   question: string;

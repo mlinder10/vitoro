@@ -3,14 +3,11 @@
 import { db, stepTwoNbmeQuestions } from "@/db";
 import { Gemini, LLM, stripAndParse } from "@/ai";
 import {
-  AnyCategory,
-  AnySubcategory,
   GeneratedQuestion,
   isValidGeneratedQuestion,
   StepTwoNBMEQuestion,
   QUESTION_TYPES,
   QuestionType,
-  System,
 } from "@/types";
 import { redirect } from "next/navigation";
 import { z } from "zod";
@@ -18,9 +15,9 @@ import { z } from "zod";
 // Types and Defaults ---------------------------------------------------------
 
 const DEFAULT_QUESTION = (
-  system: System,
-  category: AnyCategory,
-  subcategory: AnySubcategory,
+  system: string,
+  category: string,
+  subcategory: string,
   topic: string,
   type: QuestionType
 ): StepTwoNBMEQuestion => ({
@@ -81,9 +78,9 @@ export async function handleCreateQuestion(
 
   if (action === "create") {
     const res = await handleCreateBlankQuestion(
-      system as System,
-      category as AnyCategory,
-      subcategory as AnySubcategory,
+      system,
+      category,
+      subcategory,
       topic,
       type
     );
@@ -91,9 +88,9 @@ export async function handleCreateQuestion(
     redirect(`/admin/review/${res.id}`);
   } else if (action === "generate") {
     const res = await handleGenerateQuestion(
-      system as System,
-      category as AnyCategory,
-      subcategory as AnySubcategory,
+      system,
+      category,
+      subcategory,
       topic,
       type
     );
@@ -106,9 +103,9 @@ export async function handleCreateQuestion(
 // Generate -------------------------------------------------------------------
 
 async function handleGenerateQuestion(
-  system: System,
-  category: AnyCategory,
-  subcategory: AnySubcategory,
+  system: string,
+  category: string,
+  subcategory: string,
   topic: string,
   type: QuestionType
 ) {
@@ -151,9 +148,9 @@ async function handleGenerateQuestion(
 
 async function generateQuestion(
   llm: LLM,
-  system: System,
-  category: AnyCategory,
-  subcategory: AnySubcategory,
+  system: string,
+  category: string,
+  subcategory: string,
   topic: string,
   type: QuestionType
 ) {
@@ -219,60 +216,12 @@ async function generateQuestion(
   return parsed;
 }
 
-// async function generateAudit(llm: LLM, question: GeneratedQuestion) {
-//   const prompt = `
-//   You are an exam-quality control agent trained in board-style question development. You have just generated the following board-style question. You must now review it using the audit checklist below and report whether it passes each item.
-
-//   ---
-//   Input:
-//   Question: ${JSON.stringify(question)}
-//   ---
-
-//   Review each of the following checklist items. For each, return:
-//   - Pass (Yes/No)
-//   - Justification (brief explanation for your score)
-
-//   Checklist:
-//   1. One correct answer with all distractors clearly incorrect
-//   2. Each distractor tests a plausible misunderstanding
-//   3. Answer is consistent with vitals, labs, and imaging in the stem
-//   4. No required data is missing for choosing the correct answer
-//   5. Clinical presentation is realistic and not contradictory
-//   6. Question requires clinical reasoning, not fact recall
-//   7. No direct giveaway or naming of the diagnosis in the stem
-//   8. Every answer choice is anchored to clues in the vignette
-//   9. No duplicate correct answers or overly vague distractors
-
-//   After the checklist, provide:
-//   - A suggested revision if any item failed
-//   - A final overall rating: Pass / Flag for Human Review / Reject
-
-//   Respond in structured JSON format:
-//   {
-//     "checklist": {
-//       "1": {"pass": true, "notes": "Clear single correct answer"},
-//       "2": {"pass": false, "notes": "Distractor D is irrelevant to clinical reasoning"},
-//       ...etc
-//     },
-//     "suggestions": ["Remove distractor D or replace with something clinically tempting but incorrect"],
-//     "rating": "Flag for Human Review"
-//   }
-//   `;
-
-//   const result = await llm.prompt([{ type: "text", content: prompt }]);
-//   if (!result) throw new Error("Failed to generate audit");
-//   const parsed = stripAndParse<GeneratedAudit>(result);
-//   if (!parsed || !isValidGeneratedAudit(parsed))
-//     throw new Error("Failed to parse audit: " + result);
-//   return parsed;
-// }
-
 // Blank ----------------------------------------------------------------------
 
 async function handleCreateBlankQuestion(
-  system: System,
-  category: AnyCategory,
-  subcategory: AnySubcategory,
+  system: string,
+  category: string,
+  subcategory: string,
   topic: string,
   type: QuestionType
 ) {

@@ -1,7 +1,7 @@
 "use client";
 
 import Lottie from "lottie-react";
-import vitoAnimationData from "../../Vito_landing.json";
+import vitoAnimationData from "./vito.json";
 
 interface VitoAnimationProps {
   width?: number;
@@ -9,10 +9,10 @@ interface VitoAnimationProps {
   className?: string;
 }
 
-export default function VitoAnimation({ 
-  width = 300, 
-  height = 400, 
-  className = "" 
+export default function VitoAnimation({
+  width = 300,
+  height = 400,
+  className = "",
 }: VitoAnimationProps) {
   return (
     <div className={`flex justify-center ${className}`}>

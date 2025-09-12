@@ -59,17 +59,26 @@ export default function ClientCustomSessionForm() {
       });
       return;
     }
-    const sessionId = await createQbankSession(
-      id,
-      mode,
-      step,
-      numericSize,
-      systems,
-      categories,
-      types
-    );
-    router.push(`/practice/${sessionId}`);
-    // TODO: handle errors
+
+    try {
+      const sessionId = await createQbankSession(
+        id,
+        mode,
+        step,
+        numericSize,
+        systems,
+        categories,
+        types
+      );
+      if (!sessionId) {
+        toast.error("Failed to create session", { richColors: true });
+        return;
+      }
+      router.push(`/practice/${sessionId}`);
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to create session", { richColors: true });
+    }
   }
 
   function handleChangeMode(step: NBMEStep) {
@@ -83,9 +92,8 @@ export default function ClientCustomSessionForm() {
     setTypes([]);
   }
 
-  // TODO: fix no bottom padding
   return (
-    <div className="flex flex-col items-center gap-8 p-8 h-full">
+    <div className="flex flex-col items-center gap-8 p-8 h-full overflow-y-auto">
       <GradientTitle text="Custom Session" className="font-bold text-4xl" />
       <p className="text-muted-foreground">
         Tailored study sessions that adapt to your goals

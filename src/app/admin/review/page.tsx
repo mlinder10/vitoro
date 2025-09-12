@@ -2,13 +2,10 @@
 
 import useInfiniteScroll, { LoadingFooter } from "@/hooks/use-infinite-scroll";
 import {
-  AnyCategory,
-  AnySubcategory,
   AuditRating,
   QUESTION_TYPES,
   QuestionDifficulty,
   QuestionType,
-  System,
   SYSTEMS,
   YIELD_TYPES,
   YieldType,
@@ -36,9 +33,9 @@ export default function QuestionReviewListPage() {
   const [difficulty, setDifficulty] = useState<
     QuestionDifficulty | undefined
   >();
-  const [system, setSystem] = useState<System | undefined>();
-  const [category, setCategory] = useState<AnyCategory | undefined>();
-  const [subcategory, setSubcategory] = useState<AnySubcategory | undefined>();
+  const [system, setSystem] = useState<string | undefined>();
+  const [category, setCategory] = useState<string | undefined>();
+  const [subcategory, setSubcategory] = useState<string | undefined>();
   const [type, setType] = useState<QuestionType | undefined>();
   const {
     data: questions,
@@ -224,12 +221,12 @@ type SelectInputsProps = {
   setStatus: (status: AuditRating | undefined) => void;
   difficulty: QuestionDifficulty | undefined;
   setDifficulty: (difficulty: QuestionDifficulty | undefined) => void;
-  system: System | undefined;
-  setSystem: (system: System | undefined) => void;
-  category: AnyCategory | undefined;
-  setCategory: (category: AnyCategory | undefined) => void;
-  subcategory: AnySubcategory | undefined;
-  setSubcategory: (subcategory: AnySubcategory | undefined) => void;
+  system: string | undefined;
+  setSystem: (system: string | undefined) => void;
+  category: string | undefined;
+  setCategory: (category: string | undefined) => void;
+  subcategory: string | undefined;
+  setSubcategory: (subcategory: string | undefined) => void;
   type: QuestionType | undefined;
   setType: (type: QuestionType | undefined) => void;
 };
@@ -272,14 +269,14 @@ function SelectInputs({
       />
       <SimpleSelect
         value={system}
-        updateValue={(value) => setSystem(value as System)}
+        updateValue={(value) => setSystem(value)}
         options={SYSTEMS.map((s) => ({ value: s.system, label: s.system }))}
         placeholder="System"
       />
       {system && (
         <SimpleSelect
           value={category}
-          updateValue={(value) => setCategory(value as AnyCategory)}
+          updateValue={(value) => setCategory(value)}
           options={
             SYSTEMS.find((s) => s.system === system)?.categories.map((c) => ({
               value: c,
@@ -292,7 +289,7 @@ function SelectInputs({
       {category && (
         <SimpleSelect
           value={subcategory}
-          updateValue={(value) => setSubcategory(value as AnySubcategory)}
+          updateValue={(value) => setSubcategory(value)}
           options={[]}
           placeholder="Subcategory"
         />

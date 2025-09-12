@@ -5,7 +5,7 @@ import Link from "next/link";
 import HomeBackground from "./background";
 import { Header } from "./header";
 import { SECTION_HEIGHT, INNER_WIDTH } from "./constants";
-import VitoAnimation from "@/components/vito-animation";
+import VitoAnimation from "@/components/icon/vito-animation";
 
 export default async function HomePage() {
   const session = await tryGetSession();
