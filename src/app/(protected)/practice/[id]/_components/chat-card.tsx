@@ -341,7 +341,12 @@ export default function ChatCard({
   }, [question.id, choice]);
 
   return (
-    <section className="relative flex flex-col flex-1 bg-tertiary border rounded-md h-full overflow-y-auto transition-all">
+    <section
+      className={cn(
+        expanded ? "flex-3" : "flex-1",
+        "relative flex flex-col bg-tertiary border rounded-md h-full overflow-y-auto transition-all"
+      )}
+    >
       <MessagesContainer
         messages={messages}
         endRef={endRef}

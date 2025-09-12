@@ -22,10 +22,7 @@ type ClientSessionPageProps = {
   questions: NBMEQuestion[];
 };
 
-function ClientSessionPage({
-  session,
-  questions,
-}: ClientSessionPageProps) {
+function ClientSessionPage({ session, questions }: ClientSessionPageProps) {
   const { id } = useSession();
   const [answers, setAnswers] = useState<(QuestionChoice | null)[]>(
     session.answers
@@ -139,11 +136,7 @@ function ClientSessionPage({
           <motion.div
             layout
             className={
-              isStandalone
-                ? "flex-none w-full max-w-[800px]"
-                : showChat
-                  ? "flex-none"
-                  : "flex-1"
+              isStandalone ? "flex-none w-full max-w-[800px]" : "flex-2"
             }
           >
             <QuestionCard
@@ -160,26 +153,14 @@ function ClientSessionPage({
               fullWidth={showSidebar && !showChat}
             />
           </motion.div>
-          <AnimatePresence mode="wait">
-            {showChat && (
-              <motion.div
-                key="chat"
-                layout
-                initial={{ x: 300, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                exit={{ x: 300, opacity: 0 }}
-                transition={{ type: "tween", duration: 0.3 }}
-                className={`${chatExpanded ? "flex-3" : showSidebar ? "flex-2" : "flex-1"} min-w-0`}
-              >
-                <ChatCard
-                  question={activeQuestion}
-                  choice={answers[activeIndex]}
-                  expanded={chatExpanded}
-                  onToggleExpand={() => setChatExpanded((prev) => !prev)}
-                />
-              </motion.div>
-            )}
-          </AnimatePresence>
+          {showChat && (
+            <ChatCard
+              question={activeQuestion}
+              choice={answers[activeIndex]}
+              expanded={chatExpanded}
+              onToggleExpand={() => setChatExpanded((prev) => !prev)}
+            />
+          )}
         </div>
       </div>
     </div>
@@ -196,18 +177,28 @@ type HeaderProps = {
   onTimeOut: () => void;
 };
 
-function Header({ onToggleSidebar, current, total, session, onTimeOut }: HeaderProps) {
+function Header({
+  onToggleSidebar,
+  current,
+  total,
+  session,
+  onTimeOut,
+}: HeaderProps) {
   return (
     <header className="flex items-center p-6 border-b">
       <Button variant="outline" onClick={onToggleSidebar}>
         <Menu />
       </Button>
-      <p className="flex-1 text-center font-semibold text-custom-accent text-lg">
+      <p className="flex-1 font-semibold text-custom-accent text-lg text-center">
         Question {current} of {total}
       </p>
       <div className="flex items-center gap-4">
         {session.mode === "timed" && (
-          <Countdown session={session} onEnd={onTimeOut} className="font-semibold" />
+          <Countdown
+            session={session}
+            onEnd={onTimeOut}
+            className="font-semibold"
+          />
         )}
         <Button variant="outline">
           <Calculator />
