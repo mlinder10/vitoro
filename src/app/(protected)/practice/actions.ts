@@ -89,6 +89,85 @@ export async function fetchQuestions(
     .limit(count);
 }
 
+function shuffle<T>(arr: T[]) {
+  return arr
+    .map((a) => [Math.random(), a] as [number, T])
+    .sort((a, b) => a[0] - b[0])
+    .map((a) => a[1]);
+}
+
+export async function fetchQuestions_(
+  userId: string,
+  step: NBMEStep,
+  count: number,
+  systems: string[],
+  categories: string[],
+  types: string[]
+) {
+  if (step === "Step 1") {
+    const questions = await db
+      .select({
+        id: stepOneNbmeQuestions.id,
+        systems: stepOneNbmeQuestions.systems,
+        categories: stepOneNbmeQuestions.categories,
+      })
+      .from(stepOneNbmeQuestions)
+      .leftJoin(
+        answeredStepOneNbmes,
+        and(
+          eq(answeredStepOneNbmes.questionId, stepOneNbmeQuestions.id),
+          eq(answeredStepOneNbmes.userId, userId)
+        )
+      )
+      .where(
+        and(
+          eq(stepOneNbmeQuestions.rating, "Pass"),
+          isNull(answeredStepOneNbmes.userId)
+        )
+      );
+
+    const filteredQuestions = questions
+      .filter(
+        (q) =>
+          (systems.length === 0 ||
+            q.systems.some((s) => systems.includes(s))) &&
+          (categories.length === 0 ||
+            q.categories.some((c) => categories.includes(c)))
+      )
+      .map((q) => ({ id: q.id }));
+
+    return shuffle(filteredQuestions).slice(0, count);
+  } else {
+    const conditions = [
+      eq(stepTwoNbmeQuestions.rating, "Pass"),
+      isNull(answeredStepTwoNbmes.userId),
+    ];
+
+    if (systems.length)
+      conditions.push(inArray(stepTwoNbmeQuestions.system, systems));
+    if (categories.length)
+      conditions.push(inArray(stepTwoNbmeQuestions.category, categories));
+    if (types.length)
+      conditions.push(inArray(stepTwoNbmeQuestions.type, types));
+
+    const whereClause = and(...conditions);
+
+    return await db
+      .select({ id: stepTwoNbmeQuestions.id })
+      .from(stepTwoNbmeQuestions)
+      .leftJoin(
+        answeredStepTwoNbmes,
+        and(
+          eq(answeredStepTwoNbmes.questionId, stepTwoNbmeQuestions.id),
+          eq(answeredStepTwoNbmes.userId, userId)
+        )
+      )
+      .where(whereClause)
+      .orderBy(sql`RANDOM()`)
+      .limit(count);
+  }
+}
+
 // Get Session
 
 // TODO: maybe check if session belongs to user
