@@ -11,7 +11,7 @@ import {
 import { generateRandomName } from "@/lib/utils";
 import { NBMEStep, QBankMode, QuestionChoice } from "@/types";
 import { isNull, eq, and, inArray, sql } from "drizzle-orm";
-import { Filters } from "./_components/client-custom-session-form";
+import type { Filters } from "./_components/client-custom-session-form";
 
 // Create Session
 
@@ -51,7 +51,7 @@ async function fetchQuestions(
   count: number,
   filters: Filters
 ) {
-  console.log(focus, filters); // TODO: apply focus and filters
+  console.log(filters);
   switch (step) {
     case "Step 1":
       return await db
