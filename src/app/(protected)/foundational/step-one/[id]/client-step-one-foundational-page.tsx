@@ -187,9 +187,13 @@ function BaseQuestionView({
                 {question.diagnosis}
               </div>
             </div>
-            {hasFollowUps && (
+            {hasFollowUps && finalAnswer === null && (
               <div className="flex justify-end mt-4">
-                <Button variant="accent" onClick={handleNext}>
+                <Button
+                  variant="accent"
+                  onClick={handleNext}
+                  disabled={isLoading || finalAnswer !== null}
+                >
                   Next
                 </Button>
               </div>

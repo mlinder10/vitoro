@@ -23,9 +23,7 @@ export default function FollowUpQuestionView({
 }: FollowUpQuestionViewProps) {
   const [selected, setSelected] = useState<QuestionChoice | null>(finalAnswer);
   const [isChecked, setIsChecked] = useState(finalAnswer !== null);
-  const correctAnswer = (
-    followUp.answer.toLowerCase() as QuestionChoice
-  );
+  const correctAnswer = followUp.answer.toLowerCase() as QuestionChoice;
 
   useEffect(() => {
     setSelected(finalAnswer);
@@ -86,8 +84,12 @@ export default function FollowUpQuestionView({
               Submit
             </Button>
           )}
-          {isChecked && !finalAnswer && (
-            <Button variant="accent" onClick={handleNext} disabled={isLoading}>
+          {isChecked && finalAnswer === null && (
+            <Button
+              variant="accent"
+              onClick={handleNext}
+              disabled={isLoading || finalAnswer !== null}
+            >
               Next
             </Button>
           )}

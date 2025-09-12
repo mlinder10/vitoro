@@ -53,12 +53,13 @@ export function ClientStepTwoFoundationalPage({
         };
     copy.shortResponse = ans;
 
+    setBaseAnswer(copy.shortResponse);
+    setAnswer(copy);
+
     setIsLoading(true);
     await answerStepTwoQuestion(copy, answer !== null);
     setIsLoading(false);
 
-    setBaseAnswer(copy.shortResponse);
-    setAnswer(copy);
     scrollToBottom();
   }
 
@@ -66,6 +67,7 @@ export function ClientStepTwoFoundationalPage({
     if (!answer) return;
     const copy = { ...answer };
     copy.answers[index] = choice;
+
     setFollowUpAnswers(copy.answers);
     if (copy.answers.every((a) => a !== null)) copy.isComplete = true;
     setAnswer(copy);
@@ -190,9 +192,13 @@ function BaseQuestionView({
                 {question.expectedAnswer}
               </div>
             </div>
-            {hasFollowUps && (
+            {hasFollowUps && finalAnswer === null && (
               <div className="flex justify-end mt-4">
-                <Button variant="accent" onClick={handleNext}>
+                <Button
+                  variant="accent"
+                  onClick={handleNext}
+                  disabled={isLoading || finalAnswer !== null}
+                >
                   Next
                 </Button>
               </div>

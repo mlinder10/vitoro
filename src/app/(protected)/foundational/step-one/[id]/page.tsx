@@ -32,7 +32,7 @@ async function getQuestion(id: string, userId: string) {
       .limit(1),
   ]);
   if (!question) return notFound();
-  return { question, followUps, answer };
+  return { question, followUps, answer: answer ?? null };
 }
 
 type StepOneFoundationalPageProps = {
