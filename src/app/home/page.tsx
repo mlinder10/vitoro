@@ -29,7 +29,7 @@ function Hero({ session }: { session: Session | null }) {
     <section
       id="hero"
       style={{ height: SECTION_HEIGHT }}
-      className="place-items-center grid relative z-10"
+      className="z-10 relative place-items-center grid"
     >
       <div className="flex flex-col items-center gap-6">
         {/* Vito Animation */}
@@ -38,7 +38,7 @@ function Hero({ session }: { session: Session | null }) {
           Your <span className="text-custom-accent">Personal</span> Board Prep{" "}
           <span className="text-custom-accent">Tutor</span>
         </h1>
-        <div className="z-1 text-muted-foreground text-center space-y-1 max-w-lg">
+        <div className="z-1 space-y-1 max-w-lg text-muted-foreground text-center">
           <p>Built with the help of a 273 Step 2 Scorer</p>
           <p>Gain the confidence you deserve</p>
         </div>
@@ -59,7 +59,7 @@ function QuestionSection() {
   return (
     <section
       style={{ height: SECTION_HEIGHT }}
-      className="place-items-center grid relative z-10"
+      className="z-10 relative place-items-center grid"
     >
       <GradientTitle text="HOW?" className="z-1 font-black text-9xl" />
     </section>
@@ -71,23 +71,23 @@ function FeaturesSection() {
     <section
       id="features"
       style={{ height: SECTION_HEIGHT }}
-      className="flex flex-col justify-center items-center gap-8 relative z-10"
+      className="z-10 relative flex flex-col justify-center items-center gap-8"
     >
-      <h2 className="font-bold text-white text-4xl text-center mb-4">
+      <h2 className="mb-4 font-bold text-white text-4xl text-center">
         See for yourself...
       </h2>
-      <div className="flex justify-center w-full px-8">
+      <div className="flex justify-center px-8 w-full">
         <div
           style={{ maxWidth: INNER_WIDTH * 0.8 }}
-          className="w-full flex justify-center"
+          className="flex justify-center w-full"
         >
           <video
-            className="z-1 w-full max-w-4xl h-auto rounded-lg shadow-2xl border border-border"
+            className="z-1 shadow-2xl border border-border rounded-lg w-full max-w-4xl h-auto"
             controls
             preload="metadata"
-            style={{ 
+            style={{
               maxHeight: "60vh",
-              aspectRatio: "16/9"
+              aspectRatio: "16/9",
             }}
           >
             <source src="/Demo_Clip.mp4" type="video/mp4" />
@@ -101,7 +101,7 @@ function FeaturesSection() {
 
 function CallToActionSection({ session }: { session: Session | null }) {
   return (
-    <section className="relative place-items-center grid bg-background py-24 border-t z-10">
+    <section className="z-10 relative place-items-center grid bg-background py-24 border-t">
       <div
         style={{ maxWidth: INNER_WIDTH * 0.4 }}
         className="flex flex-col items-center gap-8"
@@ -110,7 +110,8 @@ function CallToActionSection({ session }: { session: Session | null }) {
           Ready to <span className="text-custom-accent">Excel</span>?
         </p>
         <p className="text-muted-foreground text-center">
-          If the "tried and true" isn't working for you, it's time to try something new.
+          If the &quot;tried and true&quot; isn&apos;t working for you,
+          it&apos;s time to try something new.
         </p>
         <Button asChild variant="accent">
           <Link href={session ? "/" : "/register"}>Start your preparation</Link>
