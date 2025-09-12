@@ -13,6 +13,7 @@ import {
   admins,
   reviewQuestions,
   users,
+  prompts,
 } from "@/db";
 import { InferSelectModel } from "drizzle-orm";
 
@@ -68,3 +69,7 @@ export type AnsweredStepTwoFoundational = InferSelectModel<
 export type AnsweredFoundational =
   | AnsweredStepOneFoundational
   | AnsweredStepTwoFoundational;
+
+// Analytics
+
+export type Prompt = InferSelectModel<typeof prompts>;

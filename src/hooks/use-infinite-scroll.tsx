@@ -1,14 +1,14 @@
 import { Loader } from "lucide-react";
 import { useEffect, useRef, useState, useCallback } from "react";
 
-export default function useInfiniteScroll<T>(
+export default function useInfiniteScroll<T, U extends HTMLElement>(
   fetchMore: (offset: number) => Promise<T[]>,
   deps: unknown[] = []
 ) {
   const [data, setData] = useState<T[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
-  const containerRef = useRef<HTMLElement>(null);
+  const containerRef = useRef<U | null>(null);
   const isFetchingRef = useRef(false); // lock to prevent duplicate fetches
 
   const fetchMoreData = useCallback(async () => {

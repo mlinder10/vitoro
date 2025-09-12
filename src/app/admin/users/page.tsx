@@ -25,7 +25,7 @@ export default function PromotePage() {
     data: users,
     isLoading,
     containerRef,
-  } = useInfiniteScroll<User>(
+  } = useInfiniteScroll<User, HTMLDivElement>(
     async (offset) =>
       handleFetchUsers(offset, MAX_ITEMS_PER_PAGE, debouncedSearch),
     [debouncedSearch]
