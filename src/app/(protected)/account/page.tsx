@@ -6,9 +6,12 @@ import { Label } from "@/components/ui/label";
 import { useSession } from "@/contexts/session-provider";
 import { cn } from "@/lib/utils";
 import { AlertCircle, ArrowLeftRight } from "lucide-react";
+import { useState } from "react";
 
 export default function AccountPage() {
   const session = useSession();
+  const [firstName] = useState(session.firstName);
+  const [lastName] = useState(session.lastName);
 
   return (
     <div className="space-y-8 mx-auto p-6 max-w-3xl">
@@ -17,8 +20,12 @@ export default function AccountPage() {
       <AccountSection title="Profile">
         <div className="space-y-4">
           <div className="space-y-2">
-            <Label>Name</Label>
-            <Input type="text" value="Matt Linder" />
+            <Label>First Name</Label>
+            <Input type="text" value={firstName} readOnly />
+          </div>
+          <div className="space-y-2">
+            <Label>Last Name</Label>
+            <Input type="text" value={lastName} readOnly />
           </div>
           <div className="space-y-2">
             <Label>Email</Label>
