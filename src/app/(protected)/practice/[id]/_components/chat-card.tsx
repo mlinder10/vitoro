@@ -5,11 +5,20 @@ import { NBMEQuestion, QuestionChoice, Task, TASKS } from "@/types";
 import {
   ArrowLeft,
   ArrowUp,
-  BotIcon,
   Loader,
   ChevronDown,
   ChevronRight,
+  HelpCircle,
 } from "lucide-react";
+import Image from "next/image";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { RefObject, useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -18,6 +27,16 @@ import {
   promptGeneralChat,
 } from "@/app/(protected)/practice/chat";
 import { Button } from "@/components/ui/button";
+
+const TASK_DESCRIPTIONS: Record<Task, string> = {
+  breakdown: "Get a detailed breakdown of the concept being tested.",
+  distractor: "Dive deeper to identify the distractors in this question.",
+  "gap-finder": "Bridge knowledge gaps with a focused micro-lesson and reinforce understanding with targeted questions.",
+  strategy: "Learn how to think like a doctor building a differential diagnosis before even looking at the answer choices.",
+  pattern: "Find patterns that can help you distinguish between related concepts.",
+  memory: "Get effective flashcards, cloze deletions, and mnemonics to cement key concepts in long-term memory.",
+  "pimp-mode": "Face challenging free-response questions that progress from basic concepts to integration, testing real understanding."
+};
 
 // Simple expandable section component matching question-card style
 const ExpandableSection = ({
@@ -81,13 +100,23 @@ const MessageComponent = ({
         className={`flex max-w-4xl ${isUser ? "flex-row-reverse" : "flex-row"} items-start gap-2`}
       >
         <div
-          className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
+          className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center overflow-hidden ${
             isUser
               ? "bg-custom-accent text-white"
               : "bg-secondary text-foreground"
           }`}
         >
-          {isUser ? <BotIcon size={16} /> : <BotIcon size={16} />}
+          {isUser ? (
+            <div className="w-4 h-4 bg-white rounded-full" />
+          ) : (
+            <Image
+              src="/VITO.png"
+              alt="Vito AI"
+              width={24}
+              height={24}
+              className="rounded-full object-cover"
+            />
+          )}
         </div>
         <div
           className={`rounded-md px-4 py-3 max-w-[600px] ${
@@ -410,12 +439,49 @@ function MessagesContainer({
     return (
       <div className="flex-1 place-items-center grid">
         <div className="flex flex-col items-center gap-2 text-sm">
-          <BotIcon size={32} className="font-bold text-muted-foreground" />
+          <div className="w-24 h-24 flex items-center justify-center">
+            <Image
+              src="/VITO.png"
+              alt="Vito AI"
+              width={96}
+              height={96}
+              className="object-contain"
+            />
+          </div>
           <p className="text-muted-foreground text-lg">
             I&apos;m here to help!
           </p>
           <div className="gap-2 space-y-2 mt-4 px-4">
-            <p className="text-muted-foreground">Try asking:</p>
+            <div className="flex items-center gap-2">
+              <p className="text-muted-foreground">Try asking:</p>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <button className="text-muted-foreground hover:text-foreground transition-colors">
+                    <HelpCircle size={16} />
+                  </button>
+                </DialogTrigger>
+                <DialogContent className="max-w-2xl">
+                  <DialogHeader>
+                    <DialogTitle>Prompt Options Guide</DialogTitle>
+                    <DialogDescription>
+                      Each prompt option provides a different learning approach for analyzing questions
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="space-y-4 max-h-96 overflow-y-auto">
+                    {TASKS.map((task) => (
+                      <div key={task} className="border-b border-border pb-3 last:border-b-0">
+                        <h4 className="font-semibold text-sm mb-1">
+                          {task.split("-").map(capitalize).join(" ")}
+                        </h4>
+                        <p className="text-sm text-muted-foreground">
+                          {TASK_DESCRIPTIONS[task]}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </DialogContent>
+              </Dialog>
+            </div>
             {TASKS.map((task) => (
               <TaskPrompt
                 key={task}
