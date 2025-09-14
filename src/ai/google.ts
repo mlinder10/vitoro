@@ -10,9 +10,13 @@ type GeminiModel =
 
 const DEFAULT_MODEL: GeminiModel = "gemini-2.0-flash";
 
-type GeminiInput =
-  | { text: string }
-  | { inlineData: { mimeType: string; data: string } };
+type GeminiInput = {
+  role: string;
+  parts: (
+    | { text: string }
+    | { inlineData: { mimeType: string; data: string } }
+  )[];
+};
 
 export class Gemini implements LLM {
   private ai;
@@ -26,13 +30,21 @@ export class Gemini implements LLM {
   private createInput(prompt: Prompt[]): GeminiInput[] {
     return prompt.map((p) => {
       if (p.type === "text") {
-        return { text: p.content };
+        return {
+          role: p.role ?? "user",
+          parts: [{ text: p.content }],
+        };
       } else if (p.type === "image") {
         return {
-          inlineData: {
-            mimeType: p.mimeType,
-            data: Buffer.from(p.content).toString("base64"),
-          },
+          role: p.role ?? "user",
+          parts: [
+            {
+              inlineData: {
+                mimeType: p.mimeType,
+                data: Buffer.from(p.content).toString("base64"),
+              },
+            },
+          ],
         };
       } else {
         throw new Error("Unknown prompt type");
@@ -41,13 +53,13 @@ export class Gemini implements LLM {
   }
 
   private async logPrompt(
-    prompt: string,
+    prompt: Prompt[],
     output: string,
     inputTokens: number,
     outputTokens: number
   ) {
     await db.insert(prompts).values({
-      prompt,
+      prompt: JSON.stringify(prompt),
       output,
       inputTokens,
       outputTokens,
@@ -60,17 +72,18 @@ export class Gemini implements LLM {
       model: this.model,
       contents: input,
     });
-    const output = res.text;
 
-    if (output === undefined) throw new Error("Failed to generate text");
+    const output =
+      res.candidates?.[0]?.content?.parts
+        ?.map((part) => part.text ?? "")
+        .join("") ?? "";
+
+    if (!output) throw new Error("No text output from Gemini");
 
     const inputTokens = res.usageMetadata?.promptTokenCount ?? 0;
     const outputTokens = res.usageMetadata?.candidatesTokenCount ?? 0;
 
-    const promptString = prompt
-      .map((p) => (p.type === "text" ? p.content : ""))
-      .join(", ");
-    await this.logPrompt(promptString, output, inputTokens, outputTokens);
+    await this.logPrompt(prompt, output, inputTokens, outputTokens);
 
     return output;
   }
@@ -87,16 +100,15 @@ export class Gemini implements LLM {
     let output = "";
 
     for await (const chunk of stream) {
-      if (chunk.text === undefined) throw new Error("Failed to generate text");
-      inputTokens += chunk.usageMetadata?.promptTokenCount ?? 0;
-      outputTokens += chunk.usageMetadata?.candidatesTokenCount ?? 0;
+      if (chunk.text === undefined) {
+        throw new Error("Failed to generate text");
+      }
+      inputTokens = chunk.usageMetadata?.promptTokenCount ?? inputTokens;
+      outputTokens += chunk.usageMetadata?.candidatesTokenCount ?? outputTokens;
       output += chunk.text;
       yield chunk.text;
     }
 
-    const promptString = prompt
-      .map((p) => (p.type === "text" ? p.content : ""))
-      .join(", ");
-    await this.logPrompt(promptString, output, inputTokens, outputTokens);
+    await this.logPrompt(prompt, output, inputTokens, outputTokens);
   }
 }

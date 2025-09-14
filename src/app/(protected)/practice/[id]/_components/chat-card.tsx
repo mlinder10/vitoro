@@ -31,11 +31,16 @@ import { Button } from "@/components/ui/button";
 const TASK_DESCRIPTIONS: Record<Task, string> = {
   breakdown: "Get a detailed breakdown of the concept being tested.",
   distractor: "Dive deeper to identify the distractors in this question.",
-  "gap-finder": "Bridge knowledge gaps with a focused micro-lesson and reinforce understanding with targeted questions.",
-  strategy: "Learn how to think like a doctor building a differential diagnosis before even looking at the answer choices.",
-  pattern: "Find patterns that can help you distinguish between related concepts.",
-  memory: "Get effective flashcards, cloze deletions, and mnemonics to cement key concepts in long-term memory.",
-  "pimp-mode": "Face challenging free-response questions that progress from basic concepts to integration, testing real understanding."
+  "gap-finder":
+    "Bridge knowledge gaps with a focused micro-lesson and reinforce understanding with targeted questions.",
+  strategy:
+    "Learn how to think like a doctor building a differential diagnosis before even looking at the answer choices.",
+  pattern:
+    "Find patterns that can help you distinguish between related concepts.",
+  memory:
+    "Get effective flashcards, cloze deletions, and mnemonics to cement key concepts in long-term memory.",
+  "pimp-mode":
+    "Face challenging free-response questions that progress from basic concepts to integration, testing real understanding.",
 };
 
 // Simple expandable section component matching question-card style
@@ -107,7 +112,7 @@ const MessageComponent = ({
           }`}
         >
           {isUser ? (
-            <div className="w-4 h-4 bg-white rounded-full" />
+            <div className="bg-white rounded-full w-4 h-4" />
           ) : (
             <Image
               src="/VITO.png"
@@ -266,18 +271,7 @@ export default function ChatCard({
     setTimeout(async () => {
       try {
         let fullContent = "";
-        // Convert messages to simple format for server-side processing
-        const serverMessages = messages.map((msg) => ({
-          role: msg.isUser ? ("user" as const) : ("assistant" as const),
-          content:
-            msg.rawText || (typeof msg.content === "string" ? msg.content : ""),
-        }));
-        const res = await promptChatWithTask(
-          task,
-          question,
-          choice,
-          serverMessages
-        );
+        const res = await promptChatWithTask(task, question, choice);
 
         // Collect all content first
         while (true) {
@@ -439,7 +433,7 @@ function MessagesContainer({
     return (
       <div className="flex-1 place-items-center grid">
         <div className="flex flex-col items-center gap-2 text-sm">
-          <div className="w-24 h-24 flex items-center justify-center">
+          <div className="flex justify-center items-center w-24 h-24">
             <Image
               src="/VITO.png"
               alt="Vito AI"
@@ -464,16 +458,20 @@ function MessagesContainer({
                   <DialogHeader>
                     <DialogTitle>Prompt Options Guide</DialogTitle>
                     <DialogDescription>
-                      Each prompt option provides a different learning approach for analyzing questions
+                      Each prompt option provides a different learning approach
+                      for analyzing questions
                     </DialogDescription>
                   </DialogHeader>
                   <div className="space-y-4 max-h-96 overflow-y-auto">
                     {TASKS.map((task) => (
-                      <div key={task} className="border-b border-border pb-3 last:border-b-0">
-                        <h4 className="font-semibold text-sm mb-1">
+                      <div
+                        key={task}
+                        className="pb-3 border-b border-border last:border-b-0"
+                      >
+                        <h4 className="mb-1 font-semibold text-sm">
                           {task.split("-").map(capitalize).join(" ")}
                         </h4>
-                        <p className="text-sm text-muted-foreground">
+                        <p className="text-muted-foreground text-sm">
                           {TASK_DESCRIPTIONS[task]}
                         </p>
                       </div>

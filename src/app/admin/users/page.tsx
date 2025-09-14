@@ -33,8 +33,7 @@ export default function UsersPage() {
       setIsLoading(false);
     }, DELAY);
     return () => clearTimeout(handler);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [search]);
+  }, [search, pageNum]);
 
   return (
     <main className="flex flex-col h-full">

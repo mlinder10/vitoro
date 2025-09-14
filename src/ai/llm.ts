@@ -1,4 +1,7 @@
-export type Prompt = TextPrompt | ImagePrompt;
+export type Prompt = { role: "user" | "assistant" } & (
+  | TextPrompt
+  | ImagePrompt
+);
 
 export type TextPrompt = {
   type: "text";

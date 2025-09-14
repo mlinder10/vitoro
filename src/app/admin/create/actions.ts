@@ -208,7 +208,9 @@ async function generateQuestion(
   }
   `;
 
-  const result = await llm.prompt([{ type: "text", content: prompt }]);
+  const result = await llm.prompt([
+    { role: "user", type: "text", content: prompt },
+  ]);
   if (!result) throw new Error("Failed to generate question");
   const parsed = stripAndParse<GeneratedQuestion>(result);
   if (!parsed || !isValidGeneratedQuestion(parsed))

@@ -5,7 +5,6 @@ import { NBMEQuestion, QuestionChoice, Task, Message } from "@/types";
 
 function buildTaskPrompts(basePrompt: string) {
   return {
-
     breakdown:
       basePrompt +
       `
@@ -72,7 +71,6 @@ function buildTaskPrompts(basePrompt: string) {
 - Explain the process of thinking like a doctor, building a differential diagnosis, and how to apply it to the question.
 `,
 
-
     pattern:
       basePrompt +
       `
@@ -132,7 +130,11 @@ function getTaskSystemPrompt(
 Your job is to dissect why the student got this question ${isCorrect ? "RIGHT" : "WRONG"} and push them to clinical mastery. 
 Tone: clear, direct, but snarky and sarcastic. Teach them what matters. Skip what doesn't.
 
-Formatting Rules:\n- Respond using markdown.\n- Use H2 headings (##) for each major section with natural, meaningful titles you choose.\n- No global intro/outro; keep the response organized under headings only.\n- Keep it concise and instructional.
+Formatting Rules:
+- Respond using markdown.
+- Use H2 headings (##) for each major section with natural, meaningful titles you choose.
+- No global intro/outro; keep the response organized under headings only.
+- Keep it concise and instructional.
 
 Question:
 ${question.question}
@@ -156,22 +158,14 @@ Correct Answer: ${question.answer}
 export async function promptChatWithTask(
   task: Task,
   question: NBMEQuestion,
-  choice: QuestionChoice,
-  messages?: Message[]
+  choice: QuestionChoice
 ) {
-  let prompt = getTaskSystemPrompt(task, question, choice);
-
-  if (messages && messages.length > 0) {
-    const history = messages.reduce(
-      (acc, m) => acc + `${m.role} message: ${m.content}\n`,
-      ""
-    );
-    prompt += `\nPrevious Conversation:\n${history}`;
-  }
+  const prompt = getTaskSystemPrompt(task, question, choice);
 
   const llm = new Gemini();
   return await llm.promptStreamed([
     {
+      role: "user",
       content: prompt,
       type: "text",
     },
@@ -188,7 +182,11 @@ export async function promptGeneralChat(
   const basePrompt = `You are Vitoro, an encouraging and brilliant USMLE board prepcoach trained in the style of Adam Plotkin.
 Your job is to push students to clinical mastery by helping them understand how to break down question stems, build a differential diagnosis, and understand the key differences between answer choices. Tone: clear, direct, but snarky and sarcastic.
 
-Formatting Rules:\n- Respond using markdown.\n- Use H2 headings (##) for each major section with natural, meaningful titles you choose.\n- No global intro/outro; keep the response organized under headings only.\n- Keep it concise and instructional.
+Formatting Rules:
+- Respond using markdown.
+- Use H2 headings (##) for each major section with natural, meaningful titles you choose.
+- No global intro/outro; keep the response organized under headings only.
+- Keep it concise and instructional.
 
 ## Case Stem
 ${question.question}
@@ -210,19 +208,19 @@ ${question.answer}
 ${question.explanations[question.answer]}
 
 ## Previous Conversation
-`; 
+`;
 
-  const joined =
-    basePrompt +
-    messages.reduce(
-      (acc, message) => acc + `${message.role} message: ${message.content}`,
-      ""
-    );
   const llm = new Gemini();
   return await llm.promptStreamed([
     {
-      content: joined,
+      role: "user",
+      content: basePrompt,
       type: "text",
     },
+    ...(messages?.map((m) => ({
+      role: m.role,
+      content: m.content,
+      type: "text" as const,
+    })) ?? []),
   ]);
 }
