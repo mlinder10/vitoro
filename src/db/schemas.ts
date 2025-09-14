@@ -392,7 +392,7 @@ export const prompts = sqliteTable("prompts", {
   id: text("id").primaryKey().default(SQL_UUID).notNull(),
   createdAt: date("created_at").default(SQL_NOW).notNull(),
   prompt: text("prompt").notNull(),
-  output: text("output").notNull().default(""),
+  output: text("output").notNull(),
   inputTokens: integer("input_tokens").notNull(),
   outputTokens: integer("output_tokens").notNull(),
 });
