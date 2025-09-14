@@ -194,3 +194,9 @@ export function reorderQuestions(
 ) {
   return questionIds.map((id) => questions.find((q) => q.id === id)!);
 }
+
+// Number
+
+export function formatNumber(n: number) {
+  return n.toLocaleString("en-US");
+}

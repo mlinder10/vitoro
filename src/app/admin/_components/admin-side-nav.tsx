@@ -1,17 +1,17 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { useSession } from "@/contexts/session-provider";
 import { cn } from "@/lib/utils";
 import {
   ChevronLeft,
-  History,
   Home,
+  Layers,
+  LayoutDashboard,
   LogOut,
   Menu,
-  Layers,
-  ShieldUserIcon,
+  MessageCircle,
   Target,
+  User,
 } from "lucide-react";
 import Link from "next/link";
 import { ComponentType, useEffect, useState } from "react";
@@ -21,11 +21,10 @@ import ThemeToggleSwitch from "@/components/theme-toggle-switch";
 import { useTheme } from "@/contexts/theme-provider";
 import AccountIcon from "@/components/account-icon";
 
-export default function SideNav() {
+export default function AdminSideNav() {
   const { theme } = useTheme();
   const [isOpen, setIsOpen] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
-  const session = useSession();
   const router = useRouter();
 
   async function handleLogout() {
@@ -58,6 +57,7 @@ export default function SideNav() {
           {isOpen && (
             <Link href="/">
               <h1 className="font-bold text-lg">Vitoro</h1>
+              <p className="text-muted-foreground text-sm">Admin</p>
             </Link>
           )}
           <Button variant="ghost" onClick={() => setIsOpen((prev) => !prev)}>
@@ -65,39 +65,37 @@ export default function SideNav() {
           </Button>
         </div>
         <ul>
-          <ListLink href="/" icon={Home} label="Home" isOpen={isOpen} />
           <ListLink
-            href="/practice"
-            icon={Target}
-            label="Question Bank"
+            href="/admin"
+            icon={LayoutDashboard}
+            label="Home"
             isOpen={isOpen}
           />
           <ListLink
-            href="/foundational"
+            href="/admin/qbank"
+            icon={Target}
+            label="QBank"
+            isOpen={isOpen}
+          />
+          <ListLink
+            href="/admin/foundational"
             icon={Layers}
             label="Foundational"
             isOpen={isOpen}
           />
-          {/* <ListLink
-            href="/review"
-            icon={NotebookText}
-            label="Review"
-            isOpen={isOpen}
-          /> */}
           <ListLink
-            href="/history"
-            icon={History}
-            label="History"
+            href="/admin/users"
+            icon={User}
+            label="Users"
             isOpen={isOpen}
           />
-          {session.isAdmin && (
-            <ListLink
-              href="/admin"
-              icon={ShieldUserIcon}
-              label="Admin"
-              isOpen={isOpen}
-            />
-          )}
+          <ListLink
+            href="/admin/prompts"
+            icon={MessageCircle}
+            label="Prompts"
+            isOpen={isOpen}
+          />
+          <ListLink href="/" icon={Home} label="Main Site" isOpen={isOpen} />
         </ul>
       </div>
       {isOpen && (

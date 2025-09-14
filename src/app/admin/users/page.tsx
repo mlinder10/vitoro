@@ -1,38 +1,43 @@
 "use client";
 
+import PaginationFooter from "@/components/pagination-footer";
+import Searchbar from "@/components/searchbar";
 import { useEffect, useState } from "react";
 import { handleFetchUsers, handleUpdateAdminStatus } from "./actions";
+import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Loader, Minus, Plus } from "lucide-react";
-import Searchbar from "@/components/searchbar";
-import useInfiniteScroll, { LoadingFooter } from "@/hooks/use-infinite-scroll";
 
 type User = Awaited<ReturnType<typeof handleFetchUsers>>[number];
 
 const MAX_ITEMS_PER_PAGE = 30;
 const DELAY = 500; // 0.5 seconds
 
-export default function PromotePage() {
+export default function UsersPage() {
+  const searchParams = useSearchParams();
+  const page = searchParams.get("page") || "1";
+  const pageNum = page ? Number(page) : 1;
   const [search, setSearch] = useState("");
-  const [debouncedSearch, setDebouncedSearch] = useState(search);
+  const [users, setUsers] = useState<User[]>([]);
+  const [, setIsLoading] = useState(false);
 
   useEffect(() => {
-    const handler = setTimeout(() => setDebouncedSearch(search), DELAY);
+    const handler = setTimeout(async () => {
+      setIsLoading(true);
+      const response = await handleFetchUsers(
+        (pageNum - 1) * MAX_ITEMS_PER_PAGE,
+        MAX_ITEMS_PER_PAGE,
+        search
+      );
+      setUsers(response);
+      setIsLoading(false);
+    }, DELAY);
     return () => clearTimeout(handler);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search]);
 
-  const {
-    data: users,
-    isLoading,
-    containerRef,
-  } = useInfiniteScroll<User, HTMLDivElement>(
-    async (offset) =>
-      handleFetchUsers(offset, MAX_ITEMS_PER_PAGE, debouncedSearch),
-    [debouncedSearch]
-  );
-
   return (
-    <main className="flex flex-col h-page">
+    <main className="flex flex-col h-full">
       <section className="p-4 border-b-2">
         <Searchbar
           placeholder="Search by name or email"
@@ -40,14 +45,16 @@ export default function PromotePage() {
           onChange={(e) => setSearch(e.target.value)}
         />
       </section>
-      <section className="flex-1 p-4 overflow-y-auto" ref={containerRef}>
+      <section className="flex-1 p-4 overflow-y-auto">
         <ul>
           {users.map((user) => (
             <UserItem key={user.id} user={user} />
           ))}
         </ul>
-        <LoadingFooter isLoading={isLoading} />
       </section>
+      <div className="p-8 pt-4">
+        <PaginationFooter page={pageNum} />
+      </div>
     </main>
   );
 }

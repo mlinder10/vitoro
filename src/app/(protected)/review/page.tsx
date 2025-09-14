@@ -1,10 +1,10 @@
 import { getSession } from "@/lib/auth";
 import { ReviewQuestion } from "@/types";
 import Link from "next/link";
-import { ArrowRight, NotebookText } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { trimTo } from "@/lib/utils";
-import PageTitle from "../_components/page-title";
 import { getQuestions } from "./actions";
+import GradientTitle from "@/components/gradient-title";
 
 export default async function ReviewPage() {
   const { id } = await getSession();
@@ -12,7 +12,7 @@ export default async function ReviewPage() {
 
   return (
     <div className="flex flex-col h-screen">
-      <PageTitle text="Review Questions" icon={NotebookText} />
+      <GradientTitle text="Review Questions" className="mx-auto py-8" />
       <div className="flex-1 px-8 overflow-hidden">
         <div className="gap-8 grid grid-cols-1 md:grid-cols-2 h-full">
           <QuestionsList

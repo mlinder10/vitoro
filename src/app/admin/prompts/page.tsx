@@ -1,34 +1,29 @@
-"use client";
-
-import useInfiniteScroll, { LoadingFooter } from "@/hooks/use-infinite-scroll";
+import PaginationFooter from "@/components/pagination-footer";
 import { fetchPrompts } from "./actions";
-import { Prompt } from "@/types";
+import PromptContainer from "./prompt-container";
 
-export default function PromptsPage() {
-  const { data, isLoading, containerRef } = useInfiniteScroll<
-    Prompt,
-    HTMLDivElement
-  >(async (offset) => {
-    return await fetchPrompts(offset, 10);
-  }, []);
+const MAX_ITEMS_PER_PAGE = 30;
+
+type PromptsPageProps = {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+};
+
+export default async function PromptsPage({ searchParams }: PromptsPageProps) {
+  const { page } = await searchParams;
+  const pageNum = page ? Number(page) : 1;
+  const data = await fetchPrompts(
+    (pageNum - 1) * MAX_ITEMS_PER_PAGE,
+    MAX_ITEMS_PER_PAGE
+  );
 
   return (
-    <main>
-      <div ref={containerRef}>
+    <main className="flex flex-col gap-8 p-8 h-full">
+      <ul className="flex flex-col flex-1 gap-4 overflow-y-auto">
         {data.map((p) => (
-          <div
-            key={p.id}
-            className="flex flex-col gap-2 bg-tertiary border rounded-md"
-          >
-            <p className="">{p.prompt}</p>
-            <div className="flex gap-2 text-muted-foreground text-sm">
-              <span>Input: {p.inputTokens}</span>
-              <span>Output: {p.outputTokens}</span>
-            </div>
-          </div>
+          <PromptContainer key={p.id} prompt={p} />
         ))}
-        <LoadingFooter isLoading={isLoading} />
-      </div>
+      </ul>
+      <PaginationFooter page={pageNum} />
     </main>
   );
 }
