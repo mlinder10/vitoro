@@ -1,3 +1,4 @@
+import { SubscriptionId } from "@/lib/payment";
 import {
   AuditRating,
   Choices,
@@ -116,6 +117,19 @@ export const admins = sqliteTable("admins", {
     .references(() => users.id, { onDelete: "cascade" })
     .notNull(),
   createdAt: date("created_at").default(SQL_NOW).notNull(),
+});
+
+export const subscriptions = sqliteTable("subscriptions", {
+  id: text("id").primaryKey().default(SQL_UUID).notNull(),
+  userId: text("user_id")
+    .references(() => users.id, { onDelete: "cascade" })
+    .notNull(),
+  stripeCustomerId: text("stripe_customer_id").notNull(),
+  stripeSubscriptionId: text("stripe_subscription_id"),
+  createdAt: date("created_at").default(SQL_NOW).notNull(),
+  expiresAt: date("expires_at").notNull(),
+  subscriptionId: json<SubscriptionId>("subscription_id").notNull(),
+  isRenewable: json<boolean>("is_renewable").default(true).notNull(),
 });
 
 // nbme questions
@@ -378,6 +392,7 @@ export const prompts = sqliteTable("prompts", {
   id: text("id").primaryKey().default(SQL_UUID).notNull(),
   createdAt: date("created_at").default(SQL_NOW).notNull(),
   prompt: text("prompt").notNull(),
+  output: text("output").notNull().default(""),
   inputTokens: integer("input_tokens").notNull(),
   outputTokens: integer("output_tokens").notNull(),
 });

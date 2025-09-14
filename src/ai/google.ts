@@ -42,11 +42,13 @@ export class Gemini implements LLM {
 
   private async logPrompt(
     prompt: string,
+    output: string,
     inputTokens: number,
     outputTokens: number
   ) {
     await db.insert(prompts).values({
       prompt,
+      output,
       inputTokens,
       outputTokens,
     });
@@ -58,7 +60,9 @@ export class Gemini implements LLM {
       model: this.model,
       contents: input,
     });
-    if (res.text === undefined) throw new Error("Failed to generate text");
+    const output = res.text;
+
+    if (output === undefined) throw new Error("Failed to generate text");
 
     const inputTokens = res.usageMetadata?.promptTokenCount ?? 0;
     const outputTokens = res.usageMetadata?.candidatesTokenCount ?? 0;
@@ -66,9 +70,9 @@ export class Gemini implements LLM {
     const promptString = prompt
       .map((p) => (p.type === "text" ? p.content : ""))
       .join(", ");
-    await this.logPrompt(promptString, inputTokens, outputTokens);
+    await this.logPrompt(promptString, output, inputTokens, outputTokens);
 
-    return res.text;
+    return output;
   }
 
   async *promptStreamed(prompt: Prompt[]) {
@@ -80,17 +84,19 @@ export class Gemini implements LLM {
 
     let inputTokens = 0;
     let outputTokens = 0;
+    let output = "";
 
     for await (const chunk of stream) {
       if (chunk.text === undefined) throw new Error("Failed to generate text");
       inputTokens += chunk.usageMetadata?.promptTokenCount ?? 0;
       outputTokens += chunk.usageMetadata?.candidatesTokenCount ?? 0;
+      output += chunk.text;
       yield chunk.text;
     }
 
     const promptString = prompt
       .map((p) => (p.type === "text" ? p.content : ""))
       .join(", ");
-    await this.logPrompt(promptString, inputTokens, outputTokens);
+    await this.logPrompt(promptString, output, inputTokens, outputTokens);
   }
 }
