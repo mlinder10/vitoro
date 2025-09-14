@@ -1,5 +1,3 @@
-"use server";
-
 import { db, subscriptions } from "@/db";
 import { eq } from "drizzle-orm";
 import Stripe from "stripe";
@@ -36,6 +34,7 @@ export type SubscriptionId = Subscription["id"];
 const MONTH_IN_MS = 1000 * 60 * 60 * 24 * 30;
 const YEAR_IN_MS = 1000 * 60 * 60 * 24 * 365;
 
+// Should only be used from server components
 export class Payment {
   // static
   private static shared: Payment | null = null;
