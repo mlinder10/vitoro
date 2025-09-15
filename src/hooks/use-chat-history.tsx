@@ -5,19 +5,39 @@ import { useState } from "react";
 import { chatWrapper } from "./chat-actions";
 import { Message } from "@/types";
 
-const CONVERSATION_LENGTH = 10;
-const MAX_WORD_COUNT = 500;
-const MAX_INPUT_WORD_COUNT = 500;
+const SHORT_TERM_MESSAGES_LENGTH = 10;
+const SUMMARY_MAX_WORD_COUNT = 500;
+const MAX_MESSAGE_WORD_COUNT = 500;
 
-export default function useChatHistory(basePrompt?: string) {
+type Config = {
+  basePrompt?: string;
+  shortTermMessagesLength: number;
+  summaryMaxWordCount: number;
+  maxMessageWordCount: number;
+};
+
+const DEFAULT_CONFIG = {
+  shortTermMessagesLength: SHORT_TERM_MESSAGES_LENGTH,
+  summaryMaxWordCount: SUMMARY_MAX_WORD_COUNT,
+  maxMessageWordCount: MAX_MESSAGE_WORD_COUNT,
+};
+
+export default function useChatHistory(config: Config = DEFAULT_CONFIG) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [summary, setSummary] = useState<string | null>(null);
   const [summarizedOn, setSummarizedOn] = useState<number>(0);
 
-  async function chat(message: string, base: string | undefined = basePrompt) {
-    const wordCount = message.split(" ").length;
-    if (wordCount > MAX_INPUT_WORD_COUNT) {
+  async function chat(
+    message: string,
+    base: string | undefined = config.basePrompt
+  ) {
+    if (isLoading) {
+      throw new Error("Already generating response");
+    }
+
+    const wordCount = message.trim().split(/\s+/).length;
+    if (wordCount > config.maxMessageWordCount) {
       throw new Error(`Message too long: ${wordCount} words`);
     }
 
@@ -55,28 +75,34 @@ export default function useChatHistory(basePrompt?: string) {
       }))
     );
 
-    const output = await chatWrapper(prompts);
+    try {
+      const output = await chatWrapper(prompts);
+      newMessages.push({
+        id: crypto.randomUUID(),
+        role: "assistant",
+        content: output,
+        type: "text",
+      });
+    } catch (err) {
+      console.error(err);
+      newMessages.push({
+        id: crypto.randomUUID(),
+        role: "assistant",
+        content: "Failed to generate response",
+        type: "text",
+      });
+    } finally {
+      setIsLoading(false);
+      setMessages(newMessages);
+    }
 
-    newMessages.push({
-      id: crypto.randomUUID(),
-      role: "assistant",
-      content: output,
-      type: "text",
-    });
-    setMessages(newMessages);
-    setIsLoading(false);
-
-    if (newMessages.length - summarizedOn > CONVERSATION_LENGTH) {
-      await summarizeChat();
+    if (newMessages.length - summarizedOn > config.shortTermMessagesLength) {
+      void summarizeChat(newMessages);
     }
   }
 
-  async function summarizeChat() {
-    const prompts: Prompt[] = messages.slice(summarizedOn).map((m) => ({
-      role: m.role,
-      content: m.content as string,
-      type: "text" as const,
-    }));
+  async function summarizeChat(messages: Message[]) {
+    const prompts: Prompt[] = [];
 
     if (summary) {
       prompts.push({
@@ -86,9 +112,17 @@ export default function useChatHistory(basePrompt?: string) {
       });
     }
 
+    prompts.push(
+      ...messages.slice(summarizedOn).map((m) => ({
+        role: m.role,
+        content: m.content as string,
+        type: "text" as const,
+      }))
+    );
+
     prompts.push({
       role: "user",
-      content: `Summarize this conversation. Try to use at most ${MAX_WORD_COUNT} words`,
+      content: `Summarize this conversation. Try to use at most ${config.summaryMaxWordCount} words`,
       type: "text",
     });
 
