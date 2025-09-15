@@ -19,7 +19,7 @@ async function fetchQuestion(id: string) {
       .where(eq(stepOneFoundationalFollowUps.foundationalQuestionId, id)),
   ]);
   if (!question) return notFound();
-  return { question, followUps };
+  return { question, followUps: followUps };
 }
 
 type StepOneFoundationalReviewPageProps = {

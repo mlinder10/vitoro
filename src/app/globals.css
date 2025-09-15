@@ -166,7 +166,9 @@ html {
 button {
   cursor: pointer;
 }
-
+button:disabled {
+  cursor: not-allowed;
+}
 
 /* Adjusted highlight color for better contrast in light mode */
 .highlight {
