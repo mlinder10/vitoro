@@ -11,7 +11,7 @@ import {
   updateFlaggedQuestions,
 } from "../../actions";
 import { useSession } from "@/contexts/session-provider";
-import ChatCard from "./chat-card";
+import ChatCard from "./chat/chat-card";
 import QuestionNavigator from "./question-navigator";
 import QuestionCard from "./question-card";
 import Countdown from "./countdown";

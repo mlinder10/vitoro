@@ -66,12 +66,14 @@ export class Gemini implements LLM {
     });
   }
 
-  async prompt(prompt: Prompt[]) {
+  async prompt(prompt: Prompt[], log: boolean = true) {
     const input = this.createInput(prompt);
     const res = await this.ai.models.generateContent({
       model: this.model,
       contents: input,
     });
+
+    console.dir(res, { depth: null });
 
     const output =
       res.candidates?.[0]?.content?.parts
@@ -80,15 +82,17 @@ export class Gemini implements LLM {
 
     if (!output) throw new Error("No text output from Gemini");
 
-    const inputTokens = res.usageMetadata?.promptTokenCount ?? 0;
-    const outputTokens = res.usageMetadata?.candidatesTokenCount ?? 0;
+    if (log) {
+      const inputTokens = res.usageMetadata?.promptTokenCount ?? 0;
+      const outputTokens = res.usageMetadata?.candidatesTokenCount ?? 0;
 
-    await this.logPrompt(prompt, output, inputTokens, outputTokens);
+      await this.logPrompt(prompt, output, inputTokens, outputTokens);
+    }
 
     return output;
   }
 
-  async *promptStreamed(prompt: Prompt[]) {
+  async *promptStreamed(prompt: Prompt[], log = true) {
     const input = this.createInput(prompt);
     const stream = await this.ai.models.generateContentStream({
       model: this.model,
@@ -109,6 +113,8 @@ export class Gemini implements LLM {
       yield chunk.text;
     }
 
-    await this.logPrompt(prompt, output, inputTokens, outputTokens);
+    if (log) {
+      await this.logPrompt(prompt, output, inputTokens, outputTokens);
+    }
   }
 }

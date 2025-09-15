@@ -4,7 +4,7 @@ import { SUMMARY_BTN_HEIGHT } from "./client-summary-page";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { updateFlaggedQuestions } from "../../../actions";
-import ChatCard from "../../_components/chat-card";
+import ChatCard from "../../_components/chat/chat-card";
 import QuestionNavigator from "../../_components/question-navigator";
 import HighlightableText from "@/components/highlightable-text";
 import QuestionChoiceView from "../../_components/question-choice";
