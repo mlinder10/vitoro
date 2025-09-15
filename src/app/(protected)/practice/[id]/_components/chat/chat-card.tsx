@@ -30,7 +30,7 @@ export default function ChatCard({
     if (!choice) return;
 
     const basePrompt = getTaskSystemPrompt(task, question, choice);
-    await chat("", basePrompt);
+    await chat(undefined, basePrompt);
   }
 
   async function promptGeneral() {

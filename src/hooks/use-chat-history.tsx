@@ -29,22 +29,28 @@ export default function useChatHistory(config: Config = DEFAULT_CONFIG) {
   const [summarizedOn, setSummarizedOn] = useState<number>(0);
 
   async function chat(
-    message: string,
+    message: string | undefined,
     base: string | undefined = config.basePrompt
   ) {
     if (isLoading) {
       throw new Error("Already generating response");
     }
 
-    const wordCount = message.trim().split(/\s+/).length;
+    const wordCount = message?.trim().split(/\s+/).length ?? 0;
     if (wordCount > config.maxMessageWordCount) {
       throw new Error(`Message too long: ${wordCount} words`);
     }
 
-    const newMessages: Message[] = [
-      ...messages,
-      { id: crypto.randomUUID(), role: "user", content: message, type: "text" },
-    ];
+    const newMessages: Message[] = [...messages];
+    if (message !== undefined) {
+      newMessages.push({
+        id: crypto.randomUUID(),
+        role: "user",
+        content: message,
+        type: "text",
+      });
+    }
+
     setMessages(newMessages);
 
     setIsLoading(true);

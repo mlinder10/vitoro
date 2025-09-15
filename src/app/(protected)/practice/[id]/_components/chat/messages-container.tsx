@@ -107,7 +107,7 @@ export default function MessagesContainer({
   }
 
   return (
-    <div className="flex-1 px-4 py-4 overflow-y-auto">
+    <div className="flex-1 p-4 py-16 overflow-y-auto">
       {messages.map((message) => (
         <MessageComponent
           key={message.id}

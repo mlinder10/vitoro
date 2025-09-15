@@ -73,8 +73,6 @@ export class Gemini implements LLM {
       contents: input,
     });
 
-    console.dir(res, { depth: null });
-
     const output =
       res.candidates?.[0]?.content?.parts
         ?.map((part) => part.text ?? "")
