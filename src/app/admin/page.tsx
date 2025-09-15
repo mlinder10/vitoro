@@ -52,7 +52,6 @@ async function fetchData() {
 
 export default async function AdminPage() {
   const data = await fetchData();
-  console.log(data.tokens);
 
   return (
     <main className="space-y-6 p-6">

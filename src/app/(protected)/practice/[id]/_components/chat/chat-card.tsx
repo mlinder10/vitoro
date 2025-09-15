@@ -3,14 +3,11 @@
 import { cn } from "@/lib/utils";
 import { NBMEQuestion, QuestionChoice, Task } from "@/types";
 import { ArrowLeft, ArrowUp, Loader } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
-import {
-  promptChatWithTask,
-  promptGeneralChat,
-} from "@/app/(protected)/practice/chat";
+import { useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import MessagesContainer from "./messages-container";
-import TutorResponse from "./tutor-response";
+import useChatHistory from "@/hooks/use-chat-history";
+import { getGeneralSystemPrompt, getTaskSystemPrompt } from "./prompts";
 
 type ChatCardProps = {
   question: NBMEQuestion;
@@ -25,94 +22,25 @@ export default function ChatCard({
   expanded = false,
   onToggleExpand,
 }: ChatCardProps) {
-  const [messages, setMessages] = useState<
-    {
-      id: string;
-      content: React.ReactNode;
-      isUser: boolean;
-      rawText?: string;
-    }[]
-  >([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const { messages, isLoading, chat, clearHistory } = useChatHistory();
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const endRef = useRef<HTMLDivElement>(null);
 
   async function promptWithTask(task: Task) {
     if (!choice) return;
-    setIsLoading(true);
 
-    try {
-      let fullContent = "";
-      const res = await promptChatWithTask(task, question, choice);
-
-      // Collect all content first
-      while (true) {
-        const { value, done } = await res.next();
-        if (done) break;
-        fullContent += value;
-      }
-
-      // Add complete AI response with expandable sections
-      const aiMessage = {
-        id: crypto.randomUUID(),
-        content: <TutorResponse content={fullContent} />,
-        isUser: false,
-        rawText: fullContent, // Store raw text for server-side context
-      };
-
-      setMessages((prev) => [...prev, aiMessage]);
-      setIsLoading(false);
-    } catch (error) {
-      console.error("Error in promptWithTask:", error);
-      setIsLoading(false);
-    }
+    const basePrompt = getTaskSystemPrompt(task, question, choice);
+    await chat("", basePrompt);
   }
 
   async function promptGeneral() {
     if (!choice || !inputRef.current) return;
     const inputValue = inputRef.current.value.trim();
     if (!inputValue) return;
-
-    setIsLoading(true);
-    const userMessage = {
-      id: crypto.randomUUID(),
-      content: inputValue,
-      isUser: true,
-      rawText: inputValue,
-    };
-
-    setMessages((prev) => [...prev, userMessage]);
     inputRef.current.value = "";
 
-    try {
-      let fullContent = "";
-      const serverMessages = [...messages, userMessage].map((msg) => ({
-        role: msg.isUser ? ("user" as const) : ("assistant" as const),
-        content:
-          msg.rawText || (typeof msg.content === "string" ? msg.content : ""),
-      }));
-
-      const res = await promptGeneralChat(question, choice, serverMessages);
-
-      while (true) {
-        const { value, done } = await res.next();
-        if (done) break;
-        fullContent += value;
-      }
-
-      const aiMessage = {
-        id: crypto.randomUUID(),
-        content: <TutorResponse content={fullContent} />,
-        isUser: false,
-        rawText: fullContent,
-      };
-
-      setMessages((prev) => [...prev, aiMessage]);
-      setIsLoading(false);
-    } catch (error) {
-      console.error("Error in promptGeneral:", error);
-      setIsLoading(false);
-    }
+    const basePrompt = getGeneralSystemPrompt(question, choice);
+    await chat(inputValue, basePrompt);
   }
 
   function handleInput(e: React.KeyboardEvent) {
@@ -126,9 +54,9 @@ export default function ChatCard({
     endRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // Reset messages when question/choice changes
   useEffect(() => {
-    setMessages([]);
+    clearHistory();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [question.id, choice]);
 
   return (

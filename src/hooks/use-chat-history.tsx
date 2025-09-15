@@ -3,22 +3,22 @@
 import { Prompt } from "@/ai";
 import { useState } from "react";
 import { chatWrapper } from "./chat-actions";
+import { Message } from "@/types";
 
-const CONVERSATION_LENGTH = 4;
+const CONVERSATION_LENGTH = 10;
 const MAX_WORD_COUNT = 500;
 const MAX_INPUT_WORD_COUNT = 500;
 
-type Message = { id: string } & Prompt;
-
-export default function useChatHistory() {
+export default function useChatHistory(basePrompt?: string) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [summary, setSummary] = useState<string | null>(null);
   const [summarizedOn, setSummarizedOn] = useState<number>(0);
 
-  async function chat(message: string) {
-    if (message.length > MAX_INPUT_WORD_COUNT) {
-      throw new Error("Message too long");
+  async function chat(message: string, base: string | undefined = basePrompt) {
+    const wordCount = message.split(" ").length;
+    if (wordCount > MAX_INPUT_WORD_COUNT) {
+      throw new Error(`Message too long: ${wordCount} words`);
     }
 
     const newMessages: Message[] = [
@@ -30,6 +30,14 @@ export default function useChatHistory() {
     setIsLoading(true);
 
     const prompts: Prompt[] = [];
+
+    if (base) {
+      prompts.push({
+        role: "user",
+        content: base,
+        type: "text",
+      });
+    }
 
     if (summary) {
       prompts.push({
@@ -89,5 +97,11 @@ export default function useChatHistory() {
     setSummarizedOn(messages.length);
   }
 
-  return { messages, isLoading, chat };
+  function clearHistory() {
+    setMessages([]);
+    setSummary(null);
+    setSummarizedOn(0);
+  }
+
+  return { messages, isLoading, chat, clearHistory };
 }

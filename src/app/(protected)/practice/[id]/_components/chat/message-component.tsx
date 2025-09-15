@@ -1,16 +1,19 @@
 import Image from "next/image";
+import TutorResponse from "./tutor-response";
 
 type MessageComponentProps = {
-  content: React.ReactNode;
-  isUser: boolean;
+  content: string;
+  role: "user" | "assistant";
   isTyping?: boolean;
 };
 
 export default function MessageComponent({
   content,
-  isUser,
+  role,
   isTyping = false,
 }: MessageComponentProps) {
+  const isUser = role === "user";
+
   return (
     <div className={`flex ${isUser ? "justify-end" : "justify-start"} mb-4`}>
       <div
@@ -52,8 +55,10 @@ export default function MessageComponent({
                 style={{ animationDelay: "0.2s" }}
               ></div>
             </div>
-          ) : (
+          ) : isUser ? (
             content
+          ) : (
+            <TutorResponse content={content} />
           )}
         </div>
       </div>

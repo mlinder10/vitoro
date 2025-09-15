@@ -7,7 +7,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { capitalize } from "@/lib/utils";
-import { Task, TASKS } from "@/types";
+import { Message, Task, TASKS } from "@/types";
 import { HelpCircle } from "lucide-react";
 import Image from "next/image";
 import { RefObject } from "react";
@@ -30,12 +30,7 @@ const TASK_DESCRIPTIONS: Record<Task, string> = {
 };
 
 type MessagesContainerProps = {
-  messages: {
-    id: string;
-    content: React.ReactNode;
-    isUser: boolean;
-    rawText?: string;
-  }[];
+  messages: Message[];
   endRef: RefObject<HTMLDivElement | null>;
   handlePromptWithTask: (task: Task) => void;
   isLoading: boolean;
@@ -117,11 +112,11 @@ export default function MessagesContainer({
         <MessageComponent
           key={message.id}
           content={message.content}
-          isUser={message.isUser}
+          role={message.role}
         />
       ))}
       {isLoading && (
-        <MessageComponent content="" isUser={false} isTyping={true} />
+        <MessageComponent content="" role={"assistant"} isTyping={true} />
       )}
       <div ref={endRef} />
     </div>

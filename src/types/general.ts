@@ -25,8 +25,10 @@ export const TASKS: Task[] = [
 // Chat
 
 export type Message = {
+  id: string;
   role: "user" | "assistant";
   content: string;
+  type: "text";
 };
 
 export type SectionType =
