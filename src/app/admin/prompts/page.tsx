@@ -17,7 +17,7 @@ export default async function PromptsPage({ searchParams }: PromptsPageProps) {
   );
 
   return (
-    <main className="flex flex-col gap-8 p-8 h-full">
+    <main className="flex flex-col gap-4 p-4 h-full">
       <ul className="flex flex-col flex-1 gap-4 overflow-y-auto">
         {data.map((p) => (
           <PromptContainer key={p.id} prompt={p} />

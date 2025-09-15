@@ -51,7 +51,7 @@ export default function UsersPage() {
           ))}
         </ul>
       </section>
-      <div className="p-8 pt-4">
+      <div className="p-4">
         <PaginationFooter page={pageNum} />
       </div>
     </main>

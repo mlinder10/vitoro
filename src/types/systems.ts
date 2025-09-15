@@ -89,21 +89,17 @@ export const SYSTEMS = [
   },
 ] as const;
 
-export const t = {
-  "Foundational Sciences": [],
-  "Clinical Application": [],
-};
-
 export type System = (typeof SYSTEMS)[number]["system"];
 
 export type AnyCategory = (typeof SYSTEMS)[number]["categories"][number];
 
 export function getCategories(systems: string[]) {
-  const collection = [];
-  for (const system of systems) {
-    for (const category of SYSTEMS.find((s) => s.system === system)!
-      .categories) {
-      collection.push(category);
+  const collection: string[] = [];
+  for (const system of SYSTEMS) {
+    if (systems.length === 0 || systems.includes(system.system)) {
+      system.categories.forEach((category) =>
+        collection.includes(category) ? null : collection.push(category)
+      );
     }
   }
   return collection;
