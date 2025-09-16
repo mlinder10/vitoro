@@ -168,6 +168,18 @@ export function generateRandomName() {
   return `${randomAdjective}_${randomNoun}`;
 }
 
+export function stripAndParse<T>(output: string): T | null {
+  if (typeof output !== "string") return null;
+  const stripped = output.replace("```json", "").replace("```", "").trim();
+  try {
+    const parsed = JSON.parse(stripped);
+    return parsed as T;
+  } catch (err) {
+    console.error(err);
+    return null;
+  }
+}
+
 // Time
 
 export async function wait(ms: number) {

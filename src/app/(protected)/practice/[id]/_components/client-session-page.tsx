@@ -16,6 +16,7 @@ import QuestionNavigator from "./question-navigator";
 import QuestionCard from "./question-card";
 import Countdown from "./countdown";
 import { motion, AnimatePresence } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 type ClientSessionPageProps = {
   session: QBankSession;
@@ -33,6 +34,7 @@ function ClientSessionPage({ session, questions }: ClientSessionPageProps) {
   const [showSidebar, setShowSidebar] = useState(session.mode === "tutor");
   const [activeIndex, setActiveIndex] = useState(0);
   const [chatExpanded, setChatExpanded] = useState(false);
+  const [chatFullScreen, setChatFullScreen] = useState(false);
   const activeQuestion = questions[activeIndex];
   const showChat = session.mode === "tutor" && answers[activeIndex] !== null;
   const router = useRouter();
@@ -42,6 +44,17 @@ function ClientSessionPage({ session, questions }: ClientSessionPageProps) {
     if (showChat) setShowSidebar(false);
     if (!showChat) setChatExpanded(false);
   }, [showChat]);
+
+  function handleChatFullScreen() {
+    if (chatFullScreen) {
+      setChatExpanded(false);
+      setChatFullScreen(false);
+      return;
+    }
+    setShowSidebar(false);
+    setChatExpanded(false);
+    setChatFullScreen(true);
+  }
 
   function handleBack() {
     if (activeIndex < 1) return;
@@ -129,36 +142,41 @@ function ClientSessionPage({ session, questions }: ClientSessionPageProps) {
           )}
         </AnimatePresence>
         <div
-          className={`flex flex-1 gap-8 p-8 h-full overflow-hidden ${
+          className={cn(
+            "flex flex-1 gap-8 p-8 h-full",
             isStandalone ? "justify-center" : ""
-          }`}
+          )}
         >
-          <motion.div
-            layout
-            className={
-              isStandalone ? "flex-none w-full max-w-[800px]" : "flex-2"
-            }
-          >
-            <QuestionCard
-              session={session}
-              question={activeQuestion}
-              answers={answers}
-              flaggedIds={flaggedIds}
-              index={activeIndex}
-              onBack={handleBack}
-              onNext={handleNext}
-              onSubmit={handleSubmit}
-              onFlag={handleFlagQuestion}
-              onUnflag={handleUnflagQuestion}
-              fullWidth={showSidebar && !showChat}
-            />
-          </motion.div>
+          {!chatFullScreen && (
+            <motion.div
+              layout
+              className={cn(
+                isStandalone ? "flex-none w-full" : "flex-2 flex justify-center"
+              )}
+            >
+              <QuestionCard
+                session={session}
+                question={activeQuestion}
+                answers={answers}
+                flaggedIds={flaggedIds}
+                index={activeIndex}
+                onBack={handleBack}
+                onNext={handleNext}
+                onSubmit={handleSubmit}
+                onFlag={handleFlagQuestion}
+                onUnflag={handleUnflagQuestion}
+                fullWidth={showSidebar && !showChat}
+              />
+            </motion.div>
+          )}
           {showChat && (
             <ChatCard
               question={activeQuestion}
               choice={answers[activeIndex]}
               expanded={chatExpanded}
+              fullScreen={chatFullScreen}
               onToggleExpand={() => setChatExpanded((prev) => !prev)}
+              onToggleFullScreen={handleChatFullScreen}
             />
           )}
         </div>

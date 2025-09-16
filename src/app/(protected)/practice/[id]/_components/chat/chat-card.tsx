@@ -2,7 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import { NBMEQuestion, QuestionChoice, Task } from "@/types";
-import { ArrowLeft, ArrowUp, Loader } from "lucide-react";
+import { ArrowLeft, ArrowUp, Expand, Loader, Shrink } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import MessagesContainer from "./messages-container";
@@ -13,16 +13,20 @@ type ChatCardProps = {
   question: NBMEQuestion;
   choice: QuestionChoice | null;
   expanded?: boolean;
+  fullScreen?: boolean;
   onToggleExpand?: () => void;
+  onToggleFullScreen?: () => void;
 };
 
 export default function ChatCard({
   question,
   choice,
   expanded = false,
+  fullScreen = false,
   onToggleExpand,
+  onToggleFullScreen,
 }: ChatCardProps) {
-  const { messages, isLoading, chat, clearHistory } = useChatHistory();
+  const { messages, isLoading, chatStreamed, clearHistory } = useChatHistory();
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const endRef = useRef<HTMLDivElement>(null);
 
@@ -30,7 +34,7 @@ export default function ChatCard({
     if (!choice) return;
 
     const basePrompt = getTaskSystemPrompt(task, question, choice);
-    await chat(undefined, basePrompt);
+    await chatStreamed(undefined, basePrompt);
   }
 
   async function promptGeneral() {
@@ -40,7 +44,7 @@ export default function ChatCard({
     inputRef.current.value = "";
 
     const basePrompt = getGeneralSystemPrompt(question, choice);
-    await chat(inputValue, basePrompt);
+    await chatStreamed(inputValue, basePrompt);
   }
 
   function handleInput(e: React.KeyboardEvent) {
@@ -101,6 +105,14 @@ export default function ChatCard({
             size={16}
             className={cn("transition-all", expanded && "rotate-180")}
           />
+        </button>
+      )}
+      {onToggleFullScreen && (
+        <button
+          className="top-4 right-4 absolute flex justify-center items-center backdrop-blur-md border rounded-full w-[32px] aspect-square cursor-pointer"
+          onClick={onToggleFullScreen}
+        >
+          {fullScreen ? <Shrink size={16} /> : <Expand size={16} />}
         </button>
       )}
     </section>
