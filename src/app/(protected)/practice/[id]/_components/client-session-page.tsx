@@ -151,7 +151,9 @@ function ClientSessionPage({ session, questions }: ClientSessionPageProps) {
             <motion.div
               layout
               className={cn(
-                isStandalone ? "flex-none w-full" : "flex-2 flex justify-center"
+                "flex transition-all duration-300",
+                showChat ? "flex-2 justify-center" : "flex-1 w-full",
+                isStandalone ? "justify-center max-w-6xl" : ""
               )}
             >
               <QuestionCard
