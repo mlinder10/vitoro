@@ -78,7 +78,7 @@ export default function QuestionCard({
         session.mode === "tutor"
           ? fullWidth
             ? "flex-1 w-full"
-            : "flex-2 max-w-[800px]"
+            : "flex-2 w-full max-w-none"
           : "flex-1 w-full"
       )}
     >

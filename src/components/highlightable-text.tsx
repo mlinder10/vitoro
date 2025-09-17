@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import { cn } from '@/lib/utils';
 
 interface HighlightableTextProps {
   text: string;
@@ -49,7 +50,10 @@ export default function HighlightableText({ text, storageKey, className }: Highl
   return (
     <p
       ref={ref}
-      className={className}
+      className={cn(
+        "text-sm sm:text-base md:text-lg leading-relaxed",
+        className
+      )}
       onMouseUp={handleMouseUp}
       onClick={handleClick}
       dangerouslySetInnerHTML={{ __html: text }}

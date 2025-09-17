@@ -92,17 +92,17 @@ export default function QuestionChoiceView({
         onContextMenu={handleDisable}
       >
         <div className="flex gap-3">
-          <span className="min-w-[20px] font-semibold text-sm">
+          <span className={cn("min-w-[20px] font-semibold text-sm sm:text-base")}>
             {letter.toUpperCase()}.
           </span>
-          <span className="flex-1">{choice}</span>
+          <span className={cn("flex-1 text-sm sm:text-base md:text-lg")}>{choice}</span>
         </div>
       </div>
 
       {/* Show explanation after answer is checked */}
       {isChecked && showExplanation && (
-        <div className="bg-muted ml-7 p-3 rounded-md text-sm">
-          <p className="text-muted-foreground">{explanation}</p>
+        <div className={cn("bg-muted ml-7 p-3 rounded-md text-sm sm:text-base")}>
+          <p className={cn("text-muted-foreground text-sm sm:text-base")}>{explanation}</p>
         </div>
       )}
     </div>
