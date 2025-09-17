@@ -1,0 +1,34 @@
+:root {
+  --custom-accent: #cc7b2e;
+  --custom-accent-dark: #bb6a1c;
+  --custom-accent-light: #cc7b2e22;
+
+  --custom-accent-secondary: #cc7b2e;
+  --custom-accent-secondary-dark: #bb6a1c;
+  --custom-accent-secondary-light: #dd8c3f;
+
+  --green-light: #00ff0022;
+  --red-light: #ff000022;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+button {
+  cursor: pointer;
+}
+button:disabled {
+  cursor: not-allowed;
+}
+
+.highlight {
+  background-color: #fde047;
+  border-bottom: 1px dashed #eab308;
+  cursor: pointer;
+}
+
+.dark .highlight {
+  background-color: #fde04733;
+  border-bottom: 1px dashed #fde047;
+}
