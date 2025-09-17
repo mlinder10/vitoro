@@ -1,8 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { Prompt } from "@/ai";
-import { chatStreamWrapper, chatWrapper } from "./chat-actions";
+import { LLMOutput, Prompt } from "@/ai";
 import { Message } from "@/types";
 import { stripAndParse } from "@/lib/utils";
 
@@ -16,6 +15,8 @@ type Config = {
   shortTermMessagesLength?: number;
   summaryMaxTokenCount?: number;
   maxMessageWordCount?: number;
+  chatFnc?: (prompts: Prompt[]) => Promise<LLMOutput>;
+  chatStreamFnc?: (prompts: Prompt[]) => AsyncGenerator<LLMOutput>;
 };
 
 type Summary = {
@@ -31,6 +32,8 @@ export default function useChatHistory({
   shortTermMessagesLength = SHORT_TERM_MESSAGES_LENGTH,
   summaryMaxTokenCount = SUMMARY_MAX_TOKEN_COUNT,
   maxMessageWordCount = MAX_MESSAGE_WORD_COUNT,
+  chatFnc = chatWrapperWithFetch,
+  chatStreamFnc = chatStreamWrapperWithFetch,
 }: Config = {}) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -60,11 +63,11 @@ export default function useChatHistory({
       isLoadingRef.current = true;
       setIsLoading(true);
 
-      const output = await chatWrapper(prompts);
+      const output = await chatFnc(prompts);
       const assistantMessage: Message = {
         id: crypto.randomUUID(),
         role: "assistant",
-        content: output,
+        content: output.text,
         type: "text",
       };
 
@@ -108,7 +111,7 @@ export default function useChatHistory({
       isLoadingRef.current = true;
       setIsLoading(true);
 
-      const stream = await chatStreamWrapper(prompts);
+      const stream = await chatStreamFnc(prompts);
       let builtMessages = [...newMessages];
 
       let buffer = "";
@@ -138,7 +141,7 @@ export default function useChatHistory({
       while (true) {
         const { value, done } = await stream.next();
         if (done) break;
-        buffer += value;
+        buffer += value.text;
         requestAnimationFrame(flushBuffer);
       }
 
@@ -200,8 +203,8 @@ ${msgs
     ];
 
     try {
-      const newSummary = await chatWrapper(prompts);
-      const parsedSummary = stripAndParse<Summary>(newSummary);
+      const newSummary = await chatFnc(prompts);
+      const parsedSummary = stripAndParse<Summary>(newSummary.text);
 
       if (parsedSummary) {
         setSummary(parsedSummary);
@@ -287,4 +290,34 @@ function buildPrompts(
   );
 
   return { prompts, newMessages };
+}
+
+// --- Fetch ---
+
+export async function chatWrapperWithFetch(
+  prompts: Prompt[]
+): Promise<LLMOutput> {
+  const res = await fetch("/api/chat", {
+    method: "POST",
+    body: JSON.stringify({ prompts }),
+  });
+  return await res.json();
+}
+
+export async function* chatStreamWrapperWithFetch(prompts: Prompt[]) {
+  const res = await fetch("/api/chat/stream", {
+    method: "POST",
+    body: JSON.stringify({ prompts }),
+  });
+  console.log(res);
+  const stream = res.body?.getReader();
+  if (!stream) return;
+  const decoder = new TextDecoder();
+  while (true) {
+    const { done, value } = await stream.read();
+    const chunk = decoder.decode(value);
+    const json = JSON.parse(chunk);
+    if (done) break;
+    yield json;
+  }
 }

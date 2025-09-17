@@ -14,7 +14,13 @@ export type ImagePrompt = {
   content: Uint8Array;
 };
 
+export type LLMOutput = {
+  text: string;
+  inputTokens: number;
+  outputTokens: number;
+};
+
 export type LLM = {
-  prompt: (prompt: Prompt[]) => Promise<string>;
-  promptStreamed: (prompt: Prompt[]) => AsyncGenerator<string>;
+  prompt: (prompt: Prompt[]) => Promise<LLMOutput>;
+  promptStreamed: (prompt: Prompt[]) => AsyncGenerator<LLMOutput>;
 };

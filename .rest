@@ -23,3 +23,18 @@ Content-Type: application/json
 ###
 
 GET http://localhost:3000/api/dev
+
+###
+
+POST http://localhost:3000/api/chat/stream
+Content-Type: application/json
+
+{
+  "prompts": [
+    {
+      "role": "user",
+      "content": "can you show me an example of a python program?",
+      "type": "text"
+    }
+  ]
+}

@@ -1,4 +1,3 @@
-import { db, prompts } from "@/db";
 import { LLM, Prompt } from "./llm";
 import { GoogleGenAI } from "@google/genai";
 
@@ -52,21 +51,7 @@ export class Gemini implements LLM {
     });
   }
 
-  private async logPrompt(
-    prompt: Prompt[],
-    output: string,
-    inputTokens: number,
-    outputTokens: number
-  ) {
-    await db.insert(prompts).values({
-      prompt: JSON.stringify(prompt),
-      output,
-      inputTokens,
-      outputTokens,
-    });
-  }
-
-  async prompt(prompt: Prompt[], log: boolean = true) {
+  async prompt(prompt: Prompt[]) {
     const input = this.createInput(prompt);
     const res = await this.ai.models.generateContent({
       model: this.model,
@@ -80,39 +65,26 @@ export class Gemini implements LLM {
 
     if (!output) throw new Error("No text output from Gemini");
 
-    if (log) {
-      const inputTokens = res.usageMetadata?.promptTokenCount ?? 0;
-      const outputTokens = res.usageMetadata?.candidatesTokenCount ?? 0;
+    const inputTokens = res.usageMetadata?.promptTokenCount ?? 0;
+    const outputTokens = res.usageMetadata?.candidatesTokenCount ?? 0;
 
-      await this.logPrompt(prompt, output, inputTokens, outputTokens);
-    }
-
-    return output;
+    return { text: output, inputTokens, outputTokens };
   }
 
-  async *promptStreamed(prompt: Prompt[], log = true) {
+  async *promptStreamed(prompt: Prompt[]) {
     const input = this.createInput(prompt);
     const stream = await this.ai.models.generateContentStream({
       model: this.model,
       contents: input,
     });
 
-    let inputTokens = 0;
-    let outputTokens = 0;
-    let output = "";
-
     for await (const chunk of stream) {
       if (chunk.text === undefined) {
         throw new Error("Failed to generate text");
       }
-      inputTokens = chunk.usageMetadata?.promptTokenCount ?? inputTokens;
-      outputTokens += chunk.usageMetadata?.candidatesTokenCount ?? outputTokens;
-      output += chunk.text;
-      yield chunk.text;
-    }
-
-    if (log) {
-      await this.logPrompt(prompt, output, inputTokens, outputTokens);
+      const inputTokens = chunk.usageMetadata?.promptTokenCount ?? 0;
+      const outputTokens = chunk.usageMetadata?.candidatesTokenCount ?? 0;
+      yield { text: chunk.text, inputTokens, outputTokens };
     }
   }
 }
