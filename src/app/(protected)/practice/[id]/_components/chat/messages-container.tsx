@@ -42,7 +42,7 @@ export default function MessagesContainer({
   handlePromptWithTask,
   isLoading,
 }: MessagesContainerProps) {
-  if (messages.length === 0) {
+  if (messages.length === 0 && !isLoading) {
     return (
       <div className="flex-1 place-items-center grid">
         <div className="flex flex-col items-center gap-2 text-sm">

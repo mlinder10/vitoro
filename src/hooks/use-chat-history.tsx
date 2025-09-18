@@ -315,9 +315,9 @@ export async function* chatStreamWrapperWithFetch(prompts: Prompt[]) {
   const decoder = new TextDecoder();
   while (true) {
     const { done, value } = await stream.read();
+    if (done) break;
     const chunk = decoder.decode(value);
     const json = JSON.parse(chunk);
-    if (done) break;
     yield json;
   }
 }

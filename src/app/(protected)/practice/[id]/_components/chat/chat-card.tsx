@@ -26,7 +26,7 @@ export default function ChatCard({
   onToggleExpand,
   onToggleFullScreen,
 }: ChatCardProps) {
-  const { messages, isLoading, chatStreamed, clearHistory } = useChatHistory();
+  const { messages, isLoading, chat, clearHistory } = useChatHistory();
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const endRef = useRef<HTMLDivElement>(null);
 
@@ -34,7 +34,7 @@ export default function ChatCard({
     if (!choice) return;
 
     const basePrompt = getTaskSystemPrompt(task, question, choice);
-    await chatStreamed(undefined, basePrompt);
+    await chat(undefined, basePrompt);
   }
 
   async function promptGeneral() {

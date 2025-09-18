@@ -45,6 +45,11 @@ function ClientSessionPage({ session, questions }: ClientSessionPageProps) {
     if (!showChat) setChatExpanded(false);
   }, [showChat]);
 
+function handleChatExpand() {
+  setChatFullScreen(false);
+  setChatExpanded((prev) => !prev);
+}
+
   function handleChatFullScreen() {
     if (chatFullScreen) {
       setChatExpanded(false);
@@ -177,7 +182,7 @@ function ClientSessionPage({ session, questions }: ClientSessionPageProps) {
               choice={answers[activeIndex]}
               expanded={chatExpanded}
               fullScreen={chatFullScreen}
-              onToggleExpand={() => setChatExpanded((prev) => !prev)}
+              onToggleExpand={handleChatExpand}
               onToggleFullScreen={handleChatFullScreen}
             />
           )}
