@@ -4,6 +4,9 @@ import { jwtVerify, SignJWT } from "jose";
 import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { LOGIN_PATH } from "./constants";
+import { NBMEStep } from "@/types";
+import { db, users } from "@/db";
+import { eq } from "drizzle-orm";
 
 const SECRET_KEY = new TextEncoder().encode(process.env.JWT_SECRET!);
 
@@ -13,6 +16,7 @@ export type Session = {
   firstName: string;
   lastName: string;
   color: string;
+  exam: NBMEStep;
   isAdmin?: boolean;
 };
 
@@ -77,6 +81,12 @@ export async function tryGetSession(): Promise<Session | null> {
   if (!token) return null;
   const decoded = await verifyToken(token);
   if (!decoded) return null;
+  const [user] = await db
+    .select()
+    .from(users)
+    .where(eq(users.id, decoded.id))
+    .limit(1);
+  if (!user) return null;
   return decoded;
 }
 

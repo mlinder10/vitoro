@@ -3,12 +3,19 @@
 import GradientTitle from "@/components/gradient-title";
 import { MINS_PER_QUESTION } from "@/lib/constants";
 import { cn } from "@/lib/utils";
-import { Focus, NBMEStep, QBankMode } from "@/types";
+import {
+  getCategories,
+  NBMEStep,
+  QBankMode,
+  QUESTION_TYPES,
+  SYSTEMS,
+} from "@/types";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { createQbankSession } from "../actions";
 import { useSession } from "@/contexts/session-provider";
 import { toast } from "sonner";
+import DropdownSelect from "@/components/dropdown-select";
 
 const DIGITS = "1234567890";
 
@@ -20,17 +27,17 @@ function isInt(n: string) {
 }
 
 export default function ClientCustomSessionForm() {
-  const { id } = useSession();
-  const [focus, setFocus] = useState<Focus>();
+  const { id, exam } = useSession();
   const [size, setSize] = useState<string>("10");
   const [isSizeCustom, setIsSizeCustom] = useState(false);
   const [mode, setMode] = useState<QBankMode>("timed");
-  const [step, setStep] = useState<NBMEStep>("Step 1");
+  const [step, setStep] = useState<NBMEStep>(exam);
+  const [systems, setSystems] = useState<string[]>([]);
+  const [categories, setCategories] = useState<string[]>([]);
+  const [types, setTypes] = useState<string[]>([]);
   const router = useRouter();
-
-  function updateFocus(focus: Focus) {
-    setFocus((prev) => (prev === focus ? undefined : focus));
-  }
+  const isRandom =
+    systems.length === 0 && categories.length === 0 && types.length === 0;
 
   function selectSize(size: string) {
     setSize(size);
@@ -52,20 +59,41 @@ export default function ClientCustomSessionForm() {
       });
       return;
     }
-    const sessionId = await createQbankSession(
-      id,
-      mode,
-      step,
-      focus,
-      numericSize
-    );
-    router.push(`/practice/${sessionId}`);
-    // TODO: handle errors
+
+    try {
+      const sessionId = await createQbankSession(
+        id,
+        mode,
+        step,
+        numericSize,
+        systems,
+        categories,
+        types
+      );
+      if (!sessionId) {
+        toast.error("Failed to create session", { richColors: true });
+        return;
+      }
+      router.push(`/practice/${sessionId}`);
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to create session", { richColors: true });
+    }
   }
 
-  // TODO: fix no bottom padding
+  function handleChangeMode(step: NBMEStep) {
+    setStep(step);
+    handleRandom();
+  }
+
+  function handleRandom() {
+    setSystems([]);
+    setCategories([]);
+    setTypes([]);
+  }
+
   return (
-    <div className="flex flex-col items-center gap-8 p-8 h-full">
+    <div className="flex flex-col items-center gap-8 p-8 h-full overflow-y-auto">
       <GradientTitle text="Custom Session" className="font-bold text-4xl" />
       <p className="text-muted-foreground">
         Tailored study sessions that adapt to your goals
@@ -74,42 +102,43 @@ export default function ClientCustomSessionForm() {
         <div className="flex gap-4">
           <OutlineButton
             label="Step 1"
-            // subheadline="Biochem, Physio, Path basics"
             isActive={step === "Step 1"}
-            onClick={() => setStep("Step 1")}
+            onClick={() => handleChangeMode("Step 1")}
           />
           <OutlineButton
             label="Step 2"
-            // subheadline="Cardio, pulm, renal"
             isActive={step === "Step 2"}
-            onClick={() => setStep("Step 2")}
+            onClick={() => handleChangeMode("Step 2")}
           />
         </div>
       </InputCard>
       <InputCard title="Focus" number="2">
-        <div className="flex gap-4">
-          <OutlineButton
-            label="Step 1 Foundations"
-            subheadline="Biochem, Physio, Path basics"
-            isActive={focus === "step-1"}
-            onClick={() => updateFocus("step-1")}
+        <div className="flex gap-4 py-2">
+          <DropdownSelect
+            title="Systems"
+            options={SYSTEMS.map((s) => s.system)}
+            selected={systems}
+            setSelected={setSystems}
           />
-          <OutlineButton
-            label="High Yield Systems"
-            subheadline="Cardio, pulm, renal"
-            isActive={focus === "high-yield"}
-            onClick={() => updateFocus("high-yield")}
+          <DropdownSelect
+            title="Categories"
+            options={getCategories(systems)}
+            selected={categories}
+            setSelected={setCategories}
           />
+          {step === "Step 2" && (
+            <DropdownSelect
+              title="Types"
+              options={QUESTION_TYPES}
+              selected={types}
+              setSelected={setTypes}
+            />
+          )}
           <OutlineButton
-            label="NBME Mix"
-            subheadline="Randomize exam-style block"
-            isActive={focus === "nbme-mix"}
-            onClick={() => updateFocus("nbme-mix")}
+            label="Random"
+            isActive={isRandom}
+            onClick={handleRandom}
           />
-          {/* <OutlineButton
-            label="Choose Topic"
-            subheadline="Search specific subjects"
-          /> */}
         </div>
       </InputCard>
       <InputCard title="Size" number="3">
@@ -171,7 +200,6 @@ export default function ClientCustomSessionForm() {
       >
         Start Session
       </button>
-      {/* <p className="text-muted-foreground">Advanced Settings</p> */}
     </div>
   );
 }
@@ -212,7 +240,7 @@ function OutlineButton({
   return (
     <button
       className={cn(
-        "flex flex-col flex-1 bg-muted p-2 border rounded-md transition-all",
+        "flex flex-col flex-1 justify-center items-center bg-muted p-2 border rounded-md transition-all",
         isActive && "border-custom-accent bg-custom-accent-light"
       )}
       onClick={onClick}

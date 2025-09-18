@@ -7,7 +7,7 @@ export function Header({ session }: { session: Session | null }) {
   return (
     <header
       style={{ height: HEADER_HEIGHT }}
-      className="flex justify-center items-center border-b"
+      className="top-0 z-50 fixed flex justify-center items-center bg-background/95 border-b w-full"
     >
       <nav
         style={{ maxWidth: INNER_WIDTH }}
@@ -27,9 +27,20 @@ export function Header({ session }: { session: Session | null }) {
             <Link href="/home/contact">Contact</Link>
           </li>
         </ul>
-        <Button asChild variant="accent" className="justify-self-end w-fit">
-          <Link href={session ? "/" : "/register"}>Get Started</Link>
-        </Button>
+        {session ? (
+          <Button asChild variant="accent" className="justify-self-end w-fit">
+            <Link href="/">Get Started</Link>
+          </Button>
+        ) : (
+          <div className="flex justify-self-end gap-2 w-fit">
+            <Button asChild variant="outline">
+              <Link href="/login">Log In</Link>
+            </Button>
+            <Button asChild variant="accent">
+              <Link href="/register">Register</Link>
+            </Button>
+          </div>
+        )}
       </nav>
     </header>
   );

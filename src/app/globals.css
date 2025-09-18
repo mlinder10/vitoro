@@ -1,7 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
-@import "../styles/keyframes.css";
-
+@import "../styles";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -143,38 +142,4 @@
   body {
     @apply bg-background text-foreground;
   }
-}
-
-/* custom styles */
-
-:root {
-  --custom-accent: #cc7b2e;
-  --custom-accent-dark: #bb6a1c;
-  --custom-accent-light: #cc7b2e22;
-
-  --custom-accent-secondary: #cc7b2e;
-  --custom-accent-secondary-dark: #bb6a1c;
-  --custom-accent-secondary-light: #dd8c3f;
-
-  --green-light: #00ff0022;
-  --red-light: #ff000022;
-}
-
-html {
-  scroll-behavior: smooth;
-}
-
-button {
-  cursor: pointer;
-}
-
-.highlight {
-  background-color: #fef9c3;
-  border-bottom: 1px dashed #eab308;
-  cursor: pointer;
-}
-
-.dark .highlight {
-  background-color: #facc1533;
-  border-bottom: 1px dashed #facc15;
 }

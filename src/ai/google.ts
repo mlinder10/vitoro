@@ -9,9 +9,13 @@ type GeminiModel =
 
 const DEFAULT_MODEL: GeminiModel = "gemini-2.0-flash";
 
-type GeminiInput =
-  | { text: string }
-  | { inlineData: { mimeType: string; data: string } };
+type GeminiInput = {
+  role: string;
+  parts: (
+    | { text: string }
+    | { inlineData: { mimeType: string; data: string } }
+  )[];
+};
 
 export class Gemini implements LLM {
   private ai;
@@ -25,13 +29,21 @@ export class Gemini implements LLM {
   private createInput(prompt: Prompt[]): GeminiInput[] {
     return prompt.map((p) => {
       if (p.type === "text") {
-        return { text: p.content };
+        return {
+          role: p.role ?? "user",
+          parts: [{ text: p.content }],
+        };
       } else if (p.type === "image") {
         return {
-          inlineData: {
-            mimeType: p.mimeType,
-            data: Buffer.from(p.content).toString("base64"),
-          },
+          role: p.role ?? "user",
+          parts: [
+            {
+              inlineData: {
+                mimeType: p.mimeType,
+                data: Buffer.from(p.content).toString("base64"),
+              },
+            },
+          ],
         };
       } else {
         throw new Error("Unknown prompt type");
@@ -45,8 +57,18 @@ export class Gemini implements LLM {
       model: this.model,
       contents: input,
     });
-    if (res.text === undefined) throw new Error("Failed to generate text");
-    return res.text;
+
+    const output =
+      res.candidates?.[0]?.content?.parts
+        ?.map((part) => part.text ?? "")
+        .join("") ?? "";
+
+    if (!output) throw new Error("No text output from Gemini");
+
+    const inputTokens = res.usageMetadata?.promptTokenCount ?? 0;
+    const outputTokens = res.usageMetadata?.candidatesTokenCount ?? 0;
+
+    return { text: output, inputTokens, outputTokens };
   }
 
   async *promptStreamed(prompt: Prompt[]) {
@@ -57,8 +79,12 @@ export class Gemini implements LLM {
     });
 
     for await (const chunk of stream) {
-      if (chunk.text === undefined) throw new Error("Failed to generate text");
-      yield chunk.text;
+      if (chunk.text === undefined) {
+        throw new Error("Failed to generate text");
+      }
+      const inputTokens = chunk.usageMetadata?.promptTokenCount ?? 0;
+      const outputTokens = chunk.usageMetadata?.candidatesTokenCount ?? 0;
+      yield { text: chunk.text, inputTokens, outputTokens };
     }
   }
 }

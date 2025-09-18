@@ -1,4 +1,5 @@
 import ProgressCircle from "@/components/progress-circle";
+import { formatPercent, scoreToHex } from "@/lib/utils";
 import {
   QBankSession,
   NBMEQuestion,
@@ -20,15 +21,6 @@ export type SessionSummaryProps = {
   onRetakeIncorrect?: () => void;
   onReviewTopic?: (system: string) => void;
 };
-
-const clamp01 = (n: number) => Math.max(0, Math.min(1, n));
-
-const formatPercent = (ratio: number) => `${Math.round(clamp01(ratio) * 100)}%`;
-
-function scoreToHex(percentage: number) {
-  const hue = Math.round(clamp01(percentage) * 120);
-  return `hsl(${hue}, 100%, 50%)`;
-}
 
 function splitQuestions(s: QBankSession, qs: NBMEQuestion[]): SplitResult {
   const unanswered = s.answers
@@ -64,7 +56,7 @@ function Bar({ pct }: { pct: number }) {
     <div className="bg-muted rounded-full w-full h-2">
       <div
         className="bg-primary rounded-full h-2"
-        style={{ width: `${clamp01(pct) * 100}%` }}
+        style={{ width: formatPercent(pct) }}
       />
     </div>
   );

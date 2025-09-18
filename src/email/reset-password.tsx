@@ -9,7 +9,7 @@ import {
   Hr,
   Link,
 } from "@react-email/components";
-import { Resend } from "resend";
+import getResend from "./resend";
 
 type ResetPasswordCodeEmailProps = {
   code: string;
@@ -87,8 +87,8 @@ export default function ResetPasswordCodeEmail({
 }
 
 export async function sendResetPasswordEmail(email: string, code: string) {
-  const resend = new Resend(process.env.RESEND_API_KEY);
   try {
+    const resend = getResend();
     await resend.emails.send({
       from: process.env.VITORO_EMAIL!,
       to: email,

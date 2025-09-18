@@ -15,6 +15,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { MINS_PER_QUESTION } from "@/lib/constants";
 
 type SessionRowProps = {
   session: QBankSession;
@@ -50,14 +51,15 @@ export default function SessionRow({
           <span className="p-2 border rounded-md w-[64px] text-muted-foreground text-sm text-center">
             {capitalize(session.mode)}
           </span>
-          {/* TODO: change timed to view if time is up */}
-          {session.inProgress ? (
-            <Button variant="accent-light" className="w-[80px]" asChild>
-              <Link href={`/practice/${session.id}`}>Continue</Link>
-            </Button>
-          ) : (
+          {!session.inProgress ||
+          (session.mode === "timed" &&
+            isExpired(session.createdAt, session.questionIds.length)) ? (
             <Button variant="accent" className="w-[80px]" asChild>
               <Link href={`/practice/${session.id}/summary`}>View</Link>
+            </Button>
+          ) : (
+            <Button variant="accent-light" className="w-[80px]" asChild>
+              <Link href={`/practice/${session.id}`}>Continue</Link>
             </Button>
           )}
           <Dialog>
@@ -91,4 +93,13 @@ export default function SessionRow({
       </div>
     </div>
   );
+}
+
+function isExpired(startedAt: Date, questionCount: number) {
+  const now = Date.now();
+  const createdAt = new Date(startedAt).getTime();
+  const totalTime = questionCount * MINS_PER_QUESTION * 60 * 1000;
+  const endTime = createdAt + totalTime;
+  const timeLeft = Math.max(0, endTime - now);
+  return timeLeft <= 0;
 }

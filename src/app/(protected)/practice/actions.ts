@@ -1,15 +1,16 @@
 "use server";
 
 import {
-  answeredQuestions,
+  answeredStepOneNbmes,
+  answeredStepTwoNbmes,
   db,
   qbankSessions,
   stepOneNbmeQuestions,
   stepTwoNbmeQuestions,
 } from "@/db";
 import { generateRandomName } from "@/lib/utils";
-import { Focus, NBMEStep, QBankMode, QuestionChoice } from "@/types";
-import { isNull, eq, and } from "drizzle-orm";
+import { NBMEStep, QBankMode, QuestionChoice } from "@/types";
+import { isNull, eq, and, inArray, sql } from "drizzle-orm";
 
 // Create Session
 
@@ -17,10 +18,19 @@ export async function createQbankSession(
   userId: string,
   mode: QBankMode,
   step: NBMEStep,
-  focus: Focus | undefined,
-  count: number
+  count: number,
+  systems: string[],
+  categories: string[],
+  types: string[]
 ) {
-  const qs = await fetchQuestions(userId, step, focus, count);
+  const qs = await fetchQuestions(
+    userId,
+    step,
+    count,
+    systems,
+    categories,
+    types
+  );
 
   const questionIds = qs.map((q) => q.id);
   const answers: (QuestionChoice | null)[] = new Array(questionIds.length).fill(
@@ -43,50 +53,139 @@ export async function createQbankSession(
   return id;
 }
 
-async function fetchQuestions(
+export async function fetchQuestions(
   userId: string,
   step: NBMEStep,
-  focus: Focus | undefined,
-  count: number
+  count: number,
+  systems: string[],
+  categories: string[],
+  types: string[]
 ) {
-  switch (step) {
-    case "Step 1":
-      return await db
-        .select({ id: stepOneNbmeQuestions.id })
-        .from(stepOneNbmeQuestions)
-        .leftJoin(
-          answeredQuestions,
-          and(
-            eq(answeredQuestions.questionId, stepOneNbmeQuestions.id),
-            eq(answeredQuestions.userId, userId)
-          )
-        )
-        .where(
-          and(
-            eq(stepOneNbmeQuestions.rating, "Pass"),
-            isNull(answeredQuestions.userId)
-          )
-        )
-        .limit(count);
-    case "Step 2":
-      return await db
-        .select({ id: stepTwoNbmeQuestions.id })
-        .from(stepTwoNbmeQuestions)
-        .leftJoin(
-          answeredQuestions,
-          and(
-            eq(answeredQuestions.questionId, stepTwoNbmeQuestions.id),
-            eq(answeredQuestions.userId, userId)
-          )
-        )
-        .where(
-          and(
-            eq(stepTwoNbmeQuestions.rating, "Pass"),
-            isNull(answeredQuestions.userId)
-          )
-        )
-        .limit(count);
+  const { questions, answered } =
+    step === "Step 1"
+      ? { questions: stepOneNbmeQuestions, answered: answeredStepOneNbmes }
+      : { questions: stepTwoNbmeQuestions, answered: answeredStepTwoNbmes };
+
+  const conditions = [eq(questions.rating, "Pass"), isNull(answered.userId)];
+
+  if (questions === stepTwoNbmeQuestions) {
+    if (systems.length) conditions.push(inArray(questions.system, systems));
+    if (categories.length)
+      conditions.push(inArray(questions.category, categories));
+    if (types.length) conditions.push(inArray(questions.type, types));
   }
+
+  const whereClause = and(...conditions);
+
+  return await db
+    .select({ id: questions.id })
+    .from(questions)
+    .leftJoin(
+      answered,
+      and(eq(answered.questionId, questions.id), eq(answered.userId, userId))
+    )
+    .where(whereClause)
+    .orderBy(sql`RANDOM()`)
+    .limit(count);
+}
+
+function shuffle<T>(arr: T[]) {
+  return arr
+    .map((a) => [Math.random(), a] as [number, T])
+    .sort((a, b) => a[0] - b[0])
+    .map((a) => a[1]);
+}
+
+export async function fetchQuestions_(
+  userId: string,
+  step: NBMEStep,
+  count: number,
+  systems: string[],
+  categories: string[],
+  types: string[]
+) {
+  if (step === "Step 1") {
+    const questions = await db
+      .select({
+        id: stepOneNbmeQuestions.id,
+        systems: stepOneNbmeQuestions.systems,
+        categories: stepOneNbmeQuestions.categories,
+      })
+      .from(stepOneNbmeQuestions)
+      .leftJoin(
+        answeredStepOneNbmes,
+        and(
+          eq(answeredStepOneNbmes.questionId, stepOneNbmeQuestions.id),
+          eq(answeredStepOneNbmes.userId, userId)
+        )
+      )
+      .where(
+        and(
+          eq(stepOneNbmeQuestions.rating, "Pass"),
+          isNull(answeredStepOneNbmes.userId)
+        )
+      );
+
+    const filteredQuestions = questions
+      .filter(
+        (q) =>
+          (systems.length === 0 ||
+            q.systems.some((s) => systems.includes(s))) &&
+          (categories.length === 0 ||
+            q.categories.some((c) => categories.includes(c)))
+      )
+      .map((q) => ({ id: q.id }));
+
+    return shuffle(filteredQuestions).slice(0, count);
+  } else {
+    const conditions = [
+      eq(stepTwoNbmeQuestions.rating, "Pass"),
+      isNull(answeredStepTwoNbmes.userId),
+    ];
+
+    if (systems.length)
+      conditions.push(inArray(stepTwoNbmeQuestions.system, systems));
+    if (categories.length)
+      conditions.push(inArray(stepTwoNbmeQuestions.category, categories));
+    if (types.length)
+      conditions.push(inArray(stepTwoNbmeQuestions.type, types));
+
+    const whereClause = and(...conditions);
+
+    return await db
+      .select({ id: stepTwoNbmeQuestions.id })
+      .from(stepTwoNbmeQuestions)
+      .leftJoin(
+        answeredStepTwoNbmes,
+        and(
+          eq(answeredStepTwoNbmes.questionId, stepTwoNbmeQuestions.id),
+          eq(answeredStepTwoNbmes.userId, userId)
+        )
+      )
+      .where(whereClause)
+      .orderBy(sql`RANDOM()`)
+      .limit(count);
+  }
+}
+
+// Get Session
+
+// TODO: maybe check if session belongs to user
+export async function getSummary(id: string) {
+  const [session] = await db
+    .select()
+    .from(qbankSessions)
+    .where(eq(qbankSessions.id, id));
+  if (!session) return null;
+
+  const table =
+    session.step === "Step 1" ? stepOneNbmeQuestions : stepTwoNbmeQuestions;
+  const questions = await db
+    .select()
+    .from(table)
+    .where(inArray(table.id, session.questionIds));
+
+  return { session, questions };
 }
 
 // Answer Question
@@ -97,6 +196,7 @@ type AnswerQuestionArgs = {
   sessionId: string;
   answer: QuestionChoice;
   answers: (QuestionChoice | null)[];
+  step: NBMEStep;
 };
 
 export async function answerQuestion({
@@ -105,13 +205,16 @@ export async function answerQuestion({
   sessionId,
   answer,
   answers,
+  step,
 }: AnswerQuestionArgs) {
   await Promise.all([
-    db.insert(answeredQuestions).values({
-      userId,
-      questionId,
-      answer,
-    }),
+    db
+      .insert(step === "Step 1" ? answeredStepOneNbmes : answeredStepTwoNbmes)
+      .values({
+        userId,
+        questionId,
+        answer,
+      }),
     db
       .update(qbankSessions)
       .set({ answers })
@@ -143,7 +246,46 @@ export async function endSession(sessionId: string) {
 // Rest Questions
 
 export async function resetQuestions(userId: string) {
-  await db
-    .delete(answeredQuestions)
-    .where(eq(answeredQuestions.userId, userId));
+  await Promise.all([
+    db
+      .delete(answeredStepOneNbmes)
+      .where(eq(answeredStepOneNbmes.userId, userId)),
+    db
+      .delete(answeredStepTwoNbmes)
+      .where(eq(answeredStepTwoNbmes.userId, userId)),
+  ]);
+}
+
+// Questions Data
+
+export async function fetchStepOneData() {
+  const [competencies, concepts] = await Promise.all([
+    db
+      .selectDistinct({
+        competency: stepOneNbmeQuestions.competency,
+      })
+      .from(stepOneNbmeQuestions),
+    db
+      .selectDistinct({ concept: stepOneNbmeQuestions.concept })
+      .from(stepOneNbmeQuestions),
+  ]);
+  return {
+    competencies: competencies.map((c) => c.competency),
+    concepts: concepts.map((c) => c.concept),
+  };
+}
+
+export async function fetchStepTwoData() {
+  const [systems, types] = await Promise.all([
+    db
+      .selectDistinct({ system: stepTwoNbmeQuestions.system })
+      .from(stepTwoNbmeQuestions),
+    db
+      .selectDistinct({ type: stepTwoNbmeQuestions.type })
+      .from(stepTwoNbmeQuestions),
+  ]);
+  return {
+    systems: systems.map((s) => s.system),
+    types: types.map((t) => t.type),
+  };
 }

@@ -43,6 +43,7 @@ export async function handleLogin(
       lastName: users.lastName,
       color: users.color,
       password: users.password,
+      exam: users.exam,
       isAdmin: admins.userId,
     })
     .from(users)
@@ -60,6 +61,7 @@ export async function handleLogin(
     lastName: user.lastName,
     color: user.color,
     isAdmin: user.isAdmin !== null,
+    exam: user.exam,
   });
 
   redirect("/");
@@ -143,6 +145,7 @@ export async function handleRegister(
       firstName: users.firstName,
       lastName: users.lastName,
       color: users.color,
+      exam: users.exam,
     });
   if (!user) return { error: ["Failed to create user"] };
 
@@ -152,6 +155,7 @@ export async function handleRegister(
     firstName: user.firstName,
     lastName: user.lastName,
     color: user.color,
+    exam: user.exam,
     isAdmin: false,
   });
   // await sendRegisterEmail(email)

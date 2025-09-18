@@ -9,18 +9,18 @@ import {
   Home,
   LogOut,
   Menu,
-  // Layers,
-  // NotebookText,
+  Layers,
   ShieldUserIcon,
   Target,
+  // Computer,
 } from "lucide-react";
 import Link from "next/link";
 import { ComponentType, useEffect, useState } from "react";
-import AccountIcon from "./account-icon";
 import { usePathname, useRouter } from "next/navigation";
 import { unauthenticate } from "@/lib/auth";
 import ThemeToggleSwitch from "@/components/theme-toggle-switch";
 import { useTheme } from "@/contexts/theme-provider";
+import AccountIcon from "@/components/account-icon";
 
 export default function SideNav() {
   const { theme } = useTheme();
@@ -70,27 +70,27 @@ export default function SideNav() {
           <ListLink
             href="/practice"
             icon={Target}
-            label="Practice"
+            label="Question Bank"
             isOpen={isOpen}
           />
-          {/* <ListLink
+          <ListLink
             href="/foundational"
             icon={Layers}
             label="Foundational"
             isOpen={isOpen}
           />
           <ListLink
-            href="/review"
-            icon={NotebookText}
-            label="Review"
-            isOpen={isOpen}
-          /> */}
-          <ListLink
             href="/history"
             icon={History}
             label="History"
             isOpen={isOpen}
           />
+          {/* <ListLink
+            href="/tutor"
+            icon={Computer}
+            label="Tutor"
+            isOpen={isOpen}
+          /> */}
           {session.isAdmin && (
             <ListLink
               href="/admin"

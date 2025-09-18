@@ -9,6 +9,7 @@ const SessionContext = createContext<Session>({
   firstName: "",
   lastName: "",
   color: "",
+  exam: "Step 1",
   isAdmin: false,
 });
 

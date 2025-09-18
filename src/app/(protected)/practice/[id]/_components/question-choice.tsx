@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 import { QBankMode, QuestionChoice } from "@/types";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type QuestionChoiceViewProps = {
   letter: QuestionChoice;
@@ -12,6 +12,12 @@ type QuestionChoiceViewProps = {
   mode: QBankMode;
   isLoading: boolean;
   select: (choice: QuestionChoice | null) => void;
+  /**
+   * When true, the explanation for a selected choice is automatically
+   * shown after the answer is checked. When false, only the correct
+   * choice's explanation is displayed by default.
+   */
+  showSelectionExplanation?: boolean;
 };
 
 export default function QuestionChoiceView({
@@ -24,13 +30,27 @@ export default function QuestionChoiceView({
   mode,
   isLoading,
   select,
+  showSelectionExplanation = true,
 }: QuestionChoiceViewProps) {
   const [isDisabled, setIsDisabled] = useState(false);
+  const [showExplanation, setShowExplanation] = useState(false);
   const canShowInsights = isChecked && mode === "tutor";
+
+  useEffect(() => {
+    if (isChecked) {
+      setShowExplanation(isCorrect || (showSelectionExplanation && isSelected));
+    } else {
+      setShowExplanation(false);
+    }
+  }, [isChecked, isCorrect, isSelected, showSelectionExplanation]);
 
   function handleSelect() {
     if (isDisabled) return;
-    if (!isChecked && !isLoading) select(letter);
+    if (isChecked) {
+      setShowExplanation((prev) => !prev);
+      return;
+    }
+    if (!isLoading) select(letter);
   }
 
   function handleDisable(e: React.MouseEvent) {
@@ -43,6 +63,8 @@ export default function QuestionChoiceView({
 
   function getChoiceStyle() {
     if (!canShowInsights) {
+      if (isDisabled)
+        return "bg-secondary border-border opacity-60 line-through";
       return isSelected
         ? "bg-custom-accent/20 border-custom-accent"
         : "bg-secondary hover:bg-secondary/80 border-border";
@@ -70,17 +92,17 @@ export default function QuestionChoiceView({
         onContextMenu={handleDisable}
       >
         <div className="flex gap-3">
-          <span className="min-w-[20px] font-semibold text-sm">
+          <span className={cn("min-w-[20px] font-semibold text-sm sm:text-base")}>
             {letter.toUpperCase()}.
           </span>
-          <span className="flex-1">{choice}</span>
+          <span className={cn("flex-1 text-sm sm:text-base md:text-lg")}>{choice}</span>
         </div>
       </div>
 
       {/* Show explanation after answer is checked */}
-      {isChecked && (isCorrect || isSelected) && (
-        <div className="bg-muted ml-7 p-3 rounded-md text-sm">
-          <p className="text-muted-foreground">{explanation}</p>
+      {isChecked && showExplanation && (
+        <div className={cn("bg-muted ml-7 p-3 rounded-md text-sm sm:text-base")}>
+          <p className={cn("text-muted-foreground text-sm sm:text-base")}>{explanation}</p>
         </div>
       )}
     </div>

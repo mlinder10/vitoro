@@ -4,7 +4,8 @@ import { Session, tryGetSession } from "@/lib/auth";
 import Link from "next/link";
 import HomeBackground from "./background";
 import { Header } from "./header";
-import { SECTION_HEIGHT, INNER_WIDTH } from "./constants";
+import { HEADER_HEIGHT, INNER_WIDTH } from "./constants";
+import VitoAnimation from "@/components/icon/vito-animation";
 
 export default async function HomePage() {
   const session = await tryGetSession();
@@ -12,10 +13,7 @@ export default async function HomePage() {
   return (
     <>
       <Header session={session} />
-      <main
-        style={{ height: SECTION_HEIGHT }}
-        className="bg-secondary overflow-y-scroll"
-      >
+      <main className="bg-secondary h-full overflow-y-auto scroll-smooth">
         <HomeBackground />
         <Hero session={session} />
         <QuestionSection />
@@ -28,21 +26,22 @@ export default async function HomePage() {
 
 function Hero({ session }: { session: Session | null }) {
   return (
-    <section
-      id="hero"
-      style={{ height: SECTION_HEIGHT }}
-      className="place-items-center grid"
-    >
-      <div className="flex flex-col items-center gap-4">
-        {/* Image */}
-        <p className="z-1 font-bold text-4xl">
-          The only <span className="text-custom-accent">AI</span> Board Prep{" "}
+    <section id="hero" className="z-10 relative place-items-center grid h-full">
+      <div
+        className="flex flex-col items-center gap-6"
+        style={{ paddingTop: HEADER_HEIGHT }}
+      >
+        {/* Vito Animation */}
+        <VitoAnimation width={250} height={172} className="z-1 mb-2" />
+        <h1 className="z-1 font-bold text-4xl text-center">
+          Your <span className="text-custom-accent">Personal</span> Board Prep{" "}
           <span className="text-custom-accent">Tutor</span>
-        </p>
-        <p className="z-1 text-muted-foreground">
-          THIS is how board prep should feel
-        </p>
-        <div className="flex gap-4">
+        </h1>
+        <div className="z-1 space-y-1 max-w-lg text-muted-foreground text-center">
+          <p>Built with the help of a 273 Step 2 Scorer</p>
+          <p>Gain the confidence you deserve</p>
+        </div>
+        <div className="flex gap-4 mt-2">
           <Button asChild variant="accent" className="z-1">
             <Link href={session ? "/" : "/register"}>Start learning</Link>
           </Button>
@@ -57,77 +56,39 @@ function Hero({ session }: { session: Session | null }) {
 
 function QuestionSection() {
   return (
-    <section
-      style={{ height: SECTION_HEIGHT }}
-      className="place-items-center grid"
-    >
+    <section className="z-10 relative place-items-center grid h-full">
       <GradientTitle text="HOW?" className="z-1 font-black text-9xl" />
     </section>
   );
 }
 
-const CARD_HEIGHT = "240px";
-
 function FeaturesSection() {
   return (
     <section
       id="features"
-      style={{ height: SECTION_HEIGHT }}
-      className="flex flex-col justify-center items-center gap-16"
+      className="z-10 relative flex flex-col justify-center items-center gap-8 h-full"
     >
-      <p className="font-semibold text-4xl">Glad you asked</p>
-      <div
-        style={{ maxWidth: INNER_WIDTH }}
-        className="gap-8 grid grid-cols-2 w-full"
-      >
+      <h2 className="mb-4 font-bold text-white text-4xl text-center">
+        See for yourself...
+      </h2>
+      <div className="flex justify-center px-8 w-full">
         <div
-          className="z-1 flex flex-col gap-4 bg-tertiary p-6 border rounded-md w-full"
-          style={{ height: CARD_HEIGHT }}
+          style={{ maxWidth: INNER_WIDTH * 0.8 }}
+          className="flex justify-center w-full"
         >
-          <span className="place-items-center grid bg-secondary p-2 rounded-md w-fit aspect-square">
-            ❤️
-          </span>
-          <p className="font-semibold text-lg">We know what you need</p>
-          <div className="flex flex-col text-muted-foreground text-sm">
-            <p>
-              Our current team is comprised of 3 current U.S. medical students.
-            </p>
-            <p>We understand your pain.</p>
-            <p>We understand YOU.</p>
-          </div>
+          <video
+            className="z-1 shadow-2xl border border-border rounded-lg w-full max-w-4xl h-auto"
+            controls
+            preload="metadata"
+            style={{
+              maxHeight: "60vh",
+              aspectRatio: "16/9",
+            }}
+          >
+            <source src="/Demo_Clip.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
         </div>
-        <div
-          className="z-1 flex flex-col gap-4 bg-tertiary p-6 border rounded-md w-full"
-          style={{ height: CARD_HEIGHT }}
-        >
-          <span className="place-items-center grid bg-secondary p-2 rounded-md w-fit aspect-square">
-            🥼
-          </span>
-          <p className="font-semibold text-lg">We know how to help</p>
-          <div className="flex flex-col text-muted-foreground text-sm">
-            <p>Our co-founder, Adam, scored a 273 on Step 2.</p>
-            <p>
-              He tutors students for free and makes YouTube videos on HY topics
-              &#40;for fun&#41;.
-            </p>
-            <p>
-              He trained Vitoro and reviewed our 4000+ board-style questions.
-            </p>
-          </div>
-        </div>
-      </div>
-      <div
-        style={{ maxWidth: INNER_WIDTH * 0.6 }}
-        className="z-1 flex flex-col gap-8 bg-tertiary p-6 border rounded-md w-full"
-      >
-        <p className="text-center">
-          Vitoro&apos;s adaptive approach helped me identify my weak areas
-          quickly and focus my study time where it mattered most. The board exam
-          felt managable because I was truly prepared.
-        </p>
-        <p className="text-muted-foreground text-sm text-center">
-          Dr. Sara Chen, Internal Medicine Resident
-        </p>
       </div>
     </section>
   );
@@ -135,7 +96,7 @@ function FeaturesSection() {
 
 function CallToActionSection({ session }: { session: Session | null }) {
   return (
-    <section className="z-1 relative place-items-center grid bg-background py-24 border-t">
+    <section className="z-10 relative place-items-center grid bg-background py-24 border-t">
       <div
         style={{ maxWidth: INNER_WIDTH * 0.4 }}
         className="flex flex-col items-center gap-8"
@@ -144,11 +105,11 @@ function CallToActionSection({ session }: { session: Session | null }) {
           Ready to <span className="text-custom-accent">Excel</span>?
         </p>
         <p className="text-muted-foreground text-center">
-          Join thousands of medical professionals who&apos;ve transformed their
-          board preparation with intelligent, adaptive learning.
+          If the &quot;tried and true&quot; isn&apos;t working for you,
+          it&apos;s time to try something new.
         </p>
         <Button asChild variant="accent">
-          <Link href={session ? "/" : "/register"}>Start your perparation</Link>
+          <Link href={session ? "/" : "/register"}>Start your preparation</Link>
         </Button>
       </div>
     </section>

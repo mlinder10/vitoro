@@ -1,18 +1,19 @@
 "use server";
 
 import { db, users, admins } from "@/db";
-import { eq, ilike, or, sql } from "drizzle-orm";
+import { eq, like, or, sql } from "drizzle-orm";
 
 export async function handleFetchUsers(
   offset: number,
   limit: number,
   search?: string
 ) {
+  search = search?.trim().toLocaleLowerCase();
   const conditions = search
     ? or(
-        ilike(users.email, `%${search}%`),
-        ilike(users.firstName, `%${search}%`),
-        ilike(users.lastName, `%${search}%`)
+        like(sql`LOWER(${users.email})`, `%${search}%`),
+        like(sql`LOWER(${users.firstName})`, `%${search}%`),
+        like(sql`LOWER(${users.lastName})`, `%${search}%`)
       )
     : undefined;
 

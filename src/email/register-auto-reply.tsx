@@ -11,7 +11,7 @@ import {
   Link,
 } from "@react-email/components";
 import { ACCENT_COLOR, APP_URL } from "@/lib/constants";
-import resend from "./resend";
+import getResend from "./resend";
 
 export default async function RegisterAutoReply() {
   return (
@@ -86,6 +86,7 @@ export default async function RegisterAutoReply() {
 
 export async function sendRegisterEmail(email: string) {
   try {
+    const resend = getResend();
     await resend.emails.send({
       from: process.env.VITORO_EMAIL!,
       to: email,
