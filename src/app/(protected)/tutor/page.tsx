@@ -25,7 +25,7 @@ const BASE_PROMPT = (tone: string) =>
   `Respond with the following tone: ${tone}`;
 
 export default function TutorPage() {
-  const [tone, setTone] = useState<string>("Jordan Peterson");
+  const [tone, setTone] = useState<string>("Political Correctness Jew");
   const { messages, isLoading, chatStreamed } = useChatHistory({
     basePrompt: BASE_PROMPT(tone),
   });

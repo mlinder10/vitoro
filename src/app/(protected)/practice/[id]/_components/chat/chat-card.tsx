@@ -44,7 +44,7 @@ export default function ChatCard({
     inputRef.current.value = "";
 
     const basePrompt = getGeneralSystemPrompt(question, choice);
-    await chatStreamed(inputValue, basePrompt);
+    await chat(inputValue, basePrompt);
   }
 
   function handleInput(e: React.KeyboardEvent) {
