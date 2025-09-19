@@ -15,6 +15,24 @@ export default function TutorResponse({ content }: TutorResponseProps) {
         <ReactMarkdown
           remarkPlugins={[remarkGfm]}
           components={{
+            h1: ({ children }) => (
+              <h1 className="mt-6 mb-4 font-bold text-lg">{children}</h1>
+            ),
+            h2: ({ children }) => (
+              <h2 className="mt-5 mb-3 font-semibold text-base">{children}</h2>
+            ),
+            h3: ({ children }) => (
+              <h3 className="mt-4 mb-2 font-medium text-sm">{children}</h3>
+            ),
+            p: ({ children }) => (
+              <p className="mb-3 leading-relaxed">{children}</p>
+            ),
+            ul: ({ children }) => (
+              <ul className="mb-4 ml-4 space-y-1 list-disc">{children}</ul>
+            ),
+            ol: ({ children }) => (
+              <ol className="mb-4 ml-4 space-y-1 list-decimal">{children}</ol>
+            ),
             table: ({ children }) => (
               <div className="my-4 overflow-x-auto">
                 <table className="border border-border min-w-full text-sm border-collapse">
@@ -59,6 +77,24 @@ export default function TutorResponse({ content }: TutorResponseProps) {
               <ReactMarkdown
                 remarkPlugins={[remarkGfm]}
                 components={{
+                  h1: ({ children }) => (
+                    <h1 className="mt-4 mb-3 font-bold text-lg">{children}</h1>
+                  ),
+                  h2: ({ children }) => (
+                    <h2 className="mt-3 mb-2 font-semibold text-base">{children}</h2>
+                  ),
+                  h3: ({ children }) => (
+                    <h3 className="mt-2 mb-2 font-medium text-sm">{children}</h3>
+                  ),
+                  p: ({ children }) => (
+                    <p className="mb-3 leading-relaxed">{children}</p>
+                  ),
+                  ul: ({ children }) => (
+                    <ul className="mb-3 ml-4 space-y-1 list-disc">{children}</ul>
+                  ),
+                  ol: ({ children }) => (
+                    <ol className="mb-3 ml-4 space-y-1 list-decimal">{children}</ol>
+                  ),
                   table: ({ children }) => (
                     <div className="my-4 overflow-x-auto">
                       <table className="border border-border min-w-full text-sm border-collapse">

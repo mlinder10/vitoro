@@ -112,40 +112,27 @@ export default function useChatHistory({
       setIsLoading(true);
 
       const stream = await chatStreamFnc(prompts);
-      let builtMessages = [...newMessages];
-
-      let buffer = "";
-      const flushBuffer = () => {
-        if (!buffer) return;
-        const lastMessage = builtMessages.at(-1);
-        if (lastMessage?.role === "assistant") {
-          builtMessages = [
-            ...builtMessages.slice(0, -1),
-            { ...lastMessage, content: lastMessage.content + buffer },
-          ];
-        } else {
-          builtMessages = [
-            ...builtMessages,
-            {
-              id: crypto.randomUUID(),
-              role: "assistant",
-              content: buffer,
-              type: "text",
-            },
-          ];
-        }
-        buffer = "";
-        setMessages(builtMessages);
-      };
+      let completeResponse = "";
 
       while (true) {
         const { value, done } = await stream.next();
         if (done) break;
-        buffer += value.text;
-        requestAnimationFrame(flushBuffer);
+        completeResponse += value.text;
       }
 
-      flushBuffer();
+      // Create final assistant message with complete response
+      const assistantMessage: Message = {
+        id: crypto.randomUUID(),
+        role: "assistant",
+        content: completeResponse,
+        type: "text",
+      };
+
+      setMessages([...newMessages, assistantMessage]);
+      
+      // Turn off loading after setting final message
+      isLoadingRef.current = false;
+      setIsLoading(false);
     } catch (err) {
       console.error(err);
       setMessages([
@@ -157,7 +144,6 @@ export default function useChatHistory({
           type: "text",
         },
       ]);
-    } finally {
       isLoadingRef.current = false;
       setIsLoading(false);
     }
@@ -229,6 +215,10 @@ ${msgs
     setSummarizedOn(0);
   }
 
+  function addMessage(message: Message) {
+    setMessages(prev => [...prev, message]);
+  }
+
   return {
     messages,
     isLoading,
@@ -236,6 +226,7 @@ ${msgs
     chat,
     chatStreamed,
     clearHistory,
+    addMessage,
   };
 }
 
@@ -271,23 +262,31 @@ function buildPrompts(
   }
 
   const prompts: Prompt[] = [];
-  if (base) {
+  
+  // If this is a system prompt without user message (like task prompts), 
+  // send only the base prompt like initial conversation
+  if (base && !message) {
     prompts.push({ role: "user", content: base, type: "text" });
+  } else {
+    // Normal conversation flow with context
+    if (base) {
+      prompts.push({ role: "user", content: base, type: "text" });
+    }
+    if (summary) {
+      prompts.push({
+        role: "user",
+        content: `Previous summary: ${JSON.stringify(summary)}`,
+        type: "text",
+      });
+    }
+    prompts.push(
+      ...newMessages.slice(summarizedOn).map((m) => ({
+        role: m.role,
+        content: m.content,
+        type: "text" as const,
+      }))
+    );
   }
-  if (summary) {
-    prompts.push({
-      role: "user",
-      content: `Previous summary: ${JSON.stringify(summary)}`,
-      type: "text",
-    });
-  }
-  prompts.push(
-    ...newMessages.slice(summarizedOn).map((m) => ({
-      role: m.role,
-      content: m.content,
-      type: "text" as const,
-    }))
-  );
 
   return { prompts, newMessages };
 }
@@ -309,15 +308,85 @@ export async function* chatStreamWrapperWithFetch(prompts: Prompt[]) {
     method: "POST",
     body: JSON.stringify({ prompts }),
   });
-  console.log(res);
   const stream = res.body?.getReader();
   if (!stream) return;
   const decoder = new TextDecoder();
+  let buffer = "";
+  
+  // Helper function to extract JSON objects from a string
+  const parseJsonObjects = (text: string): { objects: any[], remaining: string } => {
+    const objects = [];
+    let remaining = text;
+    let braceCount = 0;
+    let start = 0;
+    let inString = false;
+    let escaped = false;
+    
+    for (let i = 0; i < remaining.length; i++) {
+      const char = remaining[i];
+      
+      if (escaped) {
+        escaped = false;
+        continue;
+      }
+      
+      if (char === '\\' && inString) {
+        escaped = true;
+        continue;
+      }
+      
+      if (char === '"') {
+        inString = !inString;
+        continue;
+      }
+      
+      if (!inString) {
+        if (char === '{') {
+          if (braceCount === 0) start = i;
+          braceCount++;
+        } else if (char === '}') {
+          braceCount--;
+          if (braceCount === 0) {
+            // Found complete JSON object
+            const jsonStr = remaining.slice(start, i + 1);
+            try {
+              const obj = JSON.parse(jsonStr);
+              objects.push(obj);
+            } catch (e) {
+              console.warn("Failed to parse JSON object:", jsonStr);
+            }
+          }
+        }
+      }
+    }
+    
+    // Return remaining text (incomplete JSON if any)
+    const lastCompleteIndex = braceCount === 0 ? remaining.length : start;
+    return {
+      objects,
+      remaining: braceCount > 0 ? remaining.slice(start) : ""
+    };
+  };
+  
   while (true) {
     const { done, value } = await stream.read();
-    const chunk = decoder.decode(value);
-    const json = JSON.parse(chunk);
     if (done) break;
-    yield json;
+    
+    buffer += decoder.decode(value, { stream: true });
+    
+    const { objects, remaining } = parseJsonObjects(buffer);
+    buffer = remaining;
+    
+    for (const obj of objects) {
+      yield obj;
+    }
+  }
+  
+  // Process any remaining data in buffer
+  if (buffer.trim()) {
+    const { objects } = parseJsonObjects(buffer);
+    for (const obj of objects) {
+      yield obj;
+    }
   }
 }

@@ -42,7 +42,7 @@ export default function MessagesContainer({
   handlePromptWithTask,
   isLoading,
 }: MessagesContainerProps) {
-  if (messages.length === 0) {
+  if (messages.length === 0 && !isLoading) {
     return (
       <div className="flex-1 place-items-center grid">
         <div className="flex flex-col items-center gap-2 text-sm">
@@ -108,12 +108,32 @@ export default function MessagesContainer({
 
   return (
     <div className="flex-1 p-4 py-16 overflow-y-auto">
-      {messages.map((message) => (
-        <MessageComponent
-          key={message.id}
-          content={message.content}
-          role={message.role}
-        />
+      {messages.map((message, index) => (
+        <div key={message.id}>
+          <MessageComponent
+            content={message.content}
+            role={message.role}
+          />
+          {/* Show task prompts after assistant messages that mention "different approach" */}
+          {message.role === "assistant" && 
+           message.content.includes("Try a different approach") && 
+           index === messages.length - 1 && (
+            <div className="mt-4 space-y-2">
+              <div className="flex items-center gap-2 mb-3">
+                <p className="text-muted-foreground text-sm">Choose an approach:</p>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                {TASKS.map((task) => (
+                  <TaskPrompt
+                    key={task}
+                    label={task.split("-").map(capitalize).join(" ")}
+                    onClick={() => handlePromptWithTask(task)}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
       ))}
       {isLoading && (
         <MessageComponent content="" role={"assistant"} isTyping={true} />

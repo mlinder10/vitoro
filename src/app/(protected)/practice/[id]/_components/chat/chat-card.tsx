@@ -1,13 +1,21 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { NBMEQuestion, QuestionChoice, Task } from "@/types";
-import { ArrowLeft, ArrowUp, Expand, Loader, Shrink } from "lucide-react";
-import { useEffect, useRef } from "react";
+import { NBMEQuestion, QuestionChoice, Task, TASKS } from "@/types";
+import { ArrowLeft, ArrowUp, Expand, Loader, Settings, Shrink } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import MessagesContainer from "./messages-container";
 import useChatHistory from "@/hooks/use-chat-history";
 import { getGeneralSystemPrompt, getTaskSystemPrompt } from "./prompts";
+import ChatSettings from "./chat-settings";
 
 type ChatCardProps = {
   question: NBMEQuestion;
@@ -26,14 +34,15 @@ export default function ChatCard({
   onToggleExpand,
   onToggleFullScreen,
 }: ChatCardProps) {
-  const { messages, isLoading, chatStreamed, clearHistory } = useChatHistory();
+  const [tone, setTone] = useState<string>("Clear and concise");
+  const { messages, isLoading, chatStreamed, clearHistory, addMessage } = useChatHistory();
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const endRef = useRef<HTMLDivElement>(null);
 
   async function promptWithTask(task: Task) {
     if (!choice) return;
 
-    const basePrompt = getTaskSystemPrompt(task, question, choice);
+    const basePrompt = getTaskSystemPrompt(task, question, choice, tone);
     await chatStreamed(undefined, basePrompt);
   }
 
@@ -43,7 +52,7 @@ export default function ChatCard({
     if (!inputValue) return;
     inputRef.current.value = "";
 
-    const basePrompt = getGeneralSystemPrompt(question, choice);
+    const basePrompt = getGeneralSystemPrompt(question, choice, tone);
     await chatStreamed(inputValue, basePrompt);
   }
 
@@ -52,6 +61,70 @@ export default function ChatCard({
       e.preventDefault();
       promptGeneral();
     }
+  }
+
+  function showPromptOptions() {
+    if (!choice) return;
+
+    // Directly add an assistant message that triggers the TaskPrompt display
+    const optionsMessage = {
+      id: crypto.randomUUID(),
+      role: "assistant" as const,
+      content: "**Try a different approach:**\n\nChoose one of the options below to analyze this question from a different angle.",
+      type: "text" as const,
+    };
+
+    addMessage(optionsMessage);
+  }
+
+  async function makeFlashcard() {
+    if (!choice) return;
+
+    // Create flashcard generation prompt
+    const flashcardPrompt = `You are a medical education expert. Create high-yield flashcards based on key concept from this board question. The **back:** should include supplementary material related to the topic that helps provide more context for the student to review.
+
+Question:
+${question.question}
+
+Correct Answer: ${question.answer}
+Correct Answer Text: ${question.choices[question.answer]}
+
+Instructions:
+1. Identify the key concept being tested
+2. Create exactly 2 flashcards formatted for Anki import
+3. Include supplementary context and high-yield details
+4. Use clear, concise language suitable for spaced repetition
+5. Format for readability:
+   - Use bullet points for lists
+   - Bold key terms and concepts
+   - Use → for cause/effect relationships
+   - Include relevant mnemonics or memory aids when helpful
+   - Keep front cards concise, back cards comprehensive
+
+Respond with exactly this format:
+
+## 🃏 Anki Flashcards
+
+### Basic Q&A Card
+**Front:** [Focused question about the key concept]
+
+**Back:** [Answer with supplementary context, mechanisms, and high-yield details that help reinforce understanding]
+
+---
+
+### Cloze Deletion Card
+**Front:** [Clinical statement with {{c1::key term}} cloze deletion format]
+
+**Back:** [Additional context and clinical pearls related to the cloze term]
+
+---
+
+### Study Notes
+**Key Concept:** [High-yield concept being tested]
+**Clinical Pearl:** [Memorable clinical insight or teaching point]`;
+
+    // Send flashcard generation request (independent of chat history)
+    await chatStreamed(undefined, flashcardPrompt);
   }
 
   useEffect(() => {
@@ -84,7 +157,25 @@ export default function ChatCard({
           ref={inputRef}
           onKeyDown={(e) => handleInput(e)}
         />
-        <div className="flex justify-end p-2">
+        <div className="flex justify-between items-center p-2">
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => showPromptOptions()}
+              disabled={isLoading}
+            >
+              Show Options
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => makeFlashcard()}
+              disabled={isLoading}
+            >
+              Make Flashcard
+            </Button>
+          </div>
           <Button
             variant="accent"
             size="icon"
@@ -99,7 +190,13 @@ export default function ChatCard({
       {onToggleExpand && (
         <button
           className="top-4 left-4 absolute flex justify-center items-center backdrop-blur-md border rounded-full w-[32px] aspect-square cursor-pointer"
-          onClick={onToggleExpand}
+          onClick={() => {
+            onToggleExpand();
+            // If fullscreen is active, also toggle it off when collapsing
+            if (fullScreen && onToggleFullScreen) {
+              onToggleFullScreen();
+            }
+          }}
         >
           <ArrowLeft
             size={16}
@@ -107,6 +204,19 @@ export default function ChatCard({
           />
         </button>
       )}
+      <Dialog>
+        <DialogTrigger asChild>
+          <button className="top-4 right-12 absolute flex justify-center items-center backdrop-blur-md border rounded-full w-[32px] aspect-square cursor-pointer">
+            <Settings size={16} />
+          </button>
+        </DialogTrigger>
+        <DialogContent className="min-w-fit">
+          <DialogHeader>
+            <DialogTitle>Chat Settings</DialogTitle>
+          </DialogHeader>
+          <ChatSettings tone={tone} setTone={setTone} />
+        </DialogContent>
+      </Dialog>
       {onToggleFullScreen && (
         <button
           className="top-4 right-4 absolute flex justify-center items-center backdrop-blur-md border rounded-full w-[32px] aspect-square cursor-pointer"

@@ -44,15 +44,15 @@ export default function MessageComponent({
           }`}
         >
           {isTyping ? (
-            <div className="flex items-center space-x-1">
+            <div className="flex items-center space-x-1 py-1">
               <div className="bg-muted-foreground rounded-full w-2 h-2 animate-bounce"></div>
               <div
                 className="bg-muted-foreground rounded-full w-2 h-2 animate-bounce"
-                style={{ animationDelay: "0.1s" }}
+                style={{ animationDelay: "0.15s" }}
               ></div>
               <div
                 className="bg-muted-foreground rounded-full w-2 h-2 animate-bounce"
-                style={{ animationDelay: "0.2s" }}
+                style={{ animationDelay: "0.3s" }}
               ></div>
             </div>
           ) : isUser ? (

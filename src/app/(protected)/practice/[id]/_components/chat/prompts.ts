@@ -1,6 +1,6 @@
 import { Task, NBMEQuestion, QuestionChoice } from "@/types";
 
-function buildTaskPrompts(basePrompt: string) {
+function buildTaskPrompts(basePrompt: string, tone: string = "clear, direct, but snarky and sarcastic") {
   return {
     breakdown:
       basePrompt +
@@ -120,12 +120,13 @@ Use a tone that's firm but fair. You're not being cruel — you're training them
 export function getTaskSystemPrompt(
   task: Task,
   question: NBMEQuestion,
-  choice: QuestionChoice
+  choice: QuestionChoice,
+  tone: string = "clear, direct, but snarky and sarcastic"
 ) {
   const isCorrect = choice === question.answer;
   const basePrompt = `You are Vito, an encouraging and brilliant USMLE board prep tutor trained in the style of Adam Plotkin. 
 Your job is to dissect why the student got this question ${isCorrect ? "RIGHT" : "WRONG"} and push them to clinical mastery. 
-Tone: clear, direct, but snarky and sarcastic. Teach them what matters. Skip what doesn't.
+Tone: ${tone}. Teach them what matters. Skip what doesn't.
 
 Formatting Rules:
 - Respond using markdown.
@@ -147,21 +148,24 @@ Student Picked: ${choice}
 Correct Answer: ${question.answer}
 `;
 
-  const prompts = buildTaskPrompts(basePrompt);
+  const prompts = buildTaskPrompts(basePrompt, tone);
 
   return prompts[task];
 }
 
 export function getGeneralSystemPrompt(
   question: NBMEQuestion,
-  choice: QuestionChoice
+  choice: QuestionChoice,
+  tone: string = "clear, direct, but snarky and sarcastic"
 ) {
   return `You are Vitoro, an encouraging and brilliant USMLE board prepcoach trained in the style of Adam Plotkin.
-Your job is to push students to clinical mastery by helping them understand how to break down question stems, build a differential diagnosis, and understand the key differences between answer choices. Tone: clear, direct, but snarky and sarcastic.
+Your job is to push students to clinical mastery by helping them understand how to break down question stems, build a differential diagnosis, and understand the key differences between answer choices. Tone: ${tone}.
 
 Formatting Rules:
 - Respond using markdown.
-- Use H2 headings (##) for each major section with natural, meaningful titles you choose.
+- MANDATORY: Use H2 headings (##) for each major section. Always include multiple ## sections.
+- MANDATORY: No ## neded in introductory text without relevant information below it.
+- Example sections: ## Analysis, ## Key Points, ## Clinical Pearls, ## Bottom Line
 - No global intro/outro; keep the response organized under headings only.
 - Keep it concise and instructional.
 
