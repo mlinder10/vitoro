@@ -2,12 +2,38 @@
 
 import { cn } from "@/lib/utils";
 import { NBMEQuestion, QuestionChoice, Task } from "@/types";
-import { ArrowLeft, ArrowUp, Expand, Loader, Shrink } from "lucide-react";
-import { useEffect, useRef } from "react";
+import {
+  ArrowLeft,
+  ArrowUp,
+  Expand,
+  Eye,
+  Loader,
+  Menu,
+  Settings,
+  Shrink,
+  Sparkles,
+} from "lucide-react";
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
-import MessagesContainer from "./messages-container";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import MessagesContainer from "./messages/messages-container";
 import useChatHistory from "@/hooks/use-chat-history";
-import { getGeneralSystemPrompt, getTaskSystemPrompt } from "./prompts";
+import { getGeneralSystemPrompt, getTaskSystemPrompt } from "./actions/prompts";
+import ChatSettings from "./chat-settings";
+import { generateFlashcard } from "./actions/actions";
+import { toast } from "sonner";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+} from "@/components/ui/select";
 
 type ChatCardProps = {
   question: NBMEQuestion;
@@ -26,32 +52,59 @@ export default function ChatCard({
   onToggleExpand,
   onToggleFullScreen,
 }: ChatCardProps) {
-  const { messages, isLoading, chat, clearHistory } = useChatHistory();
+  const [tone, setTone] = useState<string>("Clear and concise");
+  const { messages, isLoading, chat, addMessage, clearHistory } =
+    useChatHistory();
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const endRef = useRef<HTMLDivElement>(null);
 
-  async function promptWithTask(task: Task) {
+  // --- AI Functions ---
+
+  async function handlePromptWithTask(task: Task) {
     if (!choice) return;
 
-    const basePrompt = getTaskSystemPrompt(task, question, choice);
-    await chat(undefined, basePrompt);
+    const basePrompt = getTaskSystemPrompt(task, question, choice, tone);
+    await chat(undefined, { basePrompt, useHistory: false });
   }
 
-  async function promptGeneral() {
+  async function handlePromptGeneral() {
     if (!choice || !inputRef.current) return;
     const inputValue = inputRef.current.value.trim();
     if (!inputValue) return;
     inputRef.current.value = "";
 
-    const basePrompt = getGeneralSystemPrompt(question, choice);
-    await chat(inputValue, basePrompt);
+    const basePrompt = getGeneralSystemPrompt(question, choice, tone);
+    await chat(inputValue, { basePrompt });
   }
+
+  async function handleGenerateFlashcard() {
+    const flashcard = await generateFlashcard(question);
+    console.log(flashcard);
+    toast.success("Flashcard created!", { richColors: true });
+  }
+
+  // --- Input Handlers ---
 
   function handleInput(e: React.KeyboardEvent) {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      promptGeneral();
+      handlePromptGeneral();
     }
+  }
+
+  function showPromptOptions() {
+    if (!choice) return;
+
+    // Directly add an assistant message that triggers the TaskPrompt display
+    const optionsMessage = {
+      id: crypto.randomUUID(),
+      role: "assistant" as const,
+      content:
+        "**Try a different approach:**\n\nChoose one of the options below to analyze this question from a different angle.",
+      type: "text" as const,
+    };
+
+    addMessage(optionsMessage);
   }
 
   useEffect(() => {
@@ -73,48 +126,150 @@ export default function ChatCard({
       <MessagesContainer
         messages={messages}
         endRef={endRef}
-        handlePromptWithTask={promptWithTask}
+        handlePromptWithTask={handlePromptWithTask}
         isLoading={isLoading}
       />
-      <div className="mx-4 mb-2 border-2 rounded-md">
-        <textarea
-          placeholder="Ask a question..."
-          disabled={isLoading}
-          className="p-2 border-none outline-none w-full font-sans resize-none"
-          ref={inputRef}
-          onKeyDown={(e) => handleInput(e)}
-        />
-        <div className="flex justify-end p-2">
-          <Button
-            variant="accent"
-            size="icon"
-            className="rounded-full"
-            onClick={() => promptGeneral()}
-            disabled={isLoading}
-          >
-            {isLoading ? <Loader className="animate-spin" /> : <ArrowUp />}
-          </Button>
-        </div>
-      </div>
-      {onToggleExpand && (
-        <button
-          className="top-4 left-4 absolute flex justify-center items-center backdrop-blur-md border rounded-full w-[32px] aspect-square cursor-pointer"
-          onClick={onToggleExpand}
-        >
-          <ArrowLeft
-            size={16}
-            className={cn("transition-all", expanded && "rotate-180")}
-          />
-        </button>
-      )}
-      {onToggleFullScreen && (
-        <button
-          className="top-4 right-4 absolute flex justify-center items-center backdrop-blur-md border rounded-full w-[32px] aspect-square cursor-pointer"
-          onClick={onToggleFullScreen}
-        >
-          {fullScreen ? <Shrink size={16} /> : <Expand size={16} />}
-        </button>
-      )}
+      <ChatInput
+        isLoading={isLoading}
+        inputRef={inputRef}
+        handleInput={handleInput}
+        handlePromptGeneral={handlePromptGeneral}
+      />
+
+      {/* Absolutely positioned */}
+      <NavButtons
+        expanded={expanded}
+        fullScreen={fullScreen}
+        tone={tone}
+        onToggleExpand={onToggleExpand}
+        onToggleFullScreen={onToggleFullScreen}
+        onShowPromptOptions={showPromptOptions}
+        onGenerateFlashcard={handleGenerateFlashcard}
+        setTone={setTone}
+      />
     </section>
+  );
+}
+
+// --- Nav Buttons ---
+
+type NavButtonsProps = {
+  expanded: boolean;
+  fullScreen: boolean;
+  tone: string;
+  onToggleExpand?: () => void;
+  onToggleFullScreen?: () => void;
+  onShowPromptOptions: () => void;
+  onGenerateFlashcard: () => void;
+  setTone: Dispatch<SetStateAction<string>>;
+};
+
+function NavButtons({
+  expanded,
+  fullScreen,
+  tone,
+  onToggleExpand,
+  onToggleFullScreen,
+  onShowPromptOptions,
+  onGenerateFlashcard,
+  setTone,
+}: NavButtonsProps) {
+  return (
+    <>
+      {/* Resize Buttons */}
+      <div className="top-4 left-4 absolute flex gap-2">
+        {onToggleExpand && (
+          <button
+            className="flex justify-center items-center backdrop-blur-md border rounded-full w-[32px] aspect-square cursor-pointer"
+            onClick={onToggleExpand}
+          >
+            <ArrowLeft
+              size={16}
+              className={cn("transition-all", expanded && "rotate-180")}
+            />
+          </button>
+        )}
+        {onToggleFullScreen && (
+          <button
+            className="flex justify-center items-center backdrop-blur-md border rounded-full w-[32px] aspect-square cursor-pointer"
+            onClick={onToggleFullScreen}
+          >
+            {fullScreen ? <Shrink size={16} /> : <Expand size={16} />}
+          </button>
+        )}
+      </div>
+
+      {/* Settins Buttons */}
+      <div className="top-4 right-4 absolute flex gap-2">
+        <Dialog>
+          <DialogTrigger asChild>
+            <button className="flex justify-center items-center backdrop-blur-md border rounded-full w-[32px] aspect-square cursor-pointer">
+              <Settings size={16} />
+            </button>
+          </DialogTrigger>
+          <DialogContent className="min-w-fit">
+            <DialogHeader>
+              <DialogTitle>Chat Settings</DialogTitle>
+            </DialogHeader>
+            <ChatSettings tone={tone} setTone={setTone} />
+          </DialogContent>
+        </Dialog>
+
+        <Select value="none">
+          <SelectTrigger className="backdrop-blur-md border rounded-2xl">
+            <Menu size={16} className="text-foreground" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="1" onMouseDown={onShowPromptOptions}>
+              <Eye size={16} />
+              <span>Show Prompt Options</span>
+            </SelectItem>
+            <SelectItem value="2" onMouseDown={onGenerateFlashcard}>
+              <Sparkles size={16} />
+              <span>Generate Flashcard</span>
+            </SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+    </>
+  );
+}
+
+// --- Chat Input ---
+
+type ChatInputProps = {
+  isLoading: boolean;
+  inputRef: React.RefObject<HTMLTextAreaElement | null>;
+  handleInput: (e: React.KeyboardEvent) => void;
+  handlePromptGeneral: () => void;
+};
+
+function ChatInput({
+  isLoading,
+  inputRef,
+  handleInput,
+  handlePromptGeneral,
+}: ChatInputProps) {
+  return (
+    <div className="mx-4 mb-2 border-2 rounded-md">
+      <textarea
+        placeholder="Ask a question..."
+        disabled={isLoading}
+        className="p-2 border-none outline-none w-full font-sans resize-none"
+        ref={inputRef}
+        onKeyDown={(e) => handleInput(e)}
+      />
+      <div className="flex justify-end items-center p-2">
+        <Button
+          variant="accent"
+          size="icon"
+          className="rounded-full"
+          onClick={handlePromptGeneral}
+          disabled={isLoading}
+        >
+          {isLoading ? <Loader className="animate-spin" /> : <ArrowUp />}
+        </Button>
+      </div>
+    </div>
   );
 }

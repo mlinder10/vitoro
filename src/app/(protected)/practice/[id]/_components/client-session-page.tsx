@@ -45,10 +45,10 @@ function ClientSessionPage({ session, questions }: ClientSessionPageProps) {
     if (!showChat) setChatExpanded(false);
   }, [showChat]);
 
-function handleChatExpand() {
-  setChatFullScreen(false);
-  setChatExpanded((prev) => !prev);
-}
+  function handleChatExpand() {
+    setChatFullScreen(false);
+    setChatExpanded((prev) => !prev);
+  }
 
   function handleChatFullScreen() {
     if (chatFullScreen) {

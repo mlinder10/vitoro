@@ -19,6 +19,11 @@ type Config = {
   chatStreamFnc?: (prompts: Prompt[]) => AsyncGenerator<LLMOutput>;
 };
 
+type ChatConfig = {
+  basePrompt?: string;
+  useHistory?: boolean;
+};
+
 type Summary = {
   topics: string[];
   userGoals: string[];
@@ -28,7 +33,7 @@ type Summary = {
 };
 
 export default function useChatHistory({
-  basePrompt,
+  basePrompt: base,
   shortTermMessagesLength = SHORT_TERM_MESSAGES_LENGTH,
   summaryMaxTokenCount = SUMMARY_MAX_TOKEN_COUNT,
   maxMessageWordCount = MAX_MESSAGE_WORD_COUNT,
@@ -45,17 +50,17 @@ export default function useChatHistory({
 
   async function chat(
     message: string | undefined,
-    base: string | undefined = basePrompt
+    { basePrompt = base, useHistory = true }: ChatConfig = {}
   ) {
     if (isLoadingRef.current) throw new Error("Already generating response");
 
     const { prompts, newMessages } = buildPrompts(
-      messages,
-      summary,
-      summarizedOn,
+      useHistory ? messages : [],
+      useHistory ? summary : null,
+      useHistory ? summarizedOn : 0,
       maxMessageWordCount,
       message,
-      base
+      basePrompt
     );
     setMessages(newMessages);
 
@@ -93,17 +98,17 @@ export default function useChatHistory({
 
   async function chatStreamed(
     message: string | undefined,
-    base: string | undefined = basePrompt
+    { basePrompt = base, useHistory = true }: ChatConfig = {}
   ) {
     if (isLoadingRef.current) throw new Error("Already generating response");
 
     const { prompts, newMessages } = buildPrompts(
-      messages,
-      summary,
-      summarizedOn,
+      useHistory ? messages : [],
+      useHistory ? summary : null,
+      useHistory ? summarizedOn : 0,
       maxMessageWordCount,
       message,
-      base
+      basePrompt
     );
     setMessages(newMessages);
 
@@ -223,6 +228,14 @@ ${msgs
     }
   }
 
+  // --- Utilities ---
+
+  function addMessage(message: Message) {
+    const newMessages = [...messages, message];
+    setMessages(newMessages);
+    maybeSummarize(newMessages);
+  }
+
   function clearHistory() {
     setMessages([]);
     setSummary(null);
@@ -235,6 +248,7 @@ ${msgs
     summary,
     chat,
     chatStreamed,
+    addMessage,
     clearHistory,
   };
 }
@@ -309,7 +323,6 @@ export async function* chatStreamWrapperWithFetch(prompts: Prompt[]) {
     method: "POST",
     body: JSON.stringify({ prompts }),
   });
-  console.log(res);
   const stream = res.body?.getReader();
   if (!stream) return;
   const decoder = new TextDecoder();
