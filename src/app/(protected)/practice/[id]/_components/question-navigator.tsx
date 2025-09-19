@@ -18,11 +18,12 @@ export default function QuestionNavigator({
   mode,
 }: QuestionNavigatorProps) {
   return (
-    <nav className="flex flex-col bg-tertiary border-r w-[300px] h-full">
+    <nav className="flex flex-col bg-tertiary border-r w-[240px] h-full">
       <div className="p-4 border-b">
-        <h2 className="font-semibold text-lg">Question Navigator</h2>
+        <h2 className="font-semibold">Question Navigator</h2>
         <p className="text-muted-foreground text-sm">
-          {answers.filter((a) => a !== null).length} of {questions.length} answered
+          {answers.filter((a) => a !== null).length} of {questions.length}{" "}
+          answered
         </p>
       </div>
       <div className="flex-1 space-y-2 p-4 overflow-y-auto">
@@ -39,7 +40,7 @@ export default function QuestionNavigator({
                 "p-3 border rounded-md transition-all cursor-pointer",
                 isActive
                   ? "bg-custom-accent/20 border-custom-accent"
-                  : "bg-secondary hover:bg-secondary/80 border-border",
+                  : "bg-secondary hover:bg-secondary/80 border-border"
               )}
               onClick={() => onSelect(question, index)}
             >
@@ -52,7 +53,7 @@ export default function QuestionNavigator({
                         "flex justify-center items-center rounded-full w-5 h-5 text-xs",
                         isCorrect
                           ? "bg-green-500 text-white"
-                          : "bg-red-500 text-white",
+                          : "bg-red-500 text-white"
                       )}
                     >
                       {isCorrect ? <Check size={12} /> : <X size={12} />}
@@ -72,4 +73,3 @@ export default function QuestionNavigator({
     </nav>
   );
 }
-

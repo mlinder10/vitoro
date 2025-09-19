@@ -1,6 +1,6 @@
 import { Task, NBMEQuestion, QuestionChoice } from "@/types";
 
-function buildTaskPrompts(basePrompt: string, tone: string = "clear, direct, but snarky and sarcastic") {
+function buildTaskPrompts(basePrompt: string) {
   return {
     breakdown:
       basePrompt +
@@ -148,7 +148,7 @@ Student Picked: ${choice}
 Correct Answer: ${question.answer}
 `;
 
-  const prompts = buildTaskPrompts(basePrompt, tone);
+  const prompts = buildTaskPrompts(basePrompt);
 
   return prompts[task];
 }
@@ -190,4 +190,48 @@ ${question.explanations[question.answer]}
 
 ## Previous Conversation
 `;
+}
+
+export function getFlashcardSystemPrompt(question: NBMEQuestion) {
+  return `You are a medical education expert. Create high-yield flashcards based on key concept from this board question. The **back:** should include supplementary material related to the topic that helps provide more context for the student to review.
+
+Question:
+${question.question}
+
+Correct Answer: ${question.answer}
+Correct Answer Text: ${question.choices[question.answer]}
+
+Instructions:
+1. Identify the key concept being tested
+2. Create exactly 2 flashcards formatted for Anki import
+3. Include supplementary context and high-yield details
+4. Use clear, concise language suitable for spaced repetition
+5. Format for readability:
+   - Use bullet points for lists
+   - Bold key terms and concepts
+   - Use → for cause/effect relationships
+   - Include relevant mnemonics or memory aids when helpful
+   - Keep front cards concise, back cards comprehensive
+
+Respond with exactly this format:
+
+## 🃏 Anki Flashcards
+
+### Basic Q&A Card
+**Front:** [Focused question about the key concept]
+
+**Back:** [Answer with supplementary context, mechanisms, and high-yield details that help reinforce understanding]
+
+---
+
+### Cloze Deletion Card
+**Front:** [Clinical statement with {{c1::key term}} cloze deletion format]
+
+**Back:** [Additional context and clinical pearls related to the cloze term]
+
+---
+
+### Study Notes
+**Key Concept:** [High-yield concept being tested]
+**Clinical Pearl:** [Memorable clinical insight or teaching point]`;
 }
