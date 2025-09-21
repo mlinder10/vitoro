@@ -47,7 +47,10 @@ export function TaskTooltip() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <button className="text-muted-foreground hover:text-foreground transition-colors">
+        <button
+          className="text-muted-foreground hover:text-foreground transition-colors"
+          aria-label="View prompt options"
+        >
           <HelpCircle size={16} />
         </button>
       </DialogTrigger>

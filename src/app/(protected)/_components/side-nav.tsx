@@ -61,7 +61,11 @@ export default function SideNav() {
               <h1 className="font-bold text-lg">Vitoro</h1>
             </Link>
           )}
-          <Button variant="ghost" onClick={() => setIsOpen((prev) => !prev)}>
+          <Button
+            variant="ghost"
+            onClick={() => setIsOpen((prev) => !prev)}
+            aria-label="Toggle sidebar"
+          >
             {isOpen ? <ChevronLeft /> : <Menu />}
           </Button>
         </div>

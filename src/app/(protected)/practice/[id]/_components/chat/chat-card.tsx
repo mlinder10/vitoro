@@ -182,6 +182,7 @@ function NavButtons({
           <button
             className="flex justify-center items-center backdrop-blur-md border rounded-full w-[32px] aspect-square cursor-pointer"
             onClick={onToggleExpand}
+            aria-label="Toggle chat size"
           >
             <ArrowLeft
               size={16}
@@ -193,6 +194,7 @@ function NavButtons({
           <button
             className="flex justify-center items-center backdrop-blur-md border rounded-full w-[32px] aspect-square cursor-pointer"
             onClick={onToggleFullScreen}
+            aria-label="Toggle chat fullscreen"
           >
             {fullScreen ? <Shrink size={16} /> : <Expand size={16} />}
           </button>
@@ -203,7 +205,10 @@ function NavButtons({
       <div className="top-4 right-4 absolute flex gap-2">
         <Dialog>
           <DialogTrigger asChild>
-            <button className="flex justify-center items-center backdrop-blur-md border rounded-full w-[32px] aspect-square cursor-pointer">
+            <button
+              className="flex justify-center items-center backdrop-blur-md border rounded-full w-[32px] aspect-square cursor-pointer"
+              aria-label="Open chat settings"
+            >
               <Settings size={16} />
             </button>
           </DialogTrigger>
@@ -216,7 +221,10 @@ function NavButtons({
         </Dialog>
 
         <Select value="none">
-          <SelectTrigger className="backdrop-blur-md border rounded-2xl">
+          <SelectTrigger
+            className="backdrop-blur-md border rounded-2xl"
+            aria-label="Open chat options"
+          >
             <Menu size={16} className="text-foreground" />
           </SelectTrigger>
           <SelectContent>
@@ -266,6 +274,7 @@ function ChatInput({
           className="rounded-full"
           onClick={handlePromptGeneral}
           disabled={isLoading}
+          aria-label="Send prompt"
         >
           {isLoading ? <Loader className="animate-spin" /> : <ArrowUp />}
         </Button>

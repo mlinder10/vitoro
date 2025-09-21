@@ -211,7 +211,11 @@ function Header({
 }: HeaderProps) {
   return (
     <header className="flex items-center p-6 border-b">
-      <Button variant="outline" onClick={onToggleSidebar}>
+      <Button
+        variant="outline"
+        onClick={onToggleSidebar}
+        aria-label="Toggle question navigator"
+      >
         <Menu />
       </Button>
       <p className="flex-1 font-semibold text-custom-accent text-lg text-center">
