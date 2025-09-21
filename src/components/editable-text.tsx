@@ -38,6 +38,7 @@ export default function EditableText({ value, onChange }: EditableTextProps) {
           value={inputValue}
           onChange={handleInputChange}
           onBlur={handleSave}
+          // eslint-disable-next-line jsx-a11y/no-autofocus
           autoFocus
         />
       ) : (

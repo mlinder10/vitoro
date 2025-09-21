@@ -85,6 +85,7 @@ function FeaturesSection() {
               aspectRatio: "16/9",
             }}
           >
+            <track kind="captions" />
             <source src="/Demo_Clip.mp4" type="video/mp4" />
             Your browser does not support the video tag.
           </video>

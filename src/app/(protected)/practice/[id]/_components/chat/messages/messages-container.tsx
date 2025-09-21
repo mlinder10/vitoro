@@ -83,7 +83,8 @@ export default function MessagesContainer({
         </div>
       ))}
       {isLoading && (
-        <MessageComponent content="" role={"assistant"} isTyping={true} />
+        // eslint-disable-next-line jsx-a11y/aria-role
+        <MessageComponent content="" role="assistant" isTyping={true} />
       )}
       <div ref={endRef} />
     </div>
