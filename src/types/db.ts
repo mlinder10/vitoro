@@ -14,6 +14,8 @@ import {
   reviewQuestions,
   users,
   prompts,
+  flashcardFolders,
+  flashcards,
 } from "@/db";
 import { InferSelectModel } from "drizzle-orm";
 
@@ -73,3 +75,9 @@ export type AnsweredFoundational =
 // Analytics
 
 export type Prompt = InferSelectModel<typeof prompts>;
+
+// Flashcards
+
+export type FlashcardFolder = InferSelectModel<typeof flashcardFolders>;
+
+export type Flashcard = InferSelectModel<typeof flashcards>;

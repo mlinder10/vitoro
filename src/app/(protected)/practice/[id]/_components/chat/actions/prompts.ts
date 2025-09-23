@@ -215,23 +215,14 @@ Instructions:
 
 Respond with exactly this format:
 
-## 🃏 Anki Flashcards
-
-### Basic Q&A Card
-**Front:** [Focused question about the key concept]
-
-**Back:** [Answer with supplementary context, mechanisms, and high-yield details that help reinforce understanding]
-
----
-
-### Cloze Deletion Card
-**Front:** [Clinical statement with {{c1::key term}} cloze deletion format]
-
-**Back:** [Additional context and clinical pearls related to the cloze term]
-
----
-
-### Study Notes
-**Key Concept:** [High-yield concept being tested]
-**Clinical Pearl:** [Memorable clinical insight or teaching point]`;
+{
+  "basic": {
+    "front": "[Focused question about the key concept]",
+    "back": "[Answer with supplementary context, mechanisms, and high-yield details that help reinforce understanding]"
+  },
+  "cloze": {
+    "front": "[Clinical statement with {{c1::key term}} cloze deletion format]",
+    "back": "[Additional context and clinical pearls related to the cloze term]"
+  }
+}`;
 }

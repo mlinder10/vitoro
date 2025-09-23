@@ -396,3 +396,20 @@ export const prompts = sqliteTable("prompts", {
   inputTokens: integer("input_tokens").notNull(),
   outputTokens: integer("output_tokens").notNull(),
 });
+
+export const flashcardFolders = sqliteTable("flashcard_folder", {
+  id: text("id").primaryKey().default(SQL_UUID).notNull(),
+  userId: text("user_id")
+    .references(() => users.id, { onDelete: "cascade" })
+    .notNull(),
+  name: text("name").notNull(),
+});
+
+export const flashcards = sqliteTable("flashcards", {
+  id: text("id").primaryKey().default(SQL_UUID).notNull(),
+  folderId: text("folder_id")
+    .references(() => flashcardFolders.id, { onDelete: "cascade" })
+    .notNull(),
+  front: text("front").notNull(),
+  back: text("back").notNull(),
+});

@@ -54,6 +54,11 @@ export type AIResponse = {
   hasExpandableSections: boolean;
 };
 
+export type GeneratedFlashcard = {
+  front: string;
+  back: string;
+};
+
 // Review
 
 export type GeneratedReviewQuestion = {

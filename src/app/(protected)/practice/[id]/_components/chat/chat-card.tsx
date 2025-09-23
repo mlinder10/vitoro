@@ -1,7 +1,13 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { NBMEQuestion, QuestionChoice, Task } from "@/types";
+import {
+  FlashcardFolder,
+  GeneratedFlashcard,
+  NBMEQuestion,
+  QuestionChoice,
+  Task,
+} from "@/types";
 import {
   ArrowLeft,
   ArrowUp,
@@ -18,6 +24,7 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -26,14 +33,19 @@ import MessagesContainer from "./messages/messages-container";
 import useChatHistory from "@/hooks/use-chat-history";
 import { getGeneralSystemPrompt, getTaskSystemPrompt } from "./actions/prompts";
 import ChatSettings from "./chat-settings";
-import { generateFlashcard } from "./actions/actions";
-import { toast } from "sonner";
+import {
+  createFlashcard,
+  createFolder,
+  fetchFolders,
+  generateFlashcard,
+} from "./actions/actions";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
 } from "@/components/ui/select";
+import { useSession } from "@/contexts/session-provider";
 
 type ChatCardProps = {
   question: NBMEQuestion;
@@ -52,6 +64,7 @@ export default function ChatCard({
   onToggleExpand,
   onToggleFullScreen,
 }: ChatCardProps) {
+  const [cards, setCards] = useState<GeneratedFlashcard[]>([]);
   const [tone, setTone] = useState<string>("Clear and concise");
   const { messages, isLoading, chat, addMessage, clearHistory } =
     useChatHistory();
@@ -78,9 +91,8 @@ export default function ChatCard({
   }
 
   async function handleGenerateFlashcard() {
-    const flashcard = await generateFlashcard(question);
-    console.log(flashcard);
-    toast.success("Flashcard created!", { richColors: true });
+    const cards = await generateFlashcard(question);
+    setCards([cards.basic, cards.cloze]);
   }
 
   // --- Input Handlers ---
@@ -147,6 +159,9 @@ export default function ChatCard({
         onGenerateFlashcard={handleGenerateFlashcard}
         setTone={setTone}
       />
+
+      {/* Dialog */}
+      <FlashcardForm open={cards.length > 0} flashcards={cards} />
     </section>
   );
 }
@@ -271,5 +286,63 @@ function ChatInput({
         </Button>
       </div>
     </div>
+  );
+}
+
+// --- Flashcard Saving ---
+
+type FlashcardFormProps = {
+  open: boolean;
+  flashcards: GeneratedFlashcard[];
+};
+
+function FlashcardForm({ open, flashcards }: FlashcardFormProps) {
+  const { id } = useSession();
+  const [folders, setFolders] = useState<FlashcardFolder[]>([]);
+  const [target, setTarget] = useState<FlashcardFolder | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    fetchFolders(id).then(setFolders);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  async function handleCreateFolder() {
+    if (!inputRef.current) return;
+    const name = inputRef.current.value;
+    if (folders.some((f) => f.name === name)) return;
+    await createFolder(name, id);
+  }
+
+  async function handleCreateFlashcard() {
+    if (!target) return;
+    await createFlashcard(target.id, flashcards);
+  }
+
+  return (
+    <Dialog open={open}>
+      <DialogContent className="min-w-full min-h-full">
+        <DialogHeader>
+          <DialogTitle>Save Flashcard</DialogTitle>
+          <DialogDescription>
+            Choose a folder to save your flashcard to
+          </DialogDescription>
+        </DialogHeader>
+        <div className="grid grid-cols-2">
+          <div className="h-full overflow-y-auto">
+            {folders.map((f) => (
+              <div
+                key={f.id}
+                className="cursor-pointer"
+                onClick={() => setTarget(f)}
+              >
+                {f.name}
+              </div>
+            ))}
+          </div>
+          <div>{/* TODO: flashcard preview + save buttons */}</div>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }
