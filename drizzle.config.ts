@@ -1,6 +1,6 @@
-// import { config } from "dotenv";
-// config();
-// import type { Config } from "drizzle-kit";
+import { config } from "dotenv";
+config();
+import type { Config } from "drizzle-kit";
 
 // export default {
 //   schema: ["src/db/schemas.ts"],
@@ -11,10 +11,6 @@
 //     authToken: process.env.DATABASE_AUTH_TOKEN,
 //   },
 // } satisfies Config;
-
-import { config } from "dotenv";
-config();
-import type { Config } from "drizzle-kit";
 
 export default {
   schema: ["src/db/schemas.ts"],
