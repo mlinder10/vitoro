@@ -14,24 +14,16 @@ import { cn } from "@/lib/utils";
 import { ArrowUp, Settings } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
-// import QuestionUpload, {
-//   DEFAULT_MULTIPLE_CHOICE,
-//   MultipleChoiceQuestion,
-// } from "./question-upload";
 import TutorSettings from "./tutor-settings";
-// import useDeepState from "@/hooks/use-deep-state";
 
 const BASE_PROMPT = (tone: string) =>
   `Respond with the following tone: ${tone}`;
 
 export default function TutorPage() {
-  const [tone, setTone] = useState<string>("Political Correctness Jew");
+  const [tone, setTone] = useState<string>("Clear and concise");
   const { messages, isLoading, chatStreamed } = useChatHistory({
     basePrompt: BASE_PROMPT(tone),
   });
-  // const [question, updateQuestion] = useDeepState<MultipleChoiceQuestion>(
-  //   DEFAULT_MULTIPLE_CHOICE
-  // );
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const endRef = useRef<HTMLDivElement>(null);
 
@@ -53,20 +45,6 @@ export default function TutorPage() {
       <div className="flex justify-between items-center bg-tertiary px-4 py-2 border-b w-full">
         <GradientTitle text="Tutor" className="font-bold text-lg" />
         <div className="flex gap-2">
-          {/* <Dialog>
-            <DialogTrigger asChild>
-              <Button size="sm" variant="accent-light">
-                Upload Question
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="flex flex-col min-w-[80vw] h-[80vh]">
-              <DialogHeader>
-                <DialogTitle>Question Upload</DialogTitle>
-              </DialogHeader>
-              <QuestionUpload question={question} onUpdate={updateQuestion} />
-            </DialogContent>
-          </Dialog> */}
-
           <Dialog>
             <DialogTrigger asChild>
               <Button size="sm" variant="outline">

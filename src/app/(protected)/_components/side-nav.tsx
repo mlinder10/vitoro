@@ -13,7 +13,7 @@ import {
   ShieldUserIcon,
   Target,
   CreditCard,
-  // Computer,
+  Computer,
 } from "lucide-react";
 import Link from "next/link";
 import { ComponentType, useEffect, useState } from "react";
@@ -91,17 +91,17 @@ export default function SideNav() {
             isOpen={isOpen}
           />
           <ListLink
+            href="/tutor"
+            icon={Computer}
+            label="Tutor"
+            isOpen={isOpen}
+          />
+          <ListLink
             href="/history"
             icon={History}
             label="History"
             isOpen={isOpen}
           />
-          {/* <ListLink
-            href="/tutor"
-            icon={Computer}
-            label="Tutor"
-            isOpen={isOpen}
-          /> */}
           {session.isAdmin && (
             <ListLink
               href="/admin"
