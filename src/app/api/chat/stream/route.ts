@@ -29,7 +29,6 @@ export async function POST(req: Request) {
         while (true) {
           const { done, value } = await stream.next();
           if (done) break;
-          console.log(value);
           controller.enqueue(encoder.encode(JSON.stringify(value)));
         }
         controller.close();

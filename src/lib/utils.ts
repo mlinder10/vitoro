@@ -170,9 +170,11 @@ export function generateRandomName() {
 
 export function stripAndParse<T>(output: string): T | null {
   if (typeof output !== "string") return null;
-  const stripped = output.replace("```json", "").replace("```", "").trim();
+  output = output.trim();
+  if (output.startsWith("```json")) output = output.substring(7);
+  if (output.endsWith("```")) output = output.substring(0, output.length - 3);
   try {
-    const parsed = JSON.parse(stripped);
+    const parsed = JSON.parse(output);
     return parsed as T;
   } catch (err) {
     console.error(err);

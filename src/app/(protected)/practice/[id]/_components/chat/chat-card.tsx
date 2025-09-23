@@ -46,6 +46,8 @@ import {
   SelectTrigger,
 } from "@/components/ui/select";
 import { useSession } from "@/contexts/session-provider";
+import { toast } from "sonner";
+import ReactMarkdown from "react-markdown";
 
 type ChatCardProps = {
   question: NBMEQuestion;
@@ -56,6 +58,7 @@ type ChatCardProps = {
   onToggleFullScreen?: () => void;
 };
 
+// TODO: add loading indicator on flashcard generation
 export default function ChatCard({
   question,
   choice,
@@ -161,7 +164,11 @@ export default function ChatCard({
       />
 
       {/* Dialog */}
-      <FlashcardForm open={cards.length > 0} flashcards={cards} />
+      <FlashcardForm
+        open={cards.length > 0}
+        setOpen={(open) => !open && setCards([])}
+        flashcards={cards}
+      />
     </section>
   );
 }
@@ -302,54 +309,130 @@ function ChatInput({
 
 type FlashcardFormProps = {
   open: boolean;
+  setOpen: (open: boolean) => void;
   flashcards: GeneratedFlashcard[];
 };
 
-function FlashcardForm({ open, flashcards }: FlashcardFormProps) {
+function FlashcardForm({ open, setOpen, flashcards }: FlashcardFormProps) {
   const { id } = useSession();
   const [folders, setFolders] = useState<FlashcardFolder[]>([]);
   const [target, setTarget] = useState<FlashcardFolder | null>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const [newFolderName, setNewFolderName] = useState("");
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    if (!id) return;
     fetchFolders(id).then(setFolders);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [id]);
 
   async function handleCreateFolder() {
-    if (!inputRef.current) return;
-    const name = inputRef.current.value;
-    if (folders.some((f) => f.name === name)) return;
-    await createFolder(name, id);
+    if (!newFolderName.trim()) return;
+    if (folders.some((f) => f.name === newFolderName.trim())) return;
+
+    setLoading(true);
+    const folder = await createFolder(newFolderName.trim(), id);
+    setFolders((prev) => [...prev, folder]);
+    setTarget(folder);
+    setNewFolderName("");
+    setLoading(false);
   }
 
   async function handleCreateFlashcard() {
     if (!target) return;
+    setLoading(true);
     await createFlashcard(target.id, flashcards);
+    setLoading(false);
+    setOpen(false);
+    toast.success(
+      `Successfully saved ${flashcards.length} flashcards to ${target.name}`,
+      { richColors: true }
+    );
   }
 
   return (
-    <Dialog open={open}>
-      <DialogContent className="min-w-full min-h-full">
+    <Dialog open={open} onOpenChange={(open) => setOpen(open)}>
+      <DialogContent className="flex flex-col min-w-full min-h-full">
         <DialogHeader>
-          <DialogTitle>Save Flashcard</DialogTitle>
+          <DialogTitle>Save Flashcards</DialogTitle>
           <DialogDescription>
-            Choose a folder to save your flashcard to
+            Choose or create a folder to save your flashcards
           </DialogDescription>
         </DialogHeader>
-        <div className="grid grid-cols-2">
-          <div className="h-full overflow-y-auto">
-            {folders.map((f) => (
-              <div
-                key={f.id}
-                className="cursor-pointer"
-                onClick={() => setTarget(f)}
-              >
-                {f.name}
-              </div>
-            ))}
+
+        <div className="flex flex-1 gap-6 overflow-hidden">
+          <div className="flex flex-col pr-4 border-r w-1/3">
+            <div className="flex gap-2 mb-4">
+              <input
+                value={newFolderName}
+                onChange={(e) => setNewFolderName(e.target.value)}
+                placeholder="New folder name"
+                className="flex-1 px-2 py-1 border rounded-md text-sm"
+              />
+              <Button onClick={handleCreateFolder} disabled={loading}>
+                Create
+              </Button>
+            </div>
+
+            <div className="flex-1 space-y-2 overflow-y-auto">
+              {folders.map((f) => (
+                <div
+                  key={f.id}
+                  onClick={() => setTarget(f)}
+                  className={cn(
+                    "flex items-center gap-2 px-3 py-2 border rounded-md cursor-pointer",
+                    target?.id === f.id
+                      ? "border-custom-accent bg-secondary"
+                      : "hover:bg-muted"
+                  )}
+                >
+                  <span
+                    className={cn(
+                      "font-black text-muted-foreground",
+                      target?.id === f.id && "text-custom-accent"
+                    )}
+                  >
+                    •
+                  </span>
+                  <span
+                    className={cn(
+                      target?.id === f.id
+                        ? "text-custom-accent"
+                        : "text-muted-foreground"
+                    )}
+                  >
+                    {f.name}
+                  </span>
+                </div>
+              ))}
+              {folders.length === 0 && (
+                <p className="text-muted-foreground text-sm italic">
+                  No folders yet
+                </p>
+              )}
+            </div>
           </div>
-          <div>{/* TODO: flashcard preview + save buttons */}</div>
+
+          <div className="flex flex-col flex-1">
+            <h3 className="mb-2 font-semibold text-sm">Preview</h3>
+            <div className="flex-1 space-y-3 p-3 border rounded-md overflow-y-auto">
+              {flashcards.map((c, i) => (
+                <div key={i} className="flex flex-col p-2 border rounded-md">
+                  <ReactMarkdown>{c.front}</ReactMarkdown>
+                  <div className="my-4 bg-border w-full h-px" />
+                  <ReactMarkdown>{c.back}</ReactMarkdown>
+                </div>
+              ))}
+            </div>
+            <div className="flex justify-end gap-2 mt-4">
+              <Button
+                variant="accent"
+                onClick={handleCreateFlashcard}
+                disabled={!target || loading}
+              >
+                Save to {target?.name ?? "Folder"}
+              </Button>
+            </div>
+          </div>
         </div>
       </DialogContent>
     </Dialog>

@@ -12,6 +12,7 @@ import {
   Layers,
   ShieldUserIcon,
   Target,
+  CreditCard,
   // Computer,
 } from "lucide-react";
 import Link from "next/link";
@@ -81,6 +82,12 @@ export default function SideNav() {
             href="/foundational"
             icon={Layers}
             label="Foundational"
+            isOpen={isOpen}
+          />
+          <ListLink
+            href="/flashcards"
+            icon={CreditCard}
+            label="Flashcards"
             isOpen={isOpen}
           />
           <ListLink

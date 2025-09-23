@@ -18,52 +18,64 @@ export default function RegisterPage() {
           <div className="top-[110%] absolute bg-gradient-to-r from-custom-accent w-full h-[2px] to-custom-accent-secondary" />
         </div>
         <p className="text-muted-foreground">Welcome to Vitoro!</p>
-        <FormTextInput
-          label="Email"
-          name="email"
-          placeholder="yourname@email.com"
-          type="email"
-          error={error?.email}
-        />
-        <FormTextInput
-          label="First Name"
-          name="firstName"
-          placeholder="First Name"
-          error={error?.firstName}
-        />
-        <FormTextInput
-          label="Last Name"
-          name="lastName"
-          placeholder="Last Name"
-          error={error?.lastName}
-        />
-        <FormTextInput
-          label="Anticipated Graduation Year"
-          name="gradYear"
-          placeholder="2026"
-          error={error?.gradYear}
-        />
-        <FormSelect
-          label="Exam"
-          name="exam"
-          placeholder="Step 1"
-          options={["Step 1", "Step 2"]}
-          error={error?.exam}
-        />
-        <FormTextInput
-          label="Password"
-          name="password"
-          placeholder="••••••••"
-          type="password"
-          error={error?.password}
-        />
-        <FormTextInput
-          label="Confirm Password"
-          name="confirmPassword"
-          placeholder="••••••••"
-          type="password"
-          error={error?.confirmPassword}
-        />
+        <div className="gap-8 grid grid-cols-2 w-[480px]">
+          <div className="space-y-4">
+            <FormTextInput
+              label="Email"
+              name="email"
+              placeholder="yourname@email.com"
+              type="email"
+              error={error?.email}
+            />
+            <FormTextInput
+              label="First Name"
+              name="firstName"
+              placeholder="First Name"
+              error={error?.firstName}
+            />
+            <FormTextInput
+              label="Last Name"
+              name="lastName"
+              placeholder="Last Name"
+              error={error?.lastName}
+            />
+            <FormTextInput
+              label="Password"
+              name="password"
+              placeholder="••••••••"
+              type="password"
+              error={error?.password}
+            />
+            <FormTextInput
+              label="Confirm Password"
+              name="confirmPassword"
+              placeholder="••••••••"
+              type="password"
+              error={error?.confirmPassword}
+            />
+          </div>
+          <div className="space-y-4">
+            <FormTextInput
+              label="School"
+              name="school"
+              placeholder="UofSC"
+              error={error?.school}
+            />
+            <FormTextInput
+              label="Anticipated Graduation Year"
+              name="gradYear"
+              placeholder="2026"
+              error={error?.gradYear}
+            />
+            <FormSelect
+              label="Exam"
+              name="exam"
+              placeholder="Step 1"
+              options={["Step 1", "Step 2"]}
+              error={error?.exam}
+            />
+          </div>
+        </div>
 
         {/* Create container for optional information */}
         {/* <div>

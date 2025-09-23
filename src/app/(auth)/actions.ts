@@ -89,6 +89,7 @@ type RegisterResult = {
   firstName?: string[];
   lastName?: string[];
   gradYear?: string[];
+  school?: string[];
   exam?: string[];
   password?: string[];
   confirmPassword?: string[];

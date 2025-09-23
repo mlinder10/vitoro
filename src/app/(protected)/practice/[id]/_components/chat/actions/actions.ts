@@ -20,7 +20,8 @@ export async function generateFlashcard(question: NBMEQuestion) {
     { role: "user", content: flashcardPrompt, type: "text" },
   ]);
   const cards = stripAndParse<GeneratedFlashcards>(output.text);
-  if (!cards) throw new Error("No flashcards generated");
+  if (!cards)
+    throw new Error(`No flashcards generated, ${output.text}, ${cards}`);
   return cards;
 }
 
@@ -32,7 +33,11 @@ export async function fetchFolders(userId: string) {
 }
 
 export async function createFolder(name: string, userId: string) {
-  await db.insert(flashcardFolders).values({ name, userId });
+  const [folder] = await db
+    .insert(flashcardFolders)
+    .values({ name, userId })
+    .returning();
+  return folder;
 }
 
 export async function createFlashcard(
