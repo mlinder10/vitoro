@@ -1,17 +1,11 @@
-import { DialogHeader } from "@/components/ui/dialog";
-import { cn } from "@/lib/utils";
 import {
   Dialog,
-  DialogTrigger,
   DialogContent,
+  DialogHeader,
   DialogTitle,
-} from "@radix-ui/react-dialog";
-import {
-  Select,
-  SelectTrigger,
-  SelectContent,
-  SelectItem,
-} from "@radix-ui/react-select";
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { cn } from "@/lib/utils";
 import {
   ArrowLeft,
   Shrink,
@@ -23,6 +17,12 @@ import {
 } from "lucide-react";
 import { Dispatch, SetStateAction } from "react";
 import ChatSettings from "./chat-settings";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+} from "@/components/ui/select";
 
 type NavButtonsProps = {
   expanded: boolean;

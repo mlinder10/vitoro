@@ -2,13 +2,14 @@ import { NBMEStep, QUESTION_DIFFICULTIES, YIELD_TYPES } from "@/types";
 import { ReactNode, useEffect, useState } from "react";
 import { fetchStepOneData, fetchStepTwoData } from "../actions";
 import { cn } from "@/lib/utils";
-import { DialogHeader, DialogFooter } from "@/components/ui/dialog";
 import {
+  DialogHeader,
+  DialogFooter,
   DialogContent,
-  DialogTitle,
-  DialogDescription,
   DialogClose,
-} from "@radix-ui/react-dialog";
+  DialogDescription,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 
 type AdvancedSettingsDialogProps = {
