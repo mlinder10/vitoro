@@ -246,6 +246,7 @@ ${msgs
     messages,
     isLoading,
     summary,
+    setIsLoading,
     chat,
     chatStreamed,
     addMessage,

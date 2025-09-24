@@ -173,6 +173,7 @@ export function stripAndParse<T>(output: string): T | null {
   output = output.trim();
   if (output.startsWith("```json")) output = output.substring(7);
   if (output.endsWith("```")) output = output.substring(0, output.length - 3);
+  output = output.trim();
   try {
     const parsed = JSON.parse(output);
     return parsed as T;

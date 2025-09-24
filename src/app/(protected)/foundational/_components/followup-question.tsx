@@ -1,7 +1,7 @@
 import HighlightableText from "@/components/highlightable-text";
 import { FoundationalFollowup, QuestionChoice } from "@/types";
 import { useEffect, useState } from "react";
-import QuestionChoiceView from "../../practice/[id]/_components/question-choice";
+import QuestionChoiceView from "../../practice/[id]/_components/question/question-choice";
 import { Button } from "@/components/ui/button";
 
 type FollowUpQuestionViewProps = {
