@@ -212,6 +212,7 @@ Instructions:
    - Use → for cause/effect relationships
    - Include relevant mnemonics or memory aids when helpful
    - Keep front cards concise, back cards comprehensive
+   - Make sure to use UTF-8 and escape newline characters so that the output can be JSON.parsed
 
 Respond with exactly this format:
 

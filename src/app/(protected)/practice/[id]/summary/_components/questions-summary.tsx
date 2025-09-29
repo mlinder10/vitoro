@@ -7,7 +7,7 @@ import { updateFlaggedQuestions } from "../../../actions";
 import ChatCard from "../../_components/chat/chat-card";
 import QuestionNavigator from "../../_components/question-navigator";
 import HighlightableText from "@/components/highlightable-text";
-import QuestionChoiceView from "../../_components/question-choice";
+import QuestionChoiceView from "../../_components/question/question-choice";
 
 type QuestionsSummaryWrapperProps = {
   session: QBankSession;

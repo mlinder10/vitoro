@@ -1,9 +1,9 @@
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import useDeepState from "@/hooks/use-deep-state";
 import { cn } from "@/lib/utils";
 import { NBMEQuestion, QuestionChoice } from "@/types";
-import { Label } from "@radix-ui/react-label";
 
 type EditQuestionViewProps = {
   question: NBMEQuestion;

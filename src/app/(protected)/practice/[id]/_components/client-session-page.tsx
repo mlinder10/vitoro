@@ -13,8 +13,8 @@ import {
 import { useSession } from "@/contexts/session-provider";
 import ChatCard from "./chat/chat-card";
 import QuestionNavigator from "./question-navigator";
-import QuestionCard from "./question-card";
-import Countdown from "./countdown";
+import QuestionCard from "./question/question-card";
+import Countdown from "./question/countdown";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 
