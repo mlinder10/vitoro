@@ -18,6 +18,8 @@ export default function QuestionsSummary({
   session,
   questions,
 }: QuestionsSummaryWrapperProps) {
+  const [chatExpanded, setChatExpanded] = useState(false);
+  const [chatFullScreen, setChatFullScreen] = useState(false);
   const [flaggedIds, setFlaggedIds] = useState<string[]>(
     session.flaggedQuestionIds
   );
@@ -43,6 +45,21 @@ export default function QuestionsSummary({
     await updateFlaggedQuestions(session.id, copy);
   }
 
+  function handleChatExpand() {
+    setChatFullScreen(false);
+    setChatExpanded((prev) => !prev);
+  }
+
+  function handleChatFullScreen() {
+    if (chatFullScreen) {
+      setChatExpanded(false);
+      setChatFullScreen(false);
+      return;
+    }
+    setChatExpanded(false);
+    setChatFullScreen(true);
+  }
+
   return (
     <div
       className="flex"
@@ -55,19 +72,29 @@ export default function QuestionsSummary({
         onSelect={(q, i) => setIndex(i)}
         mode="tutor"
       />
-      <div className="flex flex-1 gap-8 p-8 h-full">
-        <QuestionCard
-          session={session}
-          question={question}
-          index={index}
-          flaggedIds={flaggedIds}
-          onBack={() => setIndex((prev) => prev - 1)}
-          onNext={handleNextQuestion}
-          onFlag={handleFlagQuestion}
-          onUnflag={handleUnflagQuestion}
-        />
+      <div className="flex flex-2 gap-8 p-8 h-full">
+        {!chatFullScreen && (
+          <QuestionCard
+            key={question.question}
+            session={session}
+            question={question}
+            index={index}
+            flaggedIds={flaggedIds}
+            onBack={() => setIndex((prev) => prev - 1)}
+            onNext={handleNextQuestion}
+            onFlag={handleFlagQuestion}
+            onUnflag={handleUnflagQuestion}
+          />
+        )}
         {session.answers[index] !== null && (
-          <ChatCard question={question} choice={session.answers[index]} />
+          <ChatCard
+            question={question}
+            choice={session.answers[index]}
+            expanded={chatExpanded}
+            fullScreen={chatFullScreen}
+            onToggleExpand={handleChatExpand}
+            onToggleFullScreen={handleChatFullScreen}
+          />
         )}
       </div>
     </div>
@@ -116,6 +143,44 @@ function QuestionCard({
         text={question.question}
         storageKey={`nbme-${question.id}`}
       />
+
+      {question.labValues && question.labValues.length > 0 && (
+        <div className="bg-secondary mx-auto p-4 rounded-md w-fit">
+          <h3 className="mb-2 font-semibold">Laboratory Values:</h3>
+          <table className="mx-auto border border-border w-fit text-sm border-collapse">
+            <thead className="bg-muted">
+              <tr>
+                <th className="px-3 py-2 border border-border font-medium">
+                  Analyte
+                </th>
+                <th className="px-3 py-2 border border-border font-medium text-center">
+                  Value
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {question.labValues.map((lab, idx) => (
+                <tr key={idx}>
+                  <td className="px-3 py-2 border border-border">
+                    <HighlightableText
+                      text={lab.analyte}
+                      storageKey={`analyte-${lab.analyte}`}
+                      className=""
+                    />
+                  </td>
+                  <td className="px-3 py-2 border border-border text-right">
+                    <HighlightableText
+                      text={`${lab.value} ${lab.unit} ${lab.qual}`}
+                      storageKey={`value-${lab.value} ${lab.unit} ${lab.qual}`}
+                      className=""
+                    />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
 
       <div className="flex flex-col gap-4">
         {Object.entries(question.choices).map(([l]) => {

@@ -52,13 +52,12 @@ import ReactMarkdown from "react-markdown";
 type ChatCardProps = {
   question: NBMEQuestion;
   choice: QuestionChoice | null;
-  expanded?: boolean;
-  fullScreen?: boolean;
-  onToggleExpand?: () => void;
-  onToggleFullScreen?: () => void;
+  expanded: boolean;
+  fullScreen: boolean;
+  onToggleExpand: () => void;
+  onToggleFullScreen: () => void;
 };
 
-// TODO: add loading indicator on flashcard generation
 export default function ChatCard({
   question,
   choice,

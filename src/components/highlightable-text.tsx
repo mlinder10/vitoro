@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useEffect, useRef } from 'react';
-import { cn } from '@/lib/utils';
+import { useEffect, useRef } from "react";
+import { cn } from "@/lib/utils";
 
 interface HighlightableTextProps {
   text: string;
@@ -9,11 +9,17 @@ interface HighlightableTextProps {
   className?: string;
 }
 
-export default function HighlightableText({ text, storageKey, className }: HighlightableTextProps) {
+// TODO: refactor to render with state instead of imperatively editing DOM
+export default function HighlightableText({
+  text,
+  storageKey,
+  className,
+}: HighlightableTextProps) {
   const ref = useRef<HTMLParagraphElement>(null);
 
   useEffect(() => {
-    const stored = typeof window !== 'undefined' ? localStorage.getItem(storageKey) : null;
+    const stored =
+      typeof window !== "undefined" ? localStorage.getItem(storageKey) : null;
     if (ref.current && stored) {
       ref.current.innerHTML = stored;
     }
@@ -29,9 +35,10 @@ export default function HighlightableText({ text, storageKey, className }: Highl
     const selection = window.getSelection();
     if (!selection || selection.isCollapsed) return;
     const range = selection.getRangeAt(0);
-    if (!ref.current || !ref.current.contains(range.commonAncestorContainer)) return;
-    const span = document.createElement('span');
-    span.className = 'highlight';
+    if (!ref.current || !ref.current.contains(range.commonAncestorContainer))
+      return;
+    const span = document.createElement("span");
+    span.className = "highlight";
     range.surroundContents(span);
     selection.removeAllRanges();
     save();
@@ -39,7 +46,7 @@ export default function HighlightableText({ text, storageKey, className }: Highl
 
   function handleClick(e: React.MouseEvent<HTMLParagraphElement>) {
     const target = e.target as HTMLElement;
-    if (target.classList.contains('highlight')) {
+    if (target.classList.contains("highlight")) {
       const parent = target.parentNode as HTMLElement;
       while (target.firstChild) parent.insertBefore(target.firstChild, target);
       parent.removeChild(target);
@@ -60,4 +67,3 @@ export default function HighlightableText({ text, storageKey, className }: Highl
     ></p>
   );
 }
-

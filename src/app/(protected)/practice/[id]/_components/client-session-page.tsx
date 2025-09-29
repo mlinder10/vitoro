@@ -162,6 +162,7 @@ function ClientSessionPage({ session, questions }: ClientSessionPageProps) {
               )}
             >
               <QuestionCard
+                key={activeQuestion.id}
                 session={session}
                 question={activeQuestion}
                 answers={answers}

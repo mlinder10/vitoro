@@ -62,9 +62,11 @@ export default function QuestionChoiceView({
   }
 
   function getChoiceStyle() {
+    if (isDisabled && !isChecked) {
+      return "bg-secondary border-border opacity-60 line-through";
+    }
+
     if (!canShowInsights) {
-      if (isDisabled)
-        return "bg-secondary border-border opacity-60 line-through";
       return isSelected
         ? "bg-custom-accent/20 border-custom-accent"
         : "bg-secondary hover:bg-secondary/80 border-border";
@@ -92,17 +94,25 @@ export default function QuestionChoiceView({
         onContextMenu={handleDisable}
       >
         <div className="flex gap-3">
-          <span className={cn("min-w-[20px] font-semibold text-sm sm:text-base")}>
+          <span
+            className={cn("min-w-[20px] font-semibold text-sm sm:text-base")}
+          >
             {letter.toUpperCase()}.
           </span>
-          <span className={cn("flex-1 text-sm sm:text-base md:text-lg")}>{choice}</span>
+          <span className={cn("flex-1 text-sm sm:text-base md:text-lg")}>
+            {choice}
+          </span>
         </div>
       </div>
 
       {/* Show explanation after answer is checked */}
       {isChecked && showExplanation && (
-        <div className={cn("bg-muted ml-7 p-3 rounded-md text-sm sm:text-base")}>
-          <p className={cn("text-muted-foreground text-sm sm:text-base")}>{explanation}</p>
+        <div
+          className={cn("bg-muted ml-7 p-3 rounded-md text-sm sm:text-base")}
+        >
+          <p className={cn("text-muted-foreground text-sm sm:text-base")}>
+            {explanation}
+          </p>
         </div>
       )}
     </div>

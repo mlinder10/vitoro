@@ -89,15 +89,15 @@ export default function QuestionCard({
       />
 
       {question.labValues && question.labValues.length > 0 && (
-        <div className="bg-secondary p-4 rounded-md w-fit mx-auto">
+        <div className="bg-secondary mx-auto p-4 rounded-md w-fit">
           <h3 className="mb-2 font-semibold">Laboratory Values:</h3>
-          <table className="mx-auto w-fit text-sm border border-border border-collapse">
+          <table className="mx-auto border border-border w-fit text-sm border-collapse">
             <thead className="bg-muted">
               <tr>
                 <th className="px-3 py-2 border border-border font-medium">
                   Analyte
                 </th>
-                <th className="px-3 py-2 border border-border text-center font-medium">
+                <th className="px-3 py-2 border border-border font-medium text-center">
                   Value
                 </th>
               </tr>
@@ -105,9 +105,19 @@ export default function QuestionCard({
             <tbody>
               {question.labValues.map((lab, idx) => (
                 <tr key={idx}>
-                  <td className="px-3 py-2 border border-border">{lab.analyte}</td>
+                  <td className="px-3 py-2 border border-border">
+                    <HighlightableText
+                      text={lab.analyte}
+                      storageKey={`analyte-${lab.analyte}`}
+                      className=""
+                    />
+                  </td>
                   <td className="px-3 py-2 border border-border text-right">
-                    {lab.value} {lab.unit} {lab.qual}
+                    <HighlightableText
+                      text={`${lab.value} ${lab.unit} ${lab.qual}`}
+                      storageKey={`value-${lab.value} ${lab.unit} ${lab.qual}`}
+                      className=""
+                    />
                   </td>
                 </tr>
               ))}
@@ -121,7 +131,7 @@ export default function QuestionCard({
           const letter = l as QuestionChoice;
           return (
             <QuestionChoiceView
-              key={letter}
+              key={question.choices[letter]}
               mode={session.mode}
               letter={letter}
               choice={question.choices[letter]}
