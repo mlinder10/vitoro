@@ -1,21 +1,23 @@
 import { cn } from "@/lib/utils";
 import { NBMEQuestion, QBankMode, QuestionChoice } from "@/types";
-import { Check, X } from "lucide-react";
+import { Check, Flag, X } from "lucide-react";
 
 type QuestionNavigatorProps = {
+  mode: QBankMode;
+  activeQuestion: NBMEQuestion;
   questions: NBMEQuestion[];
   answers: (QuestionChoice | null)[];
-  activeQuestion: NBMEQuestion;
+  flaggedIds: string[];
   onSelect: (question: NBMEQuestion, index: number) => void;
-  mode: QBankMode;
 };
 
 export default function QuestionNavigator({
+  mode,
+  activeQuestion,
   questions,
   answers,
-  activeQuestion,
+  flaggedIds,
   onSelect,
-  mode,
 }: QuestionNavigatorProps) {
   return (
     <nav className="flex flex-col bg-tertiary border-r w-[240px] h-full">
@@ -58,6 +60,9 @@ export default function QuestionNavigator({
                     >
                       {isCorrect ? <Check size={12} /> : <X size={12} />}
                     </div>
+                  )}
+                  {flaggedIds.includes(question.id) && (
+                    <Flag size={16} className="text-custom-accent" />
                   )}
                 </div>
                 {isAnswered && (

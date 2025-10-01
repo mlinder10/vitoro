@@ -10,18 +10,10 @@ type QuestionCardProps = {
   session: QBankSession;
   question: NBMEQuestion;
   answers: (QuestionChoice | null)[];
-  flaggedIds: string[];
   index: number;
   onBack: () => void;
   onNext: (isChecked: boolean) => void;
   onSubmit: (choice: QuestionChoice) => Promise<void>;
-  onFlag: () => Promise<void>;
-  onUnflag: () => Promise<void>;
-  /**
-   * When true, the question card stretches to fill available width.
-   * Used in tutor mode before an answer is submitted so the prompt
-   * occupies the full container, similar to timed mode.
-   */
   fullWidth?: boolean;
 };
 
@@ -29,13 +21,10 @@ export default function QuestionCard({
   session,
   question,
   answers,
-  flaggedIds,
   index,
   onBack,
   onNext,
   onSubmit,
-  onFlag,
-  onUnflag,
   fullWidth = false,
 }: QuestionCardProps) {
   const [selected, setSelected] = useState<QuestionChoice | null>(null);
@@ -49,7 +38,6 @@ export default function QuestionCard({
     (session.mode === "timed" && answers.length === 1) ||
     answers.at(-2) !== null ||
     (session.mode === "tutor" && !answers.includes(null));
-  const isFlagged = flaggedIds.includes(question.id);
 
   async function handleSubmit() {
     if (!selected) return;
@@ -82,11 +70,7 @@ export default function QuestionCard({
           : "flex-1 w-full"
       )}
     >
-      <HighlightableText
-        text={question.question}
-        storageKey={`nbme-${question.id}`}
-        className="leading-relaxed"
-      />
+      <HighlightableText text={question.question} className="leading-relaxed" />
 
       {question.labValues && question.labValues.length > 0 && (
         <div className="bg-secondary mx-auto p-4 rounded-md w-fit">
@@ -106,16 +90,11 @@ export default function QuestionCard({
               {question.labValues.map((lab, idx) => (
                 <tr key={idx}>
                   <td className="px-3 py-2 border border-border">
-                    <HighlightableText
-                      text={lab.analyte}
-                      storageKey={`analyte-${lab.analyte}`}
-                      className=""
-                    />
+                    <HighlightableText text={lab.analyte} className="" />
                   </td>
                   <td className="px-3 py-2 border border-border text-right">
                     <HighlightableText
                       text={`${lab.value} ${lab.unit} ${lab.qual}`}
-                      storageKey={`value-${lab.value} ${lab.unit} ${lab.qual}`}
                       className=""
                     />
                   </td>
@@ -146,49 +125,45 @@ export default function QuestionCard({
         })}
       </div>
 
-      <div className="flex justify-between mt-auto">
-        <div className="flex gap-4">
-          {session.mode === "tutor" && (
-            <>
-              <Button variant="outline" onClick={onBack} disabled={!canGoBack}>
-                <ChevronLeft />
-                <span>Back</span>
-              </Button>
-
-              <Button
-                variant="outline"
-                onClick={() => onNext(isChecked)}
-                disabled={!canGoNext}
-              >
-                <span>Next</span>
-                <ChevronRight />
-              </Button>
-            </>
-          )}
-        </div>
-
-        <div className="flex gap-4">
-          {session.mode === "tutor" &&
-            (isFlagged ? (
-              <Button variant="accent-light" onClick={onUnflag}>
-                <span>Unmark for Review</span>
-              </Button>
-            ) : (
-              <Button variant="accent-light" onClick={onFlag}>
-                <span>Mark for Review</span>
-              </Button>
-            ))}
-          {/* KALEB: Changed button to not have "update answer" */}
+      <div className="grid grid-cols-3">
+        {session.mode === "tutor" ? (
           <Button
-            variant="accent"
-            onClick={handleSubmit}
-            disabled={
-              selected === null || submissionLoading || (isChecked && !isAtEnd)
-            }
+            className="justify-self-start"
+            variant="outline"
+            onClick={onBack}
+            disabled={!canGoBack}
           >
-            {isAtEnd ? "End Session" : "Submit Answer"}
+            <ChevronLeft />
+            <span>Back</span>
           </Button>
-        </div>
+        ) : (
+          <span />
+        )}
+
+        <Button
+          className="justify-self-center"
+          variant="accent"
+          onClick={handleSubmit}
+          disabled={
+            selected === null || submissionLoading || (isChecked && !isAtEnd)
+          }
+        >
+          {isAtEnd ? "End Session" : "Submit Answer"}
+        </Button>
+
+        {session.mode === "tutor" ? (
+          <Button
+            variant="outline"
+            onClick={() => onNext(isChecked)}
+            disabled={!canGoNext}
+            className="justify-self-end"
+          >
+            <span>Next</span>
+            <ChevronRight />
+          </Button>
+        ) : (
+          <span />
+        )}
       </div>
     </div>
   );

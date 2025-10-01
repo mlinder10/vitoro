@@ -1,4 +1,4 @@
-import { Target, Layers } from "lucide-react";
+import { Target, Layers, History, CreditCard } from "lucide-react";
 import Link from "next/link";
 import { ComponentType } from "react";
 import GradientTitle from "@/components/gradient-title";
@@ -102,7 +102,7 @@ export default async function HomePage() {
 
       <section className="flex flex-col gap-4">
         <h2 className="font-semibold text-muted-foreground">Study Materials</h2>
-        <div className="gap-4 grid md:grid-cols-2">
+        <div className="gap-4 grid md:grid-cols-4">
           <RowItem
             icon={Target}
             title="Question Bank"
@@ -114,6 +114,18 @@ export default async function HomePage() {
             title="Foundational"
             description="Master core concepts with our foundational question sets."
             link="/foundational"
+          />
+          <RowItem
+            icon={History}
+            title="Session History"
+            description="Review your past performance and track your progress."
+            link="/history"
+          />
+          <RowItem
+            icon={CreditCard}
+            title="Flashcards"
+            description="Enhance your memory with our interactive flashcards."
+            link="/flashcards"
           />
         </div>
       </section>

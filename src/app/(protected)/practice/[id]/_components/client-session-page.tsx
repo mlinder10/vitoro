@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { NBMEQuestion, QBankSession, QuestionChoice } from "@/types";
-import { Calculator, Menu } from "lucide-react";
+import { Calculator, Flag, Menu } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import {
@@ -23,7 +23,10 @@ type ClientSessionPageProps = {
   questions: NBMEQuestion[];
 };
 
-function ClientSessionPage({ session, questions }: ClientSessionPageProps) {
+export default function ClientSessionPage({
+  session,
+  questions,
+}: ClientSessionPageProps) {
   const { id } = useSession();
   const [answers, setAnswers] = useState<(QuestionChoice | null)[]>(
     session.answers
@@ -117,13 +120,14 @@ function ClientSessionPage({ session, questions }: ClientSessionPageProps) {
   return (
     <div className="flex flex-col h-full">
       <Header
-        onToggleSidebar={() => setShowSidebar((prev) => !prev)}
-        current={activeIndex + 1}
+        current={activeIndex}
         total={questions.length}
         session={session}
-        onTimeOut={() => {
-          handleEndSession();
-        }}
+        flaggedIds={flaggedIds}
+        onTimeOut={handleEndSession}
+        onToggleSidebar={() => setShowSidebar((prev) => !prev)}
+        onFlag={handleFlagQuestion}
+        onUnflag={handleUnflagQuestion}
       />
       <div className="flex flex-1 h-full overflow-hidden">
         <AnimatePresence initial={false}>
@@ -137,11 +141,12 @@ function ClientSessionPage({ session, questions }: ClientSessionPageProps) {
               className="h-full"
             >
               <QuestionNavigator
+                mode={session.mode}
+                activeQuestion={activeQuestion}
                 questions={questions}
                 answers={answers}
-                activeQuestion={activeQuestion}
+                flaggedIds={flaggedIds}
                 onSelect={(_, i) => setActiveIndex(i)}
-                mode={session.mode}
               />
             </motion.div>
           )}
@@ -166,13 +171,10 @@ function ClientSessionPage({ session, questions }: ClientSessionPageProps) {
                 session={session}
                 question={activeQuestion}
                 answers={answers}
-                flaggedIds={flaggedIds}
                 index={activeIndex}
                 onBack={handleBack}
                 onNext={handleNext}
                 onSubmit={handleSubmit}
-                onFlag={handleFlagQuestion}
-                onUnflag={handleUnflagQuestion}
                 fullWidth={showSidebar && !showChat}
               />
             </motion.div>
@@ -193,23 +195,29 @@ function ClientSessionPage({ session, questions }: ClientSessionPageProps) {
   );
 }
 
-export default ClientSessionPage;
-
 type HeaderProps = {
-  onToggleSidebar: () => void;
   current: number;
   total: number;
   session: QBankSession;
+  flaggedIds: string[];
   onTimeOut: () => void;
+  onToggleSidebar: () => void;
+  onFlag: () => void;
+  onUnflag: () => void;
 };
 
 function Header({
-  onToggleSidebar,
   current,
   total,
   session,
+  flaggedIds,
   onTimeOut,
+  onToggleSidebar,
+  onFlag,
+  onUnflag,
 }: HeaderProps) {
+  const isFlagged = flaggedIds.includes(session.questionIds[current]);
+
   return (
     <header className="flex items-center p-6 border-b">
       <Button
@@ -220,7 +228,7 @@ function Header({
         <Menu />
       </Button>
       <p className="flex-1 font-semibold text-custom-accent text-lg text-center">
-        Question {current} of {total}
+        Question {current + 1} of {total}
       </p>
       <div className="flex items-center gap-4">
         {session.mode === "timed" && (
@@ -229,6 +237,17 @@ function Header({
             onEnd={onTimeOut}
             className="font-semibold"
           />
+        )}
+        {isFlagged ? (
+          <Button variant="accent-light" onClick={onUnflag}>
+            <Flag />
+            <span>Unflag Question</span>
+          </Button>
+        ) : (
+          <Button variant="accent-light" onClick={onFlag}>
+            <Flag />
+            <span>Flag Question</span>
+          </Button>
         )}
         <Button variant="outline">
           <Calculator />

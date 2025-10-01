@@ -12,8 +12,8 @@ import {
   Layers,
   ShieldUserIcon,
   Target,
-  CreditCard,
-  Computer,
+  // CreditCard,
+  // Computer,
 } from "lucide-react";
 import Link from "next/link";
 import { ComponentType, useEffect, useState } from "react";
@@ -85,6 +85,12 @@ export default function SideNav() {
             isOpen={isOpen}
           />
           <ListLink
+            href="/history"
+            icon={History}
+            label="Session History"
+            isOpen={isOpen}
+          />
+          {/* <ListLink
             href="/flashcards"
             icon={CreditCard}
             label="Flashcards"
@@ -95,13 +101,7 @@ export default function SideNav() {
             icon={Computer}
             label="Tutor"
             isOpen={isOpen}
-          />
-          <ListLink
-            href="/history"
-            icon={History}
-            label="History"
-            isOpen={isOpen}
-          />
+          /> */}
           {session.isAdmin && (
             <ListLink
               href="/admin"
