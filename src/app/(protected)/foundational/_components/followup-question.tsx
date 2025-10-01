@@ -46,10 +46,7 @@ export default function FollowUpQuestionView({
           Question {index + 2} of {total}
         </p>
 
-        <HighlightableText
-          text={followUp.question}
-          storageKey={`foundational-${followUp.id}`}
-        />
+        <HighlightableText text={followUp.question} />
 
         <div className="flex flex-col gap-4 mt-auto">
           {Object.entries(followUp.choices).map(([l]) => {

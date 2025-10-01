@@ -66,11 +66,12 @@ export default function QuestionsSummary({
       style={{ height: `calc(100% - ${SUMMARY_BTN_HEIGHT}px)` }}
     >
       <QuestionNavigator
-        questions={questions}
-        activeQuestion={question}
-        answers={session.answers}
-        onSelect={(q, i) => setIndex(i)}
         mode="tutor"
+        activeQuestion={question}
+        questions={questions}
+        answers={session.answers}
+        flaggedIds={flaggedIds}
+        onSelect={(_, i) => setIndex(i)}
       />
       <div className="flex flex-2 gap-8 p-8 h-full">
         {!chatFullScreen && (
@@ -139,10 +140,7 @@ function QuestionCard({
         </p>
       </div>
 
-      <HighlightableText
-        text={question.question}
-        storageKey={`nbme-${question.id}`}
-      />
+      <HighlightableText text={question.question} />
 
       {question.labValues && question.labValues.length > 0 && (
         <div className="bg-secondary mx-auto p-4 rounded-md w-fit">
@@ -162,16 +160,11 @@ function QuestionCard({
               {question.labValues.map((lab, idx) => (
                 <tr key={idx}>
                   <td className="px-3 py-2 border border-border">
-                    <HighlightableText
-                      text={lab.analyte}
-                      storageKey={`analyte-${lab.analyte}`}
-                      className=""
-                    />
+                    <HighlightableText text={lab.analyte} className="" />
                   </td>
                   <td className="px-3 py-2 border border-border text-right">
                     <HighlightableText
                       text={`${lab.value} ${lab.unit} ${lab.qual}`}
-                      storageKey={`value-${lab.value} ${lab.unit} ${lab.qual}`}
                       className=""
                     />
                   </td>

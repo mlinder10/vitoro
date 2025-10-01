@@ -176,10 +176,7 @@ function BaseQuestionView({
         <p className="font-semibold text-custom-accent text-lg">
           Question 1 of {total}
         </p>
-        <HighlightableText
-          text={question.question}
-          storageKey={`foundational-${question.id}`}
-        />
+        <HighlightableText text={question.question} />
         {isChecked ? (
           <>
             <div>
