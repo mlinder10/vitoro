@@ -129,26 +129,17 @@ export const subscriptions = sqliteTable("subscriptions", {
   createdAt: date("created_at").default(SQL_NOW).notNull(),
   expiresAt: date("expires_at").notNull(),
   subscriptionId: json<SubscriptionId>("subscription_id").notNull(),
-  isRenewable: json<boolean>("is_renewable").default(true).notNull(),
+  isRenewable: integer("is_renewable", { mode: "boolean" })
+    .default(true)
+    .notNull(),
 });
 
-// export const alphaApplications = sqliteTable("alpha_applications", {
-//   id: text("id").primaryKey().default(SQL_UUID).notNull(),
-//   createdAt: date("created_at").default(SQL_NOW).notNull(),
-//   approved: json<boolean>("approved").default(false).notNull(),
-//   userId: text("user_id")
-//     .references(() => users.id, { onDelete: "cascade" })
-//     .notNull(),
-// });
-
-// export const betaApplications = sqliteTable("beta_applications", {
-//   id: text("id").primaryKey().default(SQL_UUID).notNull(),
-//   createdAt: date("created_at").default(SQL_NOW).notNull(),
-//   approved: json<boolean>("approved").default(false).notNull(),
-//   userId: text("user_id")
-//     .references(() => users.id, { onDelete: "cascade" })
-//     .notNull(),
-// });
+export const betaApplications = sqliteTable("beta_applications", {
+  id: text("id").primaryKey().default(SQL_UUID).notNull(),
+  createdAt: date("created_at").default(SQL_NOW).notNull(),
+  approved: integer("approved", { mode: "boolean" }).default(false).notNull(),
+  email: text("email").unique().notNull(),
+});
 
 // nbme questions
 
