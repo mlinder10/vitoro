@@ -2,12 +2,13 @@ import { LLM, Prompt } from "./llm";
 import { GoogleGenAI } from "@google/genai";
 
 type GeminiModel =
+  | "gemini-3-flash-preview"
   | "gemini-2.0-flash"
   | "gemini-2.0-flash-lite"
   | "gemini-2.5-flash"
   | "gemini-2.5-flash-lite";
 
-const DEFAULT_MODEL: GeminiModel = "gemini-2.0-flash";
+const DEFAULT_MODEL: GeminiModel = "gemini-2.5-flash-lite";
 
 type GeminiInput = {
   role: string;
